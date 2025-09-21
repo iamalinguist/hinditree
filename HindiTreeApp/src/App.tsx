@@ -361,7 +361,35 @@ function App() {
           error={error}
           svgRef={svgRef}
         />}
-        {view === 'syntax-rules' && <SyntaxRules />}
+        {view === 'syntax-rules' && <SyntaxRules
+          selectedMethod={selectedMethod}
+          setSelectedMethod={setSelectedMethod}
+          showMethod1Rules={showMethod1Rules}
+          setShowMethod1Rules={setShowMethod1Rules}
+          hiddenMethods={hiddenMethods}
+          handleResetMethods={handleResetMethods}
+          handleEditMethod1={handleEditMethod1}
+          handleDeleteMethod={handleDeleteMethod}
+          method1Categories={method1Categories}
+          method1Grammar={method1Grammar}
+          customPOS={customPOS}
+          customRoots={customRoots}
+          customGrammar={customGrammar}
+          newPosInput={newPosInput}
+          setNewPosInput={setNewPosInput}
+          handleAddCustomPOS={handleAddCustomPOS}
+          handleDeleteCustomPOS={handleDeleteCustomPOS}
+          newRootInput={newRootInput}
+          setNewRootInput={setNewRootInput}
+          handleAddCustomRoot={handleAddCustomRoot}
+          handleDeleteCustomRoot={handleDeleteCustomRoot}
+          newRuleLHS={newRuleLHS}
+          setNewRuleLHS={setNewRuleLHS}
+          newRuleRHS={newRuleRHS}
+          setNewRuleRHS={setNewRuleRHS}
+          handleAddRule={handleAddRule}
+          handleDeleteCustomRule={handleDeleteCustomRule}
+        />}
         {view === 'abbreviations' && <Abbreviations />}
         {view === 'faq' && <FAQ />}
         {view === 'support' && <Support />}
