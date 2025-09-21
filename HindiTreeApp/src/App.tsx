@@ -8,7 +8,8 @@ import FAQ from './components/FAQ';
 import Support from './components/Support';
 import About from './components/About';
 import './App.css';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+// import * as d3 from 'd3';
 
 // --- /src/grammar/rules.js (Simulated File) ---
 // Simplified Context-Free Grammar (CFG) for Hindi in Chomsky Normal Form (CNF)
@@ -190,8 +191,8 @@ function App() {
   const [openFaq, setOpenFaq] = useState(null);
 
   const svgRef = useRef(null);
-  const zoomRef = useRef(null);
-  const gRef = useRef(null);
+
+  const tailwindColors = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'];
 
   const handleEditMethod1 = () => {
       const password = window.prompt("Enter password to edit rules:");
@@ -271,8 +272,9 @@ function App() {
       link.click();
       document.body.removeChild(link);
     };
-    const encodedSvg = 'data:image/svg+xml;base64,' + btoa(svgData);
-    img.src = encodedSvg;
+  // Unicode-safe base64 encoding for SVG
+  const encodedSvg = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(svgData)));
+  img.src = encodedSvg;
   };
 
   const handleAddCustomPOS = () => {
@@ -334,79 +336,6 @@ function App() {
     });
   };
 
-  // D3.js Tree visualization logic
-  useEffect(() => {
-    if (!svgRef.current) return;
-    const svg = d3.select(svgRef.current);
-    const width = svg.node().getBoundingClientRect().width;
-    const height = 600;
-
-    const zoom = d3.zoom()
-        .scaleExtent([0.1, 5])
-        .on('zoom', (event) => {
-          d3.select(gRef.current).attr('transform', event.transform);
-        });
-    svg.call(zoom);
-    zoomRef.current = zoom;
-    gRef.current = svg.append('g').node();
-  }, []);
-
-  const handleZoom = (direction) => {
-    if (!zoomRef.current || !svgRef.current) return;
-    const svg = d3.select(svgRef.current);
-    if (direction === 'in') {
-      svg.transition().call(zoomRef.current.scaleBy, 1.2);
-    } else {
-      svg.transition().call(zoomRef.current.scaleBy, 0.8);
-    }
-  };
-
-  useEffect(() => {
-    if (view !== 'tree-viewer' || !treeData || !svgRef.current) return;
-
-    const svg = d3.select(svgRef.current);
-    const width = svg.node().getBoundingClientRect().width;
-    const height = 600;
-
-    // Clear previous tree
-    d3.select(gRef.current).selectAll('*').remove();
-
-    const treeLayout = d3.tree().size([width - 80, height - 120]);
-    const root = d3.hierarchy(treeData);
-    treeLayout(root);
-    const linkGenerator = d3.linkVertical().x(d => d.x).y(d => d.y);
-
-    d3.select(gRef.current).selectAll('.link')
-      .data(root.links())
-      .enter()
-      .append('path')
-      .attr('class', 'link')
-      .attr('d', linkGenerator)
-      .attr('fill', 'none')
-      .attr('stroke', '#ccc')
-      .attr('stroke-width', 2);
-
-    const nodes = d3.select(gRef.current).selectAll('.node')
-      .data(root.descendants())
-      .enter()
-      .append('g')
-      .attr('class', 'node')
-      .attr('transform', d => `translate(${d.x},${d.y})`);
-
-    nodes.append('circle')
-      .attr('r', 6)
-      .attr('fill', '#6366f1')
-      .attr('stroke', '#4f46e5')
-      .attr('stroke-width', 2);
-
-    nodes.append('text')
-      .attr('dy', '-1.5em')
-      .attr('x', 0)
-      .attr('text-anchor', 'middle')
-      .attr('font-size', 14)
-      .text(d => d.data.name);
-  }, [treeData, view]);
-
   return (
     <div className="flex min-h-screen">
       <Sidebar view={view} setView={setView} />
@@ -421,25 +350,17 @@ function App() {
             selectedMethod={selectedMethod}
             customPOS={customPOS}
             method1Categories={method1Categories}
-            handleSentenceSubmit={() => {
-              const wordList = sentence.trim().split(/\s+/).filter(w => w);
-              setWords(wordList);
-              setAssignments(new Array(wordList.length).fill(''));
-              setTreeData(null);
-              setError(null);
-            }}
-            handleAssignCategory={(index: number, category: string) => {
-              const newAssignments = [...assignments];
-              newAssignments[index] = category;
-              setAssignments(newAssignments);
-            }}
-            handleGenerateTree={() => {
-              // You can add your tree generation logic here
-            }}
+            handleSentenceSubmit={handleSentenceSubmit}
+            handleAssignCategory={handleAssignCategory}
+            handleGenerateTree={() => handleGenerateTree()}
             error={error}
           />
         )}
-        {view === 'tree-viewer' && <TreeViewer />}
+        {view === 'tree-viewer' && <TreeViewer
+          treeData={treeData}
+          error={error}
+          svgRef={svgRef}
+        />}
         {view === 'syntax-rules' && <SyntaxRules />}
         {view === 'abbreviations' && <Abbreviations />}
         {view === 'faq' && <FAQ />}
