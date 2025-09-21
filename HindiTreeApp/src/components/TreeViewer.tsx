@@ -87,16 +87,17 @@ const TreeViewer = ({
       const treeLayout = d3.tree<TreeNode>().size([width - 80, height - 120]);
       const root = d3.hierarchy<TreeNode>(treeData);
       treeLayout(root);
-      const linkGenerator = d3.linkVertical<d3.HierarchyPointLink<TreeNode>, d3.HierarchyPointNode<TreeNode>>()
-        .x((d: d3.HierarchyPointNode<TreeNode>) => d.x)
-        .y((d: d3.HierarchyPointNode<TreeNode>) => d.y);
 
+      // Render links as straight lines (vertical)
       d3.select(g).selectAll('.link')
         .data(root.links())
         .enter()
         .append('path')
         .attr('class', 'link')
-        .attr('d', linkGenerator)
+        .attr('d', (d: d3.HierarchyPointLink<TreeNode>) => {
+          // Draw a straight line from parent to child
+          return `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`;
+        })
         .attr('fill', 'none')
         .attr('stroke', '#ccc')
         .attr('stroke-width', 2);
@@ -108,17 +109,13 @@ const TreeViewer = ({
         .attr('class', 'node')
         .attr('transform', (d: d3.HierarchyPointNode<TreeNode>) => `translate(${d.x},${d.y})`);
 
-      nodes.append('circle')
-        .attr('r', 6)
-        .attr('fill', '#6366f1')
-        .attr('stroke', '#4f46e5')
-        .attr('stroke-width', 2);
-
       nodes.append('text')
-        .attr('dy', '-1.5em')
+        .attr('dy', '0.35em')
         .attr('x', 0)
         .attr('text-anchor', 'middle')
-        .attr('font-size', 14)
+        .attr('font-size', 16)
+        .attr('font-weight', 'bold')
+        .attr('fill', '#22223b')
         .text((d: d3.HierarchyPointNode<TreeNode>) => d.data.name);
     }
   }, [treeData, svgRef]);
