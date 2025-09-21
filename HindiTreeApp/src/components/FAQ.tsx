@@ -1,27 +1,20 @@
 import React, { useState } from 'react';
 
 const faqContent = [
-  {
-    q: 'What is HindiTree?',
-    a: 'HindiTree is an open-access constituency parser for Hindi and related languages, allowing users to build and explore syntactic trees using customizable grammar rules.'
-  },
-  {
-    q: 'Can I add my own syntax rules?',
-    a: 'Yes! The platform is designed to be modular and theory-flexible, so you can add or modify rules to fit your needs.'
-  },
-  {
-    q: 'What frameworks does HindiTree support?',
-    a: 'Currently, HindiTree uses phrase-structure rules (CFG) as a baseline, but it is designed to support a variety of grammatical frameworks in the future.'
-  },
-  {
-    q: 'Who can use HindiTree?',
-    a: 'Researchers, teachers, students, and anyone interested in Hindi syntax can use HindiTree for free.'
-  },
-  {
-    q: 'How do I get support?',
-    a: 'For technical issues or questions, please visit the Support page or email sopan.tripathi@gmail.com.'
-  },
-];
+    { q: "What is HindiTree?", a: "HindiTree is an open-access constituency parser built specifically for Hindi sentences, available as a free web app." },
+    { q: "How is this different from existing parsers?", a: "Most existing parsers are English-focused or dependency-based; HindiTree directly models Hindi’s unique structures like free word order, postpositions, and complex predicates." },
+    { q: "Isn’t this just a CFG parser?", a: "The first version is CFG-based, but HindiTree is modular and designed to incorporate richer frameworks such as X-bar, Minimalist, Paninian, LFG, TAG, CCG, and HPSG." },
+    { q: "Why does Hindi need its own parser?", a: "Because English has decades of advanced parsers and large treebanks, while Hindi still lacks open, accessible tools for exploring constituency structure." },
+    { q: "Can the same sentence look different in different theories?", a: "Yes. For example, “राम ने सेब खाया” can be parsed in CFG as NP–VP, in X-bar with XP/X′ layers, or in Paninian with Karta–Karma–Kriya roles." },
+    { q: "Who can use HindiTree?", a: "Researchers, teachers, students, and anyone curious about Hindi grammar or NLP can use it freely in their browser." },
+    { q: "Does HindiTree need installation?", a: "No. It’s fully web-based. Just open the site, type a Hindi sentence, and see the tree." },
+    { q: "Will HindiTree support other Indian languages?", a: "Yes, the framework can be extended to related languages like Marathi, Bhojpuri, or Bangla with adapted grammar rules." },
+    { q: "Can I download or cite HindiTree?", a: "Yes. The code and grammar are open-source on GitHub, and a DOI (via Zenodo) will be provided for citation." },
+    { q: "What’s next for HindiTree?", a: "Future versions will include more grammatical frameworks, automatic tagging, richer corpora integration, and side-by-side comparisons of different theories." },
+    { q: "What technologies are used in Hindi Tree?", a: "Hindi Tree is built with React and D3.js. The parsing logic is a custom CKY-like algorithm written in JavaScript." },
+    { q: "Why is the parser failing to generate a tree?", a: "This can happen if the sentence is incomplete or the POS tags you have assigned do not match a valid grammar rule. Make sure every word has a tag and try again." },
+    { q: "Can I use this for other Indian languages?", a: "Yes, the framework can be adapted. However, you will need to define the specific POS tags and grammar rules for that language in the 'Your Method' section." },
+  ];
 
 const FAQ: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
