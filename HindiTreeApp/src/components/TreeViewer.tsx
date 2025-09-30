@@ -84,39 +84,70 @@ const TreeViewer = ({
     // Only render tree if treeData is present
     if (treeData) {
       d3.select(g).selectAll('*').remove();
-      const treeLayout = d3.tree<TreeNode>().size([width - 80, height - 120]);
-      const root = d3.hierarchy<TreeNode>(treeData);
-      treeLayout(root);
+      const nodeRadius = 24;
+      const verticalGap = 100;
+      const horizontalGap = 120;
 
-      // Render links as straight lines (vertical)
-      d3.select(g).selectAll('.link')
-        .data(root.links())
-        .enter()
-        .append('path')
-        .attr('class', 'link')
-        .attr('d', (d: d3.HierarchyPointLink<TreeNode>) => {
-          // Draw a straight line from parent to child
-          return `M${d.source.x},${d.source.y} L${d.target.x},${d.target.y}`;
-        })
-        .attr('fill', 'none')
-        .attr('stroke', '#ccc')
-        .attr('stroke-width', 2);
+      // Recursive function to draw tree
+      function drawNode(node: TreeNode, x: number, y: number, parentX?: number, parentY?: number, isChild: boolean = false) {
+        // Draw line from parent to this node, but stop short of the node's text
+        if (parentX !== undefined && parentY !== undefined) {
+          // Calculate direction vector
+          const dx = x - parentX;
+          const dy = y - parentY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          // Offset so line stops short of text (approximate text height)
+          const textOffset = 16;
+          const offsetX = (dx / dist) * textOffset;
+          const offsetY = (dy / dist) * textOffset;
+          const x1 = parentX;
+          const y1 = parentY + (isChild ? 18 : 0);
+          d3.select(g)
+            .append('line')
+            .attr('class', 'link')
+            .attr('x1', x1)
+            .attr('y1', y1)
+            .attr('x2', x - offsetX)
+            .attr('y2', y - offsetY)
+            .attr('stroke', '#ccc')
+            .attr('stroke-width', 2);
+        }
 
-      const nodes = d3.select(g).selectAll<SVGGElement, d3.HierarchyPointNode<TreeNode>>('.node')
-        .data(root.descendants())
-        .enter()
-        .append('g')
-        .attr('class', 'node')
-        .attr('transform', (d: d3.HierarchyPointNode<TreeNode>) => `translate(${d.x},${d.y})`);
+        // Draw node as text only
+        d3.select(g)
+          .append('text')
+          .attr('class', 'node-text')
+          .attr('x', x)
+          .attr('y', y)
+          .attr('dy', '0.35em')
+          .attr('text-anchor', 'middle')
+          .attr('font-size', 16)
+          .attr('font-weight', 'bold')
+          .attr('fill', '#22223b')
+          .text(node.name);
 
-      nodes.append('text')
-        .attr('dy', '0.35em')
-        .attr('x', 0)
-        .attr('text-anchor', 'middle')
-        .attr('font-size', 16)
-        .attr('font-weight', 'bold')
-        .attr('fill', '#22223b')
-        .text((d: d3.HierarchyPointNode<TreeNode>) => d.data.name);
+        // Draw children recursively
+        if (node.children && node.children.length > 0) {
+          if (node.children.length === 1) {
+            // Single child: draw edge vertically straight down
+            const childX = x;
+            const childY = y + verticalGap;
+            drawNode(node.children[0], childX, childY, x, y, true);
+          } else {
+            // Two children: spread horizontally
+            node.children.forEach((child, i) => {
+              const childX = x + (i === 0 ? -horizontalGap : horizontalGap);
+              const childY = y + verticalGap;
+              drawNode(child, childX, childY, x, y, true);
+            });
+          }
+        }
+      }
+
+      // Start drawing from root, centered
+      const startX = width / 2;
+      const startY = 80;
+      drawNode(treeData, startX, startY, undefined, undefined, false);
     }
   }, [treeData, svgRef]);
 
