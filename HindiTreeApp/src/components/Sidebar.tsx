@@ -83,7 +83,6 @@ const Sidebar: React.FC<SidebarProps> = ({ view, setView }) => {
             }
             const isActive = typeof item.key === 'string' && view === item.key;
             const commonProps = {
-              key: item.key,
               className: `flex items-center w-full p-3 rounded-lg font-semibold transition-colors duration-200 ${isActive ? 'bg-indigo-100 text-indigo-700' : 'hover:bg-gray-100'}`,
               onClick: () => {
                 if (typeof item.key === 'string') setView(item.key);
@@ -91,14 +90,14 @@ const Sidebar: React.FC<SidebarProps> = ({ view, setView }) => {
             };
             if (item.type === 'button') {
               return (
-                <button type="button" {...commonProps}>
+                <button key={item.key} type="button" {...commonProps}>
                   {item.icon}
                   {item.label}
                 </button>
               );
             }
             return (
-              <a {...commonProps}>
+              <a key={item.key} {...commonProps}>
                 {item.icon}
                 {item.label}
               </a>
