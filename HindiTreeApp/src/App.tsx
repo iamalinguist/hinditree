@@ -247,36 +247,6 @@ function App() {
     setView('tree-viewer'); // Switch to the Tree Viewer after parsing
   };
 
-  const downloadImage = (format) => {
-    const svgElement = svgRef.current;
-    if (!svgElement) {
-      console.error('SVG element not found.');
-      return;
-    }
-    const svgData = new XMLSerializer().serializeToString(svgElement);
-    const canvas = document.createElement('canvas');
-    const svgSize = svgElement.getBoundingClientRect();
-    canvas.width = svgSize.width * 2;
-    canvas.height = svgSize.height * 2;
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.onload = () => {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL(`image/${format}`, 1.0);
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `parse-tree.${format}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-  // Unicode-safe base64 encoding for SVG
-  const encodedSvg = 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(svgData)));
-  img.src = encodedSvg;
-  };
-
   const handleAddCustomPOS = () => {
     if (newPosInput.trim() !== '') {
         const randomColor = tailwindColors[Math.floor(Math.random() * tailwindColors.length)];
@@ -338,63 +308,68 @@ function App() {
 
   return (
     <div className="flex min-h-screen">
+      {/* Sidebar */}
       <Sidebar view={view} setView={setView} />
-      <MainContent>
-        {view === 'sentence-editor' && (
-          <SentenceEditor
-            sentence={sentence}
-            setSentence={setSentence}
-            words={words}
-            assignments={assignments}
-            setAssignments={setAssignments}
-            selectedMethod={selectedMethod}
-            customPOS={customPOS}
-            method1Categories={method1Categories}
-            handleSentenceSubmit={handleSentenceSubmit}
-            handleAssignCategory={handleAssignCategory}
-            handleGenerateTree={() => handleGenerateTree()}
-            error={error}
-          />
-        )}
-        {view === 'tree-viewer' && <TreeViewer
-          treeData={treeData}
-          error={error}
-          svgRef={svgRef}
-        />}
-        {view === 'syntax-rules' && <SyntaxRules
-          selectedMethod={selectedMethod}
-          setSelectedMethod={setSelectedMethod}
-          showMethod1Rules={showMethod1Rules}
-          setShowMethod1Rules={setShowMethod1Rules}
-          hiddenMethods={hiddenMethods}
-          handleResetMethods={handleResetMethods}
-          handleEditMethod1={handleEditMethod1}
-          handleDeleteMethod={handleDeleteMethod}
-          method1Categories={method1Categories}
-          method1Grammar={method1Grammar}
-          customPOS={customPOS}
-          customRoots={customRoots}
-          customGrammar={customGrammar}
-          newPosInput={newPosInput}
-          setNewPosInput={setNewPosInput}
-          handleAddCustomPOS={handleAddCustomPOS}
-          handleDeleteCustomPOS={handleDeleteCustomPOS}
-          newRootInput={newRootInput}
-          setNewRootInput={setNewRootInput}
-          handleAddCustomRoot={handleAddCustomRoot}
-          handleDeleteCustomRoot={handleDeleteCustomRoot}
-          newRuleLHS={newRuleLHS}
-          setNewRuleLHS={setNewRuleLHS}
-          newRuleRHS={newRuleRHS}
-          setNewRuleRHS={setNewRuleRHS}
-          handleAddRule={handleAddRule}
-          handleDeleteCustomRule={handleDeleteCustomRule}
-        />}
-        {view === 'abbreviations' && <Abbreviations />}
-        {view === 'faq' && <FAQ />}
-        {view === 'support' && <Support />}
-        {view === 'about' && <About />}
-      </MainContent>
+
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col">
+        <MainContent>
+          {view === 'sentence-editor' && (
+            <SentenceEditor
+              sentence={sentence}
+              setSentence={setSentence}
+              words={words}
+              assignments={assignments}
+              setAssignments={setAssignments}
+              selectedMethod={selectedMethod}
+              customPOS={customPOS}
+              method1Categories={method1Categories}
+              handleSentenceSubmit={handleSentenceSubmit}
+              handleAssignCategory={handleAssignCategory}
+              handleGenerateTree={handleGenerateTree}
+              error={error}
+            />
+          )}
+          {view === 'tree-viewer' && (
+            <TreeViewer treeData={treeData} error={error} svgRef={svgRef} />
+          )}
+          {view === 'syntax-rules' && (
+            <SyntaxRules
+              selectedMethod={selectedMethod}
+              setSelectedMethod={setSelectedMethod}
+              showMethod1Rules={showMethod1Rules}
+              setShowMethod1Rules={setShowMethod1Rules}
+              hiddenMethods={hiddenMethods}
+              handleResetMethods={handleResetMethods}
+              handleEditMethod1={handleEditMethod1}
+              handleDeleteMethod={handleDeleteMethod}
+              method1Categories={method1Categories}
+              method1Grammar={method1Grammar}
+              customPOS={customPOS}
+              customRoots={customRoots}
+              customGrammar={customGrammar}
+              newPosInput={newPosInput}
+              setNewPosInput={setNewPosInput}
+              handleAddCustomPOS={handleAddCustomPOS}
+              handleDeleteCustomPOS={handleDeleteCustomPOS}
+              newRootInput={newRootInput}
+              setNewRootInput={setNewRootInput}
+              handleAddCustomRoot={handleAddCustomRoot}
+              handleDeleteCustomRoot={handleDeleteCustomRoot}
+              newRuleLHS={newRuleLHS}
+              setNewRuleLHS={setNewRuleLHS}
+              newRuleRHS={newRuleRHS}
+              setNewRuleRHS={setNewRuleRHS}
+              handleAddRule={handleAddRule}
+              handleDeleteCustomRule={handleDeleteCustomRule}
+            />
+          )}
+          {view === 'abbreviations' && <Abbreviations />}
+          {view === 'faq' && <FAQ />}
+          {view === 'support' && <Support />}
+          {view === 'about' && <About />}
+        </MainContent>
+      </div>
     </div>
   );
 }

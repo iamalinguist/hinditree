@@ -35,7 +35,7 @@ export function drawTree(
         .attr('y1', parentY + (isChild ? 18 : 0))
         .attr('x2', x - offsetX)
         .attr('y2', y - offsetY)
-        .attr('stroke', '#ccc')
+        .attr('stroke', '#000')
         .attr('stroke-width', 2);
     }
 
@@ -72,18 +72,23 @@ export function drawTree(
 }
 
 // Download as image (high resolution PNG)
-export function downloadImage(svgRef: RefObject<SVGSVGElement>) {
+export function downloadImage(svgRef: RefObject<SVGSVGElement | null>, gRef: RefObject<SVGGElement | null>) {
   const svgElement = svgRef.current;
-  if (!svgElement) return;
+  const gElement = gRef.current;
+  if (!svgElement || !gElement) return;
 
+  // Serialize SVG
   const svgData = new XMLSerializer().serializeToString(svgElement);
 
+  // Compute bounding box of the <g> tree
+  const bbox = gElement.getBBox();
+  const padding = 20; // extra space around tree
+
   // Create canvas
-  const svgSize = svgElement.getBoundingClientRect();
-  const scale = 4; // increase this for sharper images (2 = 2x, 4 = 4x resolution)
+  const scale = 4; // high resolution
   const canvas = document.createElement('canvas');
-  canvas.width = svgSize.width * scale;
-  canvas.height = svgSize.height * scale;
+  canvas.width = (bbox.width + padding * 2) * scale;
+  canvas.height = (bbox.height + padding * 2) * scale;
 
   const ctx = canvas.getContext('2d');
   const img = new Image();
@@ -91,15 +96,16 @@ export function downloadImage(svgRef: RefObject<SVGSVGElement>) {
   img.onload = () => {
     if (!ctx) return;
 
-    // White background
+    // Fill background
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw scaled image
-    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    // Center the tree on canvas
+    ctx.setTransform(scale, 0, 0, scale, -bbox.x + padding, -bbox.y + padding);
+
     ctx.drawImage(img, 0, 0);
 
-    // Export as PNG
+    // Export PNG
     const dataUrl = canvas.toDataURL('image/png', 1.0);
     const link = document.createElement('a');
     link.href = dataUrl;
@@ -115,3 +121,4 @@ export function downloadImage(svgRef: RefObject<SVGSVGElement>) {
     window.btoa(unescape(encodeURIComponent(svgData)));
   img.src = encodedSvg;
 };
+

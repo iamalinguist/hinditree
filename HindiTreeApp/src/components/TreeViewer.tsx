@@ -7,7 +7,7 @@ import { downloadImage, drawTree, type TreeNode } from './treeUtils';
 interface TreeViewerProps {
   treeData: TreeNode | null;
   error: string | null;
-  svgRef: RefObject<SVGSVGElement>;
+  svgRef: RefObject<SVGSVGElement | null>;
 }
 
 const TreeViewer = ({ treeData, error, svgRef }: TreeViewerProps) => {
@@ -60,10 +60,6 @@ const TreeViewer = ({ treeData, error, svgRef }: TreeViewerProps) => {
 
       {treeData ? (
         <>
-          <p className="text-center text-sm text-gray-500 mb-4">
-            Use mouse wheel to zoom or click and hold to drag.
-          </p>
-
           {/* Container with relative positioning so controls can be placed inside */}
           <div className="relative overflow-hidden border border-gray-300 rounded-lg shadow-inner">
             {/* Controls pinned to top-right inside the canvas */}
@@ -71,7 +67,7 @@ const TreeViewer = ({ treeData, error, svgRef }: TreeViewerProps) => {
               <TreeControls
                 onZoomIn={() => handleZoom('in')}
                 onZoomOut={() => handleZoom('out')}
-                onDownload={() => downloadImage(svgRef)}
+                onDownload={() => downloadImage(svgRef, gRef)}
               />
             </div>
 
