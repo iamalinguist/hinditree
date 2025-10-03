@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import type { RefObject } from 'react';
 
 export type TreeNode = {
   name: string;
@@ -69,3 +70,48 @@ export function drawTree(
   const startY = 80;
   drawNode(treeData, startX, startY);
 }
+
+// Download as image (high resolution PNG)
+export function downloadImage(svgRef: RefObject<SVGSVGElement>) {
+  const svgElement = svgRef.current;
+  if (!svgElement) return;
+
+  const svgData = new XMLSerializer().serializeToString(svgElement);
+
+  // Create canvas
+  const svgSize = svgElement.getBoundingClientRect();
+  const scale = 4; // increase this for sharper images (2 = 2x, 4 = 4x resolution)
+  const canvas = document.createElement('canvas');
+  canvas.width = svgSize.width * scale;
+  canvas.height = svgSize.height * scale;
+
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+
+  img.onload = () => {
+    if (!ctx) return;
+
+    // White background
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw scaled image
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    ctx.drawImage(img, 0, 0);
+
+    // Export as PNG
+    const dataUrl = canvas.toDataURL('image/png', 1.0);
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = 'parse-tree.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Encode SVG for <img>
+  const encodedSvg =
+    'data:image/svg+xml;base64,' +
+    window.btoa(unescape(encodeURIComponent(svgData)));
+  img.src = encodedSvg;
+};

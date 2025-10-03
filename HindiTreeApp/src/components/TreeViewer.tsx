@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { RefObject } from 'react';
 import * as d3 from 'd3';
 import TreeControls from './TreeControls';
-import { drawTree, type TreeNode } from './treeUtils';
+import { downloadImage, drawTree, type TreeNode } from './treeUtils';
 
 interface TreeViewerProps {
   treeData: TreeNode | null;
@@ -14,39 +14,6 @@ const TreeViewer = ({ treeData, error, svgRef }: TreeViewerProps) => {
   const zoomRef = useRef<d3.ZoomBehavior<Element, unknown> | null>(null);
   const gRef = useRef<SVGGElement | null>(null);
 
-  // Download as image
-  const downloadImage = (format: 'png' | 'jpeg') => {
-    const svgElement = svgRef.current;
-    if (!svgElement) return;
-
-    const svgData = new XMLSerializer().serializeToString(svgElement);
-    const canvas = document.createElement('canvas');
-    const svgSize = svgElement.getBoundingClientRect();
-    canvas.width = svgSize.width * 2;
-    canvas.height = svgSize.height * 2;
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-
-    img.onload = () => {
-      if (!ctx) return;
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      const dataUrl = canvas.toDataURL(`image/${format}`, 1.0);
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `parse-tree.${format}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-
-    const encodedSvg =
-      'data:image/svg+xml;base64,' +
-      window.btoa(unescape(encodeURIComponent(svgData)));
-    img.src = encodedSvg;
-  };
 
   // D3 logic
   useEffect(() => {
@@ -104,7 +71,7 @@ const TreeViewer = ({ treeData, error, svgRef }: TreeViewerProps) => {
               <TreeControls
                 onZoomIn={() => handleZoom('in')}
                 onZoomOut={() => handleZoom('out')}
-                onDownload={downloadImage}
+                onDownload={() => downloadImage(svgRef)}
               />
             </div>
 
