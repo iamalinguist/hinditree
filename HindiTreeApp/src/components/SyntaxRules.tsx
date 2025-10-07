@@ -108,7 +108,7 @@ const SyntaxRules = ({
                   <div className="flex flex-wrap gap-2 mb-4 items-center">
                     {customPOS.map((pos, index) => (
                       <div key={index} draggable="true" onDragStart={(e) => e.dataTransfer.setData('text/plain', pos.label)} className="relative group cursor-hand">
-                        <span className={`px-4 py-2 rounded-full text-white font-bold text-sm bg-${pos.color}-500`}>{pos.label}</span>
+                        <span className={`px-4 py-2 rounded-full text-white font-bold text-sm ${pos.color}`}>{pos.label}</span>
                         <button onClick={() => handleDeleteCustomPOS(index)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">x</button>
                       </div>
                     ))}
