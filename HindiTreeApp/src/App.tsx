@@ -274,7 +274,7 @@ function App() {
   const handleAddCustomPOS = () => {
     if (newPosInput.trim() !== '') {
         const randomColor = tailwindColors[Math.floor(Math.random() * tailwindColors.length)];
-        setCustomPOS(prev => [...prev, { label: newPosInput.trim(), color: colorClasses[randomColor] }]);
+        setCustomPOS(prev => [...prev, { hindi: newPosInput.trim(), label: newPosInput.trim(), color: colorClasses[randomColor] }]);
         setNewPosInput('');
     }
   };
@@ -282,7 +282,7 @@ function App() {
   const handleAddCustomRoot = () => {
       if (newRootInput.trim() !== '') {
           const randomColor = tailwindColors[Math.floor(Math.random() * tailwindColors.length)];
-          setCustomRoots(prev => [...prev, { label: newRootInput.trim(), color: colorClasses[randomColor] }]);
+          setCustomRoots(prev => [...prev, { hindi: newRootInput.trim(), label: newRootInput.trim(), color: colorClasses[randomColor] }]);
           setNewRootInput('');
       }
   };
