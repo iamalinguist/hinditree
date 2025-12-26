@@ -63,11 +63,12 @@ const TreeViewer = ({ treeData, error, svgRef }: TreeViewerProps) => {
           {/* Container with relative positioning so controls can be placed inside */}
           <div className="relative overflow-hidden border border-gray-300 rounded-lg shadow-inner">
             {/* Controls pinned to top-right inside the canvas */}
-            <div className="absolute top-2 right-2 z-10 flex space-x-2 bg-white bg-opacity-80 p-1 rounded-md shadow">
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10 flex items-center bg-white bg-opacity-80 p-1 rounded-md shadow">
               <TreeControls
+                orientation="row"
                 onZoomIn={() => handleZoom('in')}
                 onZoomOut={() => handleZoom('out')}
-                onDownload={() => downloadImage(svgRef, gRef)}
+                onDownload={(format: 'png' | 'jpeg') => downloadImage(svgRef, gRef, format)}
               />
             </div>
 

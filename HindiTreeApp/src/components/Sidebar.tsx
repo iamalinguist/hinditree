@@ -8,9 +8,17 @@ interface SidebarProps {
 const navItems = [
   {
     key: 'sentence-editor',
-    label: 'Sentence Editor',
+    label: 'Sentence',
     icon: (
       <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+    ),
+    type: 'button',
+  },
+  {
+    key: 'syntax-rules',
+    label: 'Methods',
+    icon: (
+      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
     ),
     type: 'button',
   },
@@ -18,15 +26,12 @@ const navItems = [
     key: 'tree-viewer',
     label: 'Tree Viewer',
     icon: (
-      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.5 3L12 5.25L10.5 3H6.75L12 12.75L17.25 3H13.5zM17.25 3V5.25L12 15.75L6.75 5.25V3H17.25zM12 15.75L17.25 21H6.75L12 15.75zM12 15.75L10.5 13.5L8.25 18.75H15.75L12 15.75z"></path></svg>
-    ),
-    type: 'button',
-  },
-  {
-    key: 'syntax-rules',
-    label: 'Syntax Rules',
-    icon: (
-      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="5" r="2" strokeWidth="2" />
+        <circle cx="6" cy="17" r="2" strokeWidth="2" />
+        <circle cx="18" cy="17" r="2" strokeWidth="2" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 7v6M6 15h12" />
+      </svg>
     ),
     type: 'button',
   },
@@ -43,7 +48,10 @@ const navItems = [
     key: 'faq',
     label: 'FAQ',
     icon: (
-      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.734.145-1.547.34-1.547.495 0 .214.329.418.599.591.944.498 1.405 1.583 1.405 2.507 0 .428-.105.83-.298 1.182M14 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16h8M8 12h8" />
+      </svg>
     ),
     type: 'link',
   },
@@ -51,7 +59,7 @@ const navItems = [
     key: 'support',
     label: 'Support Page',
     icon: (
-      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m-2.828 4.242l-3.536 3.536m2.828-4.242a2 2 0 102.828 2.828m-2.828-4.242a2 2 0 112.828 2.828"></path></svg>
+      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 15v-3a8 8 0 0116 0v3M6 15v4a2 2 0 002 2h.5a2.5 2.5 0 002.5-2.5V15M18 15v4a2 2 0 01-2 2h-.5a2.5 2.5 0 01-2.5-2.5V15"></path></svg>
     ),
     type: 'link',
   },
@@ -116,7 +124,7 @@ const Sidebar: React.FC<SidebarProps> = ({ view, setView }) => {
                   if (typeof item.key === 'string') setView(item.key);
                   setIsOpen(false); // close sidebar on mobile after click
                 },
-              };
+              } as any;
               if (item.type === 'button') {
                 return (
                   <button key={item.key} type="button" {...commonProps}>

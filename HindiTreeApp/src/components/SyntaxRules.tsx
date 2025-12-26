@@ -5,6 +5,8 @@ const SyntaxRules = ({
   setSelectedMethod,
   showMethod1Rules,
   setShowMethod1Rules,
+  showMethod2Rules,
+  setShowMethod2Rules,
   hiddenMethods,
   handleResetMethods,
   handleEditMethod1,
@@ -42,8 +44,14 @@ const SyntaxRules = ({
             <div className="flex items-center">
               {selectedMethod === 'Method 1' && <span className="text-green-500 mr-2 font-bold text-lg">✔</span>}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Method 1: Constituency, Trees, and Rules</h3>
-                <p className="text-sm text-gray-500">15 POS Tags, 7 Syntax Rules</p>
+                <div className="flex items-center gap-3">
+                  <h3 className="text-lg font-semibold text-gray-900">Method 1: Constituency, Rules, and Trees</h3>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
+                    <svg className="w-3 h-3 mr-1 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.9 7.82 20 9 12.91 4 9.27l5.91-.99L12 2z"/></svg>
+                    Default
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500">By Tripathi Vivek</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -58,14 +66,8 @@ const SyntaxRules = ({
           {selectedMethod === 'Method 1' && showMethod1Rules && (
             <div className="mt-4">
               <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 sm:p-10">
-                <h3 className="text-xl font-bold mb-4">POS Tags and Rule Set (Method 1)</h3>
+                <h3 className="text-xl font-bold mb-4">Method 1: Constituency, Rules and Trees</h3>
                 <div className="bg-gray-50 p-6 rounded-lg shadow-inner mb-6">
-                  <h4 className="text-lg font-semibold mb-2">Parts of Speech</h4>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {method1Categories.map((pos, index) => (
-                      <span key={index} className={`px-4 py-2 rounded-full text-white font-bold text-sm ${pos.color}`}>{pos.hindi}</span>
-                    ))}
-                  </div>
                   <h4 className="text-lg font-semibold mb-2">Syntax Rules</h4>
                   <div className="space-y-2 mb-4">
                     {Object.entries(method1Grammar).map(([lhs, rules], index) => (
@@ -77,6 +79,55 @@ const SyntaxRules = ({
                       </div>
                     ))}
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+      {!hiddenMethods.includes('Method 2') && (
+        <>
+          <li onClick={() => { setSelectedMethod('Method 2'); setShowMethod2Rules(!showMethod2Rules); }} className={`flex items-center justify-between py-4 cursor-pointer rounded-lg px-2 transition-colors duration-200 ${selectedMethod === 'Method 2' ? 'bg-indigo-50' : 'hover:bg-gray-50'}`}>
+            <div className="flex items-center">
+              {selectedMethod === 'Method 2' && <span className="text-green-500 mr-2 font-bold text-lg">✔</span>}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Method 2: Constituency, Rules and Trees</h3>
+                <p className="text-sm text-gray-500">By Tripathi Vivek, Rathod Dinesh</p>
+              </div>
+            </div>
+              <div className="flex items-center space-x-2">
+              <button onClick={(e) => { e.stopPropagation(); handleDeleteMethod('Method 2'); }} className="text-gray-400 hover:text-gray-600">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              </button>
+            </div>
+          </li>
+          {selectedMethod === 'Method 2' && showMethod2Rules && (
+            <div className="mt-4">
+              <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 sm:p-10">
+                <h3 className="text-xl font-bold mb-4">Method 2: Constituency, Rules and Trees</h3>
+                <div className="bg-gray-50 p-6 rounded-lg shadow-inner mb-6">
+                  <h4 className="text-lg font-semibold mb-2"><u>Rules (<a href="https://rupkatha.com/v16n103g/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">Refer to this Paper</a>)</u></h4>
+                  <div className="space-y-2 mb-4">
+                    <div><span className="font-semibold">S →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">NP VP</span></div>
+                    <div><span className="font-semibold">NP →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">N_m</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">| N_f</span></div>
+                    <div><span className="font-semibold">VP →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">NP_cm Verb_t</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">| Verb_i</span></div>
+                    <div><span className="font-semibold">Verb_t →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">V_t Aux</span></div>
+                    <div><span className="font-semibold">Verb_i →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">V_i Aux</span></div>
+                    <div><span className="font-semibold">NP_cm →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">NP CM</span></div>
+                    <div>
+                      <span className="font-semibold">Aux →</span>
+                      <div className="ml-2">
+                        <div className="ml-2 bg-gray-200 px-2 py-1 rounded-md">-ता है (जब NP में N_m हो)</div>
+                        <div className="ml-2 bg-gray-200 px-2 py-1 rounded-md">-ती है (जब NP में N_f हो)</div>
+                        
+                      </div>
+                    </div>
+                    <div><span className="font-semibold">S →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">S Conj S</span></div>
+                    <div><span className="font-semibold">S →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">Neg S</span></div>
+                    <div><span className="font-semibold">Conj →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">और</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">| या</span></div>
+                    <div><span className="font-semibold">Neg →</span> <span className="ml-2 bg-gray-200 px-2 py-1 rounded-md">ऐसा नहीं है कि</span></div>
+                  </div>
+                  
                 </div>
               </div>
             </div>

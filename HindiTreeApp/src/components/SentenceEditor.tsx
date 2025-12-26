@@ -9,6 +9,7 @@ const SentenceEditor = ({
   selectedMethod,
   customPOS,
   method1Categories,
+  method2Categories,
   handleSentenceSubmit,
   handleAssignCategory,
   handleGenerateTree,
@@ -38,17 +39,22 @@ const SentenceEditor = ({
           {words.map((word: string, index: number) => (
             <div key={index} className="flex flex-col items-center p-4 border border-gray-200 rounded-lg shadow-sm bg-gray-50 transition-transform duration-200 hover:scale-105">
               <span className="text-xl font-medium text-gray-900 mb-2">{word}</span>
-              <div className="grid grid-cols-3 gap-2 mt-2">
-                {(selectedMethod === 'Your Method' ? customPOS : method1Categories).map((cat: any, catIndex: number) => (
-                  <button
-                    key={catIndex}
-                    onClick={() => handleAssignCategory(index, cat.hindi)}
-                    className={`w-8 h-8 rounded-full text-white text-xs font-bold flex items-center justify-center transition-colors duration-200 ${assignments[index] === cat.hindi ? cat.color : 'bg-gray-400'}`}
-                  >
-                    {cat.hindi}
-                  </button>
-                ))}
-              </div>
+              {/* If this token is already identified as Aux, don't show category buttons */}
+              {assignments[index] === 'Aux' ? (
+                <div className="px-3 py-1 rounded-full bg-gray-200 text-sm font-semibold">Aux</div>
+              ) : (
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {(selectedMethod === 'Your Method' ? customPOS : (selectedMethod === 'Method 2' ? method2Categories.filter((c: any) => c.hindi !== 'Aux') : method1Categories)).map((cat: any, catIndex: number) => (
+                    <button
+                      key={catIndex}
+                      onClick={() => handleAssignCategory(index, cat.hindi)}
+                      className={`w-8 h-8 rounded-full text-white text-xs font-bold flex items-center justify-center transition-colors duration-200 ${assignments[index] === cat.hindi ? cat.color : 'bg-gray-400'}`}
+                    >
+                      {cat.hindi}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>

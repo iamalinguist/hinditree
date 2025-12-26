@@ -39,6 +39,36 @@ const method1Categories = [
   { label: 'aspect marker', hindi: 'Am', color: 'bg-teal-500', hover: 'hover:bg-teal-600' },
   { label: 'tense marker', hindi: 'Tm', color: 'bg-amber-500', hover: 'hover:bg-amber-600' },
 ];
+
+  const method2Categories = [
+    { hindi: 'S', color: 'bg-indigo-500' },
+    { hindi: 'NP', color: 'bg-purple-500' },
+    { hindi: 'VP', color: 'bg-green-500' },
+    { hindi: 'N_m', color: 'bg-yellow-500' },
+    { hindi: 'N_f', color: 'bg-pink-400' },
+    { hindi: 'NP_cm', color: 'bg-orange-400' },
+    { hindi: 'Verb_t', color: 'bg-green-600' },
+    { hindi: 'Verb_i', color: 'bg-lime-600' },
+    { hindi: 'V_t', color: 'bg-emerald-500' },
+    { hindi: 'Aux', color: 'bg-teal-500' },
+    { hindi: 'V_i', color: 'bg-amber-500' },
+    { hindi: 'Conj', color: 'bg-indigo-400' },
+    { hindi: 'Neg', color: 'bg-red-400' },
+    { hindi: 'CM', color: 'bg-gray-500' },
+  ];
+
+  // Grammar for Method 2 written in CNF-friendly form. The ternary S -> S Conj S
+  // is rewritten using an intermediate nonterminal S_CONJ: S -> S S_CONJ ; S_CONJ -> Conj S
+  const method2Grammar = {
+    'S': [['NP', 'VP'], ['S', 'S_CONJ'], ['Neg', 'S']],
+    'S_CONJ': [['Conj', 'S']],
+    'NP': [['N_m'], ['N_f']],
+    'VP': [['NP_cm', 'Verb_t'], ['Verb_i']],
+    'Verb_t': [['V_t', 'Aux']],
+    'Verb_i': [['V_i', 'Aux']],
+    'NP_cm': [['NP', 'CM']],
+    // terminals like N_m, N_f, V_i, V_t, Aux, Conj, Neg, CM are used directly as lexical categories
+  };
 // --- End of Grammar file ---
 
 // --- /src/lib/parser.js (Simulated File) ---
@@ -50,14 +80,14 @@ const parse = (words, assignments, grammar, rootTags) => {
   const table = new Array(n).fill(null).map(() => new Array(n).fill(null).map(() => ({})));
   const backpointers = new Array(n).fill(null).map(() => new Array(n).fill(null).map(() => ({})));
 
-  // Step 1: Initialize the diagonal with terminals and apply unary rules
+    // Step 1: Initialize the diagonal with terminals and apply unary rules
   for (let i = 0; i < n; i++) {
     const word = words[i];
     const assignedCategory = assignments[i];
     
-    // Check for unknown POS category
+    // Check for unknown POS category (prefer showing the word itself in the error)
     if (!assignedCategory) {
-      return { tree: null, error: `Unexpected token '${assignments[i]}' found at position ${i + 1} in the following sentence: ${words.join(' ')}` };
+      return { tree: null, error: `Unexpected token '${word}' (no category assigned) found at position ${i + 1} in the following sentence: ${words.join(' ')}` };
     }
 
     table[i][i][assignedCategory] = true;
@@ -178,7 +208,8 @@ function App() {
   const [error, setError] = useState(null);
   const [selectedMethod, setSelectedMethod] = useState('Method 1');
   const [method1Editable, setMethod1Editable] = useState(false);
-  const [showMethod1Rules, setShowMethod1Rules] = useState(false);
+  const [showMethod1Rules, setShowMethod1Rules] = useState(true);
+  const [showMethod2Rules, setShowMethod2Rules] = useState(false);
   const [hiddenMethods, setHiddenMethods] = useState([]);
 
   const [customGrammar, setCustomGrammar] = useState({});
@@ -229,9 +260,70 @@ function App() {
 
   // Handle sentence input
   const handleSentenceSubmit = () => {
-    const wordList = sentence.trim().split(/\s+/).filter(w => w);
-    setWords(wordList);
-    setAssignments(new Array(wordList.length).fill(''));
+    const raw = sentence.trim().split(/\s+/).filter(w => w);
+    const processed: string[] = [];
+    const assignmentsInit: string[] = [];
+    for (let i = 0; i < raw.length; i++) {
+      const token = raw[i];
+      // Normalize common hyphen characters
+      const normToken = token.replace(/^‑|^–|^—/, '-');
+      // If token is a standalone suffix like '-ता', '-ती', 'ता', 'ती', possibly with 'है'
+      const simpleSuffMatch = normToken.match(/^-?(ता|ती)(है)?$/);
+      if (simpleSuffMatch) {
+        const suff = simpleSuffMatch[1] === 'ता' ? '-ता है' : '-ती है';
+        processed.push(suff);
+        assignmentsInit.push('Aux');
+        // if token did not include 'है' but next token is 'है', skip it
+        if (!simpleSuffMatch[2] && i + 1 < raw.length && raw[i + 1] === 'है') i++;
+        continue;
+      }
+      // Case: token ends with 'ता' or 'ती' and next token is 'है' -> split stem + suffix Aux
+      const m = token.match(/^(.*?)(ता|ती)(है)?$/);
+      if (m && (m[3] === 'है' || (i + 1 < raw.length && raw[i + 1] === 'है'))) {
+        // m[1] may be a hyphen '-' when input was like 'चल -ता', avoid treating '-' as stem
+        const rawStem = m[1] ? m[1].trim() : '';
+        const isHyphenOnly = /^-+$/.test(rawStem);
+        const stem = (!isHyphenOnly && rawStem !== '') ? rawStem : token.replace(/^-?(ता|ती)(है)?$/, '').trim();
+        if (stem) {
+          processed.push(stem);
+          assignmentsInit.push('');
+        }
+        // push normalized suffix token
+        const suff = m[2] === 'ता' ? '-ता है' : '-ती है';
+        processed.push(suff);
+        assignmentsInit.push('Aux');
+        // if next token was separate 'है', skip it
+        if (!(m[3] === 'है') && i + 1 < raw.length && raw[i + 1] === 'है') i++;
+        continue;
+      }
+
+      // Case: token is exactly 'है' and previous token ended with 'ता' or 'ती' was not split -> mark as Aux
+      if (token === 'है' && processed.length > 0) {
+        // check previous original raw token
+        const prevRaw = raw[i - 1] || '';
+        if (/(ता|ती)$/.test(prevRaw) || /ता|ती/.test(prevRaw)) {
+          // mark this token as Aux
+          processed.push('-ता है');
+          assignmentsInit.push('Aux');
+          continue;
+        }
+      }
+
+      // Case: token already is suffix-like (e.g., 'ता', 'ती')
+      if (/^(ता|ती|ता है|ती है)$/.test(token)) {
+        const suff = token.includes('ती') ? '-ती है' : '-ता है';
+        processed.push(suff);
+        assignmentsInit.push('Aux');
+        continue;
+      }
+
+      // default
+      processed.push(token);
+      assignmentsInit.push('');
+    }
+
+    setWords(processed);
+    setAssignments(assignmentsInit);
     setTreeData(null);
     setError(null);
   };
@@ -256,18 +348,60 @@ function App() {
     let rootTagsToUse;
 
     if (selectedMethod === 'Your Method') {
-        grammarToUse = customGrammar;
-        assignmentTags = assignments;
-        rootTagsToUse = customRoots.map(r => r.label);
+      grammarToUse = customGrammar;
+      assignmentTags = assignments;
+      rootTagsToUse = customRoots.map(r => r.label);
+    } else if (selectedMethod === 'Method 2') {
+      grammarToUse = method2Grammar;
+      // assignments already contain method2 category labels (e.g., 'N_m','V_i','Aux')
+      assignmentTags = assignments;
+      rootTagsToUse = ['S'];
     } else {
-        grammarToUse = method1Grammar;
-        assignmentTags = assignments.map(a => method1Categories.find(c => c.hindi === a)?.hindi);
-        rootTagsToUse = ['S', 'NP', 'VP']; // Default roots for Method 1
+      grammarToUse = method1Grammar;
+      assignmentTags = assignments.map(a => method1Categories.find(c => c.hindi === a)?.hindi);
+      rootTagsToUse = ['S', 'NP', 'VP']; // Default roots for Method 1
+    }
+
+    // Special handling: if there is a Neg token assigned (e.g., 'नहीं'), transform into Neg S
+    const negIndex = assignmentTags.findIndex(a => a === 'Neg');
+    if (negIndex !== -1) {
+      // Build sentence without the negation token
+      const wordsWithoutNeg = words.slice(0, negIndex).concat(words.slice(negIndex + 1));
+      const assignsWithoutNeg = assignmentTags.slice(0, negIndex).concat(assignmentTags.slice(negIndex + 1));
+
+      const { tree: subTree, error: subError } = parse(wordsWithoutNeg, assignsWithoutNeg, grammarToUse, rootTagsToUse);
+      if (subError) {
+        const line = 1;
+        const suggestion = `You have selected ${selectedMethod}. You may consider changing the method.`;
+        setTreeData(null);
+        setError(`${subError} Line: ${line}. ${suggestion}`);
+        setView('tree-viewer');
+        return;
+      }
+
+      // Build Neg node using the expanded rendered negation phrase
+      const negNode = { name: 'Neg', children: [{ name: 'ऐसा नहीं है कि', isLeaf: true, pos: 'Neg' }] };
+
+      // Combine into a top-level S -> Neg S structure
+      const combined = { name: 'S', children: [negNode, subTree] };
+      setTreeData(combined);
+      setError(null);
+      setView('tree-viewer');
+      return;
     }
 
     const { tree, error } = parse(words, assignmentTags, grammarToUse, rootTagsToUse);
+    if (error) {
+      // Provide a line indicator (single-line input assumed) and advise which method is selected
+      const line = 1;
+      const suggestion = `You have selected ${selectedMethod}. You may consider changing the method.`;
+      setTreeData(null);
+      setError(`${error} Line: ${line}. ${suggestion}`);
+      setView('tree-viewer');
+      return;
+    }
     setTreeData(tree);
-    setError(error);
+    setError(null);
     setView('tree-viewer'); // Switch to the Tree Viewer after parsing
   };
 
@@ -348,6 +482,7 @@ function App() {
               selectedMethod={selectedMethod}
               customPOS={customPOS}
               method1Categories={method1Categories}
+              method2Categories={method2Categories}
               handleSentenceSubmit={handleSentenceSubmit}
               handleAssignCategory={handleAssignCategory}
               handleGenerateTree={handleGenerateTree}
@@ -363,6 +498,8 @@ function App() {
               setSelectedMethod={setSelectedMethod}
               showMethod1Rules={showMethod1Rules}
               setShowMethod1Rules={setShowMethod1Rules}
+              showMethod2Rules={showMethod2Rules}
+              setShowMethod2Rules={setShowMethod2Rules}
               hiddenMethods={hiddenMethods}
               handleResetMethods={handleResetMethods}
               handleEditMethod1={handleEditMethod1}

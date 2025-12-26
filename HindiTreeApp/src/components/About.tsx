@@ -4,31 +4,45 @@ const About: React.FC = () => (
   <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 sm:p-10">
     <h2 className="text-2xl font-bold text-gray-800 mb-4">About Hindi Tree</h2>
     <div className="text-lg text-gray-700 leading-relaxed space-y-6">
-      <h3 className="text-xl font-bold">What?</h3>
-      <p>This tool automatically builds linguistics syntax trees for Hindi and Hindi-like (syntactically) languages.</p>
-      <p>A major goal of this tool is to accept a broad set of syntax rules. Nearly every textbook has different rules and standards. Along with standard rules, I want others to be able to add/modify the rules to work for them.</p>
-      <p>I have included an annotated sentence and syntax rules from my Paper 'Hindi Tree: An Open-Access Constituency Parser for Hindi'.</p>
+        <p className="text-base">Hindi Tree is a lightweight, open-access tool to create and explore constituency (phrase-structure) parses for Hindi and Hindi-like languages. It focuses on clarity, teachability, and extensibility — you can view built-in rules or add your own.</p>
 
-      <h3 className="text-xl font-bold">Why?</h3>
-      <p>In English, syntactic parsing has already gone through decades of development. Researchers have created large annotated treebanks like the Penn Treebank, and today’s parsers are statistical or neural, trained on millions of examples. By 2014, building a purely rule-based CFG parser for English already looked outdated, because more advanced approaches had become standard.</p>
-      <p>Hindi, however, is still in an earlier stage. Most work has focused on dependency parsing, and the few constituency parsers available are usually adapted from English frameworks that do not capture Hindi’s unique features such as gender, free word order, postpositions, agreement, and complex predicates. Large-scale treebanks are limited, and there is no easy, open-access tool that allows researchers, teachers, or learners to explore Hindi syntax directly.</p>
-      <p>Hindi Tree aims to change that. It is the first open-access constituency parser built specifically for Hindi. The current version is implemented with phrase-structure rules (CFG), but the platform is designed to be "modular and theory-flexible". That means the same Hindi sentence could eventually be parsed under a variety of grammatical frameworks, including:</p>
-      <ol className="list-decimal list-inside space-y-1 ml-4">
-        <li>Phrase Structure Grammar / CFG (baseline)</li>
-        <li>X-bar Theory</li>
-        <li>Government and Binding / Principles and Parameters</li>
-        <li>Minimalist Program</li>
-        <li>Categorial Grammar (CG)</li>
-        <li>Lexical Functional Grammar (LFG)</li>
-        <li>Tree Adjoining Grammar (TAG)</li>
-        <li>Combinatory Categorial Grammar (CCG)</li>
-        <li>Head-Driven Phrase Structure Grammar (HPSG)</li>
-      </ol>
-      <p>This flexibility allows HindiTree not only to provide practical parses, but also to serve as a teaching and research tool: users can compare how the same Hindi sentence looks when analyzed under different theoretical traditions. By making the tool freely available on the web, HindiTree opens up Hindi syntax for exploration, experimentation, and future advancement.</p>
+        <section className="flex items-start gap-3">
+          <svg className="w-6 h-6 text-indigo-500 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
+          <div>
+            <h4 className="font-semibold">Overview</h4>
+            <p className="text-sm text-gray-600">Builds syntax trees from user-assigned parts of speech and grammar rules. The parser uses a simple chart algorithm and is intended for teaching, experimentation, and lightweight research.</p>
+          </div>
+        </section>
 
-      <h3 className="text-xl font-bold">When?</h3>
-      <p>[Sept, 2025] This is version 1.0 of Hindi tree that uses CFG to parse sentences.</p>
-    </div>
+        <section className="flex items-start gap-3">
+          <svg className="w-6 h-6 text-yellow-500 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 2v2M4.22 4.22l1.42 1.42M2 11h2m16 0h2M18.36 4.22l-1.42 1.42M6.34 17.66l-1.42 1.42M20 11a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div>
+            <h4 className="font-semibold">Why this project</h4>
+            <p className="text-sm text-gray-600">Hindi lacks widely available constituency tools that capture its morphology and agreement patterns. This project provides a modular CFG-based parser and UI so users can experiment with different rule sets and study parses interactively.</p>
+          </div>
+        </section>
+
+        <section className="flex items-start gap-3">
+          <svg className="w-6 h-6 text-green-500 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
+          <div>
+            <h4 className="font-semibold">Key features</h4>
+            <ul className="text-sm text-gray-600 list-disc ml-5 space-y-1">
+              <li>Interactive sentence editor with assignable POS tags.</li>
+              <li>Multiple parsing methods (toggleable) and editable grammar rules.</li>
+              <li>SVG tree visualizer with download/export support.</li>
+              <li>Designed for teaching: compare parses and tweak rules live.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section className="flex items-start gap-3">
+          <svg className="w-6 h-6 text-gray-500 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 1.567-3 3.5S10.343 15 12 15s3-1.567 3-3.5S13.657 8 12 8z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <div>
+            <h4 className="font-semibold">Version</h4>
+            <p className="text-sm text-gray-600">v1.0 — CFG-based parsing (September 2025). Future plans include improved grammar formats, better font embedding for exports, and richer parsing backends.</p>
+          </div>
+        </section>
+      </div>
   </div>
 );
 
