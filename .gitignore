@@ -1,0 +1,6 @@
+# Copyrighted course text: never commit or publish
+*.pdf
+
+node_modules/
+.DS_Store
+Thumbs.db

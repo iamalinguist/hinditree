@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Draw, parse and teach Hindi syntax trees, following Linda Thomas's Beginning Syntax.">
+  <title>Hindi Tree: syntax trees for Hindi</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="mobile-bar">
+    <a class="brand-small" href="#studio">hindi tree</a>
+    <button id="menu" class="btn small" aria-controls="sidebar" aria-expanded="false">Menu</button>
+  </header>
+
+  <aside id="sidebar" class="sidebar">
+    <a class="brand" href="#studio">hindi tree<span>open access hindi parser</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#studio" data-page="studio">Tree Studio <span lang="hi">वृक्ष</span></a>
+      <a href="#course" data-page="course">Course <span lang="hi">पाठ</span></a>
+      <a href="#practice" data-page="practice">Practice <span lang="hi">अभ्यास</span></a>
+      <a href="#mine" data-page="mine">My examples <span lang="hi">उदाहरण</span></a>
+      <hr>
+      <a href="#rules" data-page="rules">Syntax rules <span lang="hi">नियम</span></a>
+      <a href="#adaptation" data-page="adaptation">English to Hindi <span lang="hi">तुलना</span></a>
+      <a href="#abbreviations" data-page="abbreviations">Abbreviations <span lang="hi">संकेत</span></a>
+      <a href="#about" data-page="about">Help and about <span lang="hi">सहायता</span></a>
+    </nav>
+  </aside>
+
+  <main id="main"><noscript>HindiTree needs JavaScript to draw trees.</noscript></main>
+
+  <dialog id="dialog"></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="print-root"></div>
+
+  <!-- Classic scripts rather than modules, so the app also runs from file:// in a classroom. -->
+  <script src="js/util.js"></script>
+  <script src="js/lexicon.js"></script>
+  <script src="js/tagger.js"></script>
+  <script src="js/grammar.js"></script>
+  <script src="js/parser.js"></script>
+  <script src="js/tree.js"></script>
+  <script src="js/legacy.js"></script>
+  <script src="js/lessons.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/studio.js"></script>
+  <script src="js/pages.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

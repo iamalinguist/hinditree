@@ -1,0 +1,117 @@
+/* Run with: node tests/run.js (no dependencies). */
+'use strict';
+
+const assert = require('node:assert/strict');
+const path = require('node:path');
+
+for (const file of ['util', 'lexicon', 'tagger', 'grammar', 'parser', 'tree', 'legacy', 'lessons', 'render']) {
+  require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));
+}
+const { lexicon, tagger, grammar, parser, tree, legacy, lessons, render } = globalThis.HT;
+const compiled = parser.compile(grammar.thomas);
+const analysis = (text) => {
+  const { trees, error } = parser.parse(tagger.tag(text), compiled);
+  assert.ok(trees.length, `${text}: ${error}`);
+  return tree.functions(trees[0]).map((u) => `${u.fn}:${u.text}`).join(' / ');
+};
+
+let passed = 0;
+let failed = 0;
+function test(name, body) {
+  try {
+    body();
+    passed++;
+  } catch (error) {
+    failed++;
+    console.error(`FAIL ${name}\n  ${error.message}`);
+  }
+}
+
+test('the grammar compiles', () => assert.deepEqual(compiled.errors, []));
+
+for (const example of lessons.all) {
+  test(`chapter ${example.chapter}: ${example.sentence}`, () => {
+    const solved = lessons.solve(example);
+    assert.ok(solved.matched, 'no tree has the expected functions');
+    const model = solved.trees[solved.index];
+    assert.equal(tree.text(model), example.sentence);
+    for (let level = 1; level <= 6; level++) {
+      const view = tree.present(model, level);
+      assert.equal(tree.text(view), example.sentence, `words lost at chapter ${level}`);
+      assert.ok(render.draw(view, {}).svg.startsWith('<svg'));
+      assert.equal(tree.compare(view, view).missing.length, 0);
+    }
+  });
+}
+
+// Sentences that are not among the course examples.
+const unseen = {
+  'राम चल रहा है': 'S:राम / P:चल रहा है',
+  'लड़के ने सेब खाया': 'S:लड़के ने / dO:सेब / P:खाया',
+  'मैं स्कूल जा रहा हूँ': 'S:मैं / A:स्कूल / P:जा रहा हूँ',
+  'क्या तुम कल आओगे': 'S:तुम / A:कल / P:आओगे',
+  'राम खाना खा रहा है': 'S:राम / dO:खाना / P:खा रहा है',
+  'राम को बुखार है': 'S:राम को / sC:बुखार / P:है',
+  'मुझे नींद आ रही है': 'A:मुझे / S:नींद / P:आ रही है',
+  'मुझे घर जाना है': 'S:मुझे / A:घर / P:जाना है',
+  'पिता ने बेटे को पैसे दिए': 'S:पिता ने / iO:बेटे को / dO:पैसे / P:दिए',
+  'आम को राम ने खाया': 'dO:आम को / S:राम ने / P:खाया',
+  'चोर पकड़ा जा सकता है': 'S:चोर / P:पकड़ा जा सकता है',
+  'गीता खुश हो गई': 'S:गीता / sC:खुश / P:हो गई',
+  'राम मोहन और सोहन आए': 'S:राम मोहन और सोहन / P:आए',
+  'राजा ने मंत्री को बुलाया': 'S:राजा ने / dO:मंत्री को / P:बुलाया',
+  'मैंने उससे बात की': 'S:मैंने / A:उससे / dO:बात / P:की',
+};
+for (const [text, expected] of Object.entries(unseen)) test(text, () => assert.equal(analysis(text), expected));
+
+test('spelling without nukta is understood', () => {
+  assert.equal(analysis('लडके ने दरवाजा खोला'), 'S:लडके ने / dO:दरवाजा / P:खोला');
+  assert.equal(lexicon.key('हँसी'), lexicon.key('हंसी'));
+});
+
+test('ने errors are flagged', () => {
+  assert.equal(tagger.check(tagger.tag('राम ने रोटी खाता है')).length, 1);
+  assert.equal(tagger.check(tagger.tag('राम ने सोया')).length, 1);
+  assert.equal(tagger.check(tagger.tag('राम ने रोटी खाई')).length, 0);
+  assert.equal(tagger.check(tagger.tag('राम ने आम खा लिया')).length, 0);
+});
+
+test('bracket notation round-trips', () => {
+  for (const example of lessons.all) {
+    const { trees, index } = lessons.solve(example);
+    assert.deepEqual(tree.fromBracket(tree.toBracket(trees[index], 0)), trees[index], example.sentence);
+  }
+});
+
+test('broken notation is rejected', () => {
+  for (const bad of ['[S [NP राम]', 'S', '[]', '[S] x']) assert.throws(() => tree.fromBracket(bad));
+});
+
+test('shared trees are validated', () => {
+  assert.throws(() => tree.sanitize({ l: 'S' }));
+  assert.throws(() => tree.sanitize({ l: 'S', c: [{ x: 1 }] }));
+});
+
+test('labels are escaped in SVG', () => {
+  assert.ok(!render.draw({ l: '<script>', c: [{ w: '<img>' }] }, {}).svg.match(/<script>|<img>/));
+});
+
+test('cyclic user rules terminate', () => {
+  const cyclic = parser.compile('roots: A\nA -> B | A A | x\nB -> A');
+  const tokens = Array.from({ length: 12 }, () => ({ w: 'x', tags: ['x'] }));
+  assert.ok(parser.parse(tokens, cyclic).trees.length);
+});
+
+for (const [id, expected] of [
+  ['method1', '[S [NP [Nm राम]] [VP [Verbi [Vi चल] [Aux [Am रहा] [Tm है]]]]]'],
+  ['method2', '[S [NP [N_m राम]] [VP [NP_cm [NP [N_m आम]] [CM को]] [Verb_t [V_t खा] [Aux "-ता है"]]]]'],
+]) {
+  test(id, () => {
+    const { text, tags } = legacy.methods[id].example;
+    const tokens = legacy.tokenize(text).map((t, i) => ({ ...t, tags: [tags[i]] }));
+    assert.equal(tree.toBracket(legacy.parse(tokens, id).trees[0]), expected);
+  });
+}
+
+console.log(`${passed} passed, ${failed} failed`);
+process.exitCode = failed ? 1 : 0;
