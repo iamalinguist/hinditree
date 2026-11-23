@@ -366,8 +366,6 @@ VP -> PP* NP? NP? V TENSE?`;
       <section class="card"><h2>About</h2>
         <p>HindiTree is an open-access tool for creating and teaching constituency trees for Hindi.</p>
         <ul>
-          <li>Method 2 (the toy fragment) and the earlier HindiTree app: Tripathi Vivek and Rathod Dinesh.
-            <a href="https://rupkatha.com/v16n103g/" target="_blank" rel="noopener noreferrer">Paper</a>.</li>
           <li>The idea of annotating words and solving for all trees comes from
             <a href="https://github.com/adambcomer/lin-tree-solver" target="_blank" rel="noopener noreferrer">Linguistics Tree Solver</a> by Adam Comer. The code here is written independently.</li>
           <li>The course sequence and notation follow Linda Thomas (1993), <cite>Beginning Syntax</cite>, Blackwell. The app does not contain the book and is not affiliated with its author or publisher.</li>
