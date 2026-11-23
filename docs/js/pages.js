@@ -150,8 +150,9 @@ VP -> PP* NP? NP? V TENSE?`;
     const toy = HT.legacy.methods.method2;
     const toyRules = `${Object.entries(toy.grammar).map(([lhs, list]) => `${lhs} → ${list.map((r) => r.join(' ')).join(' | ')}`).join('\n')}\nroots: ${toy.roots.join(' ')}`;
     const current = HT.studio.state.method;
+    const LEVEL = { thomas: 'beginners', method2: 'novice', custom: 'customise', xbar: 'intermediate' };
     const card = (id, title, summary, body, use = 'Use this method', buttons = '') => `<details class="card method" data-method="${id}">
-      <summary><span class="method-title">${esc(title)}</span>${id === current ? '<span class="pill">In use</span>' : ''}
+      <summary><span class="method-title">${esc(title)}</span><span class="pill">${LEVEL[id]}</span>${id === current ? '<span class="pill">In use</span>' : ''}
         <span class="method-summary">${esc(summary)}</span></summary>
       <div class="method-body">${body}<div class="row method-actions">${buttons}<button class="btn primary" data-use="${id}">${esc(use)}</button></div></div></details>`;
 
@@ -164,7 +165,7 @@ VP -> PP* NP? NP? V TENSE?`;
         <details><summary>Complete parser grammar</summary>
           <p class="hint"><code>?</code> optional, <code>*</code> repeatable, <code>=dO</code> function, <code>@1.5</code> a cost that ranks less likely readings lower. A suffix such as <code>NP.erg</code> is internal.</p>
           <pre class="mono grammar" tabindex="0">${esc(HT.grammar.thomas)}</pre>
-          <button class="btn" id="copy-grammar">Copy into Method 3: My Grammar</button></details>`)}
+          <button class="btn" data-copy="thomas">Copy into Method 3: My Grammar</button></details>`)}
       ${card('method2', toy.name, `By ${toy.authors}. A small grammar of simple Hindi clauses.`, `
         <p>By ${esc(toy.authors)}. <a href="${toy.paper}" target="_blank" rel="noopener noreferrer">Read the paper</a></p>
         <pre class="mono" tabindex="0">${esc(toyRules)}</pre>
@@ -174,7 +175,36 @@ VP -> PP* NP? NP? V TENSE?`;
         <textarea id="grammar-text" class="mono" rows="14" spellcheck="false" aria-label="My grammar">${esc(store.get('grammar', STARTER_GRAMMAR))}</textarea>
         <p id="grammar-status" class="hint" role="status"></p>`,
       'Save and use this method',
-      '<button class="btn" id="grammar-reset">Reset to starter grammar</button><button class="btn" id="grammar-save">Save</button>')}`;
+      '<button class="btn" id="grammar-reset">Reset to starter grammar</button><button class="btn" id="grammar-save">Save</button>')}
+      ${card('xbar', 'Method 4: X-Bar Theory', 'Every phrase has the same shape: a head, its complement, a specifier and adjuncts.', `
+        <p>Every phrase is built from three rules, and every branch is binary:</p>
+        <ul class="mono rules"><li>XP → (Specifier) X′</li><li>X′ → Adjunct X′</li><li>X′ → (Complement) X</li></ul>
+        <p>Hindi is <b>head-final</b>: the complement comes before its head (रोटी खाई, घर में, राम ने).
+          The exception is C, which comes first (कि सीता आएगी).</p>
+        <div class="lesson-grid">
+          <div><h3>Clause</h3><ul class="mono rules">
+            <li>CP → C′;  C′ → C TP</li><li>TP → Spec(subject) T′</li><li>T′ → AspP / ModP / VoiceP / vP / VP + T</li>
+            <li>AspP → Asp′;  Asp′ → … Asp</li><li>ModP → Mod′;  Mod′ → … Mod</li><li>VoiceP → Voice′;  Voice′ → VP Voice</li><li>vP → v′;  v′ → VP v</li></ul></div>
+          <div><h3>Verb phrase</h3><ul class="mono rules">
+            <li>V′ → NP(dO) V</li><li>VP → KP(iO) V′ (ditransitive)</li><li>VP → NP(dO) V′;  V′ → oC V (complex)</li>
+            <li>V′ → sC V (intensive);  V′ → PP(pO) V (prepositional)</li><li>V′ → Adjunct V′</li></ul></div>
+          <div><h3>Nominals and others</h3><ul class="mono rules">
+            <li>NP → (D / KP genitive) N′</li><li>N′ → AP N′;  N′ → N′ CP(relative)</li><li>KP → K′;  K′ → NP K (ने, को, का)</li>
+            <li>PP → P′;  P′ → NP P</li><li>AP → (Deg) A′;  A′ → A</li></ul></div>
+        </div>
+        <h3>How Hindi is analysed</h3>
+        <ul>
+          <li>Tense is T: an auxiliary (है, था, होगा) or an unpronounced (past), (pres) or (fut).</li>
+          <li>Aspect, modality and voice are heads above VP, in the order of the words: पकाया [Voice जा] [Asp रहा] [T है].</li>
+          <li>Case markers head a KP, so राम ने is [KP [K′ [NP राम] [K ने]]].</li>
+          <li>A vector verb (खा <b>लिया</b>) is a light verb v.</li>
+          <li>A कि clause follows T, so it is extraposed and adjoined to the right of TP.</li>
+          <li>Functions are marked on the tree as in Method 1. P marks the lexical verb V only.</li>
+        </ul>
+        <p class="hint">Not built in: a fronted object (scrambling) and relative clauses on objects. Draw these by hand in the Tree Studio.</p>
+        <details><summary>Complete parser grammar</summary>
+          <pre class="mono grammar" tabindex="0">${esc(HT.grammar.xbar)}</pre>
+          <button class="btn" data-copy="xbar">Copy into Method 3: My Grammar</button></details>`)}`;
 
     const area = el.querySelector('#grammar-text');
     const status = el.querySelector('#grammar-status');
@@ -197,13 +227,13 @@ VP -> PP* NP? NP? V TENSE?`;
       area.value = STARTER_GRAMMAR;
       validate();
     };
-    el.querySelector('#copy-grammar').onclick = () => {
-      area.value = HT.grammar.thomas;
+    el.querySelectorAll('[data-copy]').forEach((b) => { b.onclick = () => {
+      area.value = HT.grammar[b.dataset.copy];
       validate();
       el.querySelector('[data-method="custom"]').open = true;
       area.scrollIntoView({ block: 'center' });
       toast('Copied into Method 3. Save to keep it.');
-    };
+    }; });
     el.querySelectorAll('[data-use]').forEach((button) => {
       button.onclick = () => {
         if (button.dataset.use === 'custom' && !save()) return;
@@ -243,6 +273,13 @@ VP -> PP* NP? NP? V TENSE?`;
       ['AUX', 'auxiliary', 'सहायक क्रिया'], ['TENSE', 'tense', 'काल'], ['MOD', 'modal: सक, चाहिए', 'वृत्ति'],
       ['PERF', 'perfect: चुका, (perf)', 'पूर्ण पक्ष'], ['PROG', 'progressive: रहा', 'सातत्य पक्ष'], ['HAB', 'habitual: -ता', 'नित्य पक्ष'],
       ['PASS', 'passive: जाना', 'कर्मवाच्य'], ['VEC', 'vector verb: लिया, गया', 'रंजक क्रिया'],
+    ]],
+    ['X-bar theory (Method 4)', [
+      ['XP, X′, X', 'phrase, intermediate level, head', 'पदबंध, मध्यवर्ती स्तर, शीर्ष'],
+      ['CP, C', 'complementiser phrase; कि, क्योंकि, अगर', 'संयोजक पदबंध'], ['TP, T', 'tense phrase; tense', 'काल पदबंध'],
+      ['AspP, Asp', 'aspect phrase: रहा, चुका, (hab)', 'पक्ष पदबंध'], ['ModP, Mod', 'modal phrase: सक, चाहिए', 'वृत्ति पदबंध'],
+      ['VoiceP, Voice', 'passive जाना', 'वाच्य पदबंध'], ['vP, v', 'light (vector) verb: लिया, गया', 'रंजक क्रिया'],
+      ['KP, K', 'case phrase: ने, को, का', 'कारक पदबंध'], ['D, Deg', 'determiner, degree word', 'निर्धारक, प्रविशेषण'],
     ]],
     ['Notation', [
       ['→', 'consists of', 'से बना है'], ['( )', 'optional', 'वैकल्पिक'], ['*', 'ungrammatical', 'अव्याकरणिक'],

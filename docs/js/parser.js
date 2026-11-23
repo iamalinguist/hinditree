@@ -18,6 +18,11 @@
     const errors = [];
     const helpers = new Map();
     let roots = [];
+    // Display options: "rename: TENSE=T" draws a category under another name;
+    // "show-class: VP" prints the verb class only under those labels.
+    const rename = {};
+    let showClass = null;
+    let elide = [];
 
     const addRule = (lhs, rhs, cost) => rules.push({ lhs, rhs, cost });
     const join = (rhs) => {
@@ -46,6 +51,22 @@
       const fail = (message) => errors.push({ line: n + 1, message });
       if (line.startsWith('roots:')) {
         roots = line.slice(6).trim().split(/[\s,]+/).filter(Boolean);
+        return;
+      }
+      if (line.startsWith('rename:')) {
+        for (const pair of line.slice(7).trim().split(/\s+/)) {
+          const [from, to] = pair.split('=');
+          if (!from || !to || !LABEL.test(from) || !LABEL.test(to)) return fail(`cannot read "${pair}"; write rename: OLD=NEW`);
+          rename[from] = to;
+        }
+        return;
+      }
+      if (line.startsWith('elide-unary:')) {
+        elide = line.slice(12).trim().split(/[\s,]+/).filter(Boolean);
+        return;
+      }
+      if (line.startsWith('show-class:')) {
+        showClass = line.slice(11).trim().split(/[\s,]+/).filter(Boolean);
         return;
       }
       let cost = 0;
@@ -94,7 +115,7 @@
       if (!index.has(first)) index.set(first, []);
       index.get(first).push(r);
     }
-    return { unary, binary, roots, errors };
+    return { unary, binary, roots, errors, rename, showClass, elide };
   }
 
   function insert(cell, entry) {
@@ -124,33 +145,34 @@
     }
   }
 
-  function build(entry, tokens, fn) {
+  function build(entry, tokens, fn, grammar) {
     if (!entry.rule) {
       const t = tokens[entry.at];
       const leaf = { w: t.w };
       if (t.g) leaf.g = t.g;
       if (t.abs) leaf.abs = true;
       // As in Thomas (27a), the genitive marker hangs directly from POSS.
-      if (entry.sym === 'gen') return [leaf];
-      return [node(entry.sym, [leaf], fn)];
+      if (entry.sym === 'gen' && !grammar.rename.gen) return [leaf];
+      return [node(entry.sym, [leaf], fn, grammar)];
     }
     const { rhs } = entry.rule;
-    const children = build(entry.left, tokens, rhs[0].fn);
-    if (entry.right) children.push(...build(entry.right, tokens, rhs[1].fn));
+    const children = build(entry.left, tokens, rhs[0].fn, grammar);
+    if (entry.right) children.push(...build(entry.right, tokens, rhs[1].fn, grammar));
     if (/^[\u0001\u0002_]/.test(entry.sym)) {
       if (fn && children.length === 1 && children[0].c) children[0].fn = fn;
       return children;
     }
-    // N' is only drawn where it branches.
-    if (entry.sym === "N'" && children.length === 1) return children;
-    return [node(entry.sym, children, fn)];
+    // "elide-unary: N'" draws N' only where it branches (Thomas's convention).
+    if (children.length === 1 && grammar.elide.includes(entry.sym)) return children;
+    return [node(entry.sym, children, fn, grammar)];
   }
 
-  function node(sym, children, fn) {
+  function node(sym, children, fn, grammar) {
     const dot = sym.indexOf('.');
-    const out = { l: dot > 0 ? sym.slice(0, dot) : sym, c: children };
+    const base = dot > 0 ? sym.slice(0, dot) : sym;
+    const out = { l: grammar.rename[base] || base, c: children };
     const feature = dot > 0 ? sym.slice(dot + 1).split('_')[0] : '';
-    if (HT.lexicon.CLASSES.includes(feature)) out.f = feature;
+    if (HT.lexicon.CLASSES.includes(feature) && (!grammar.showClass || grammar.showClass.includes(out.l))) out.f = feature;
     if (fn) out.fn = fn;
     return out;
   }
@@ -200,7 +222,7 @@
     const seen = new Set();
     const trees = [];
     for (const entry of found) {
-      const tree = build(entry, tokens, '')[0];
+      const tree = build(entry, tokens, '', grammar)[0];
       const id = JSON.stringify(tree);
       if (!seen.has(id)) {
         seen.add(id);
@@ -224,7 +246,7 @@
           break;
         }
       }
-      chunks.push(...build(best, tokens, ''));
+      chunks.push(...build(best, tokens, '', grammar));
       i = j + 1;
     }
     return { trees: [], chunks, error: 'No complete tree fits these categories and rules.' };

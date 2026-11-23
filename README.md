@@ -10,7 +10,7 @@ Analyse Hindi sentence structure using formal grammar. HindiTree draws, parses a
 | **Course** | Six chapters matching the book, with rules, tests, 83 Hindi examples, printable handouts and worksheets. |
 | **Practice** | Students name functions or verb classes, or draw a tree and have it checked. |
 | **My examples** | Save trees in the browser, export or import a collection, print a handout. |
-| **Syntax rules** | Method 1: Thomas, adapted to Hindi. Method 2: the toy fragment by Tripathi et al. Method 3: your own editable grammar. |
+| **Syntax rules** | Method 1: Thomas, adapted to Hindi (beginners). Method 2: toy fragment by Tripathi et al. (novice). Method 3: your own editable grammar (customise). Method 4: X-bar theory (intermediate). |
 | **English to Hindi** | Where the book's English rules change for Hindi, and why. |
 
 The research behind the design is in [RESEARCH.md](RESEARCH.md).
@@ -50,7 +50,7 @@ Open `docs/index.html` in a browser. Everything except Convert works without an 
 |---|---|
 | Words and verb classes | `docs/js/lexicon.js`: one `word:gloss` or `stem:gloss:classes` entry |
 | Examples and lesson text | `docs/js/lessons.js`: one line per example, for example `['S:राम / P:सोया', 'Ram slept']` |
-| Grammar rules | `docs/js/grammar.js` |
+| Grammar rules (Methods 1 and 4) | `docs/js/grammar.js` |
 | How words get categories | `docs/js/tagger.js` |
 | Tree appearance | `docs/js/render.js` |
 

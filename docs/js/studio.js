@@ -8,7 +8,9 @@
     ['S', 'subject'], ['P', 'predicator'], ['dO', 'direct object'], ['iO', 'indirect object'],
     ['sC', 'subject complement'], ['oC', 'object complement'], ['pO', 'prepositional object'], ['A', 'adverbial'],
   ];
-  const LABELS = ['S', 'S1', 'S2', 'NP', "N'", 'VP', 'Vgp', 'AP', 'AdvP', 'PP', 'POSS', 'DET', 'N', 'PRO', 'V', 'AUX', 'TENSE',
+  const LABELS = ['S', 'S1', 'S2', 'CP', "C'", 'C', 'TP', "T'", 'T', 'AspP', "Asp'", 'Asp', 'ModP', "Mod'", 'Mod', 'VoiceP', "Voice'", 'Voice',
+    'vP', "v'", 'v', "V'", 'KP', "K'", 'K', 'D', 'Deg', "A'", "P'", "Adv'", 'Conj', 'Prt', 'Neg',
+    'NP', "N'", 'VP', 'Vgp', 'AP', 'AdvP', 'PP', 'POSS', 'DET', 'N', 'PRO', 'V', 'AUX', 'TENSE',
     'MOD', 'PERF', 'PROG', 'HAB', 'PASS', 'VEC', 'NEG', 'A', 'Adv', 'deg', 'P', 'CASE', 'sub', 'coord', 'part'];
   const LEVELS = ['1 · Categories and phrases', '2 · AdvP, PP, AP', '3 · Verb classes', '4 · Verb group', '5 · N′ in the noun phrase', '6 · Clauses and triangles'];
   const OPTIONS = [['functions', 'Functions'], ['gloss', 'Glosses'], ['translit', 'Transliteration'], ['english', 'Translation'],
@@ -17,7 +19,7 @@
   const s = {
     text: '', english: '', note: '', tokens: [], trees: [], index: 0, tree: null, chunks: null,
     error: '', warnings: [], exercise: null, feedback: null,
-    method: ['thomas', 'method2', 'custom'].includes(store.get('method')) ? store.get('method') : 'thomas',
+    method: ['thomas', 'method2', 'custom', 'xbar'].includes(store.get('method')) ? store.get('method') : 'thomas',
     level: 4,
     opts: { functions: true, gloss: false, translit: false, english: false, triangles: false, align: true, color: true, blank: false, ...store.get('options', {}) },
     selected: [], word: null, several: false, undo: [], redo: [],
@@ -31,7 +33,7 @@
   const customText = () => store.get('grammar', HT.pages.STARTER_GRAMMAR);
 
   function grammar() {
-    const text = s.method === 'custom' ? customText() : HT.grammar.thomas;
+    const text = s.method === 'custom' ? customText() : s.method === 'xbar' ? HT.grammar.xbar : HT.grammar.thomas;
     if (text !== compiled.text) compiled = { text, grammar: HT.parser.compile(text) };
     return compiled.grammar;
   }
@@ -53,7 +55,7 @@
 
   function shown() {
     if (!s.tree) return null;
-    if (isLegacy() || s.method === 'custom') return s.tree;
+    if (s.method !== 'thomas') return s.tree;
     return T.present(s.tree, s.level, { triangles: s.level === 6 && s.opts.triangles });
   }
 
@@ -94,7 +96,7 @@
       trees: result.trees, index: 0, tree: result.trees[0] || null, error: result.error || '',
       chunks: result.chunks || null, selected: [], step: Infinity, feedback: null,
     });
-    s.warnings = s.method === 'thomas' ? HT.tagger.check(s.tokens) : [];
+    s.warnings = s.method === 'thomas' || s.method === 'xbar' ? HT.tagger.check(s.tokens) : [];
   }
 
   function analyse() {
@@ -156,7 +158,7 @@
       tree, trees: [], tokens: [], chunks: null, error: '', warnings: [], word: null, selected: [], exercise: null, feedback: null,
       text: String(data.text || T.text(tree)).slice(0, 1000), english: String(data.english || '').slice(0, 1000),
       note: String(data.note || '').slice(0, 2000), step: Infinity, zoom: 0,
-      method: data.method === 'custom' || isLegacyId(data.method) ? data.method : 'thomas',
+      method: ['custom', 'xbar'].includes(data.method) || isLegacyId(data.method) ? data.method : 'thomas',
       level: Math.min(6, Math.max(1, Math.floor(Number(data.level)) || 4)),
     });
     s.opts.triangles = !!data.triangles;
@@ -488,7 +490,7 @@
           <button class="btn" data-act="hand">Draw by hand</button>
           <label class="inline">Method <select id="method">${[
             ['thomas', 'Method 1: Thomas, adapted to Hindi'], ['method2', 'Method 2: Toy Fragment by Tripathi et al.'],
-            ['custom', 'Method 3: My Grammar'],
+            ['custom', 'Method 3: My Grammar'], ['xbar', 'Method 4: X-Bar Theory'],
           ].map(([id, name]) => `<option value="${id}" ${id === s.method ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select></label>
           ${s.method === 'thomas' ? `<label class="inline">Detail as in chapter <select id="level">${LEVELS.map((name, i) =>
             `<option value="${i + 1}" ${i + 1 === s.level ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select></label>` : ''}

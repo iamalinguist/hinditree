@@ -112,5 +112,33 @@ for (const [id, expected] of [
   });
 }
 
+// Method 4: X-bar theory
+const xbar = parser.compile(grammar.xbar);
+const plain = (t) => tree.toBracket(t).replace(/\{[^}]*\}/g, '');
+test('the X-bar grammar compiles', () => assert.deepEqual(xbar.errors, []));
+test('X-bar: every course sentence parses, with the same functions as Method 1', () => {
+  let matched = 0;
+  for (const e of lessons.all) {
+    const { trees } = parser.parse(tagger.tag(e.sentence), xbar);
+    assert.ok(trees.length, e.sentence);
+    const want = e.key.filter((k) => k.fn !== 'P').map((k) => `${k.fn}:${k.text}`).join('/');
+    const got = tree.functions(trees[0]).filter((u) => u.fn !== 'P').map((u) => `${u.fn}:${u.text}`).join('/');
+    if (got === want) matched++;
+  }
+  assert.ok(matched >= 82, `${matched} of ${lessons.all.length}`);
+});
+for (const [text, expected] of [
+  ['राम ने सीता को किताब दी', "[TP [KP=S [K' [NP [N' [N राम]]] [K ने]]] [T' [VP.ditrans [KP=iO [K' [NP [N' [N सीता]]] [K को]]] [V' [NP=dO [N' [N किताब]]] [V=P दी]]] [T (past)]]]"],
+  ['खाना पकाया जा रहा है', "[TP [NP=S [N' [N खाना]]] [T' [AspP [Asp' [VoiceP [Voice' [VP.trans [V' [V=P पकाया]]] [Voice जा]]] [Asp रहा]]] [T है]]]"],
+  ['राम जानता है कि सीता आएगी', "[TP [TP [NP=S [N' [N राम]]] [T' [AspP [Asp' [VP.trans [V' [V=P जानता]]] [Asp (hab)]]] [T है]]] [CP=CL [C' [C कि] [TP [NP=S [N' [N सीता]]] [T' [VP.intrans [V' [V=P आएगी]]] [T (fut)]]]]]]"],
+]) {
+  test(`X-bar: ${text}`, () => assert.equal(plain(parser.parse(tagger.tag(text), xbar).trees[0]), expected));
+}
+test('X-bar: an extraposed कि clause is dO, or sC with an intensive verb', () => {
+  const fns = (text) => tree.functions(parser.parse(tagger.tag(text), xbar).trees[0]).map((u) => u.fn).join(' ');
+  assert.equal(fns('राम जानता है कि सीता आएगी'), 'S P dO');
+  assert.equal(fns('सच यह है कि राम बीमार है'), 'S sC P sC');
+});
+
 console.log(`${passed} passed, ${failed} failed`);
 process.exitCode = failed ? 1 : 0;

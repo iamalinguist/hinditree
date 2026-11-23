@@ -95,10 +95,31 @@
         if (fn) units.push({ node: c, fn });
       }
     }
+    // Other frameworks (X-bar: TP, CP) mark functions in their rules.
+    // Collect the outermost marked constituents of the main clause.
+    function marked(n) {
+      for (const c of n.c) {
+        if (isLeaf(c)) continue;
+        if (c.fn) units.push({ node: c, fn: c.fn });
+        else if (c.l !== 'CP') marked(c);
+      }
+    }
+    // An extraposed clause (CL) is the object, or with an intensive verb the complement.
+    function verbClass(n) {
+      if (isLeaf(n) || n.l === 'CP') return '';
+      if (n.l === 'VP' && n.f) return n.f;
+      for (const c of n.c) {
+        const f = verbClass(c);
+        if (f) return f;
+      }
+      return '';
+    }
     if (!isLeaf(root)) {
       if (clause.test(root.l)) scan(root);
       else if (root.l === 'VP') scanVP(root);
+      else marked(root);
     }
+    for (const u of units) if (u.fn === 'CL') u.fn = verbClass(root) === 'intens' ? 'sC' : 'dO';
     return units.map((u) => ({ ...u, text: text(u.node) }));
   }
 

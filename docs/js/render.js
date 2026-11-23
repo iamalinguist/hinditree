@@ -24,7 +24,13 @@
     return ruler.measureText(text).width;
   }
 
-  function colour(label) {
+  function colour(name) {
+    // X-bar: XP, X′ and X share the colour of the head X.
+    let label = name.replace(/'$/, '');
+    if (/^(T|C|K|Asp|Mod|Voice|v|A|Adv)P$/.test(label)) label = label.slice(0, -1);
+    if (/^(T|Asp|Mod|Voice|v)$/.test(label)) return '#9a4a0b';
+    if (/^(C|Conj|Prt)$/.test(label)) return '#4c1d95';
+    if (/^(K|D|Deg)$/.test(label)) return '#0f6560';
     if (/^(S\d?|sub|coord)$/.test(label)) return '#4c1d95';
     if (/^(N|NP|N'|NOUN|PRO|Nm|Nf|N_m|N_f|NP_cm)$/.test(label)) return '#1553a1';
     if (/^(V|VP|Vgp|VERB|Vi|Vt|V_i|V_t|Verbi|Verb_i|Verbt|Verb_t)$/.test(label)) return '#a3243b';
@@ -150,7 +156,7 @@
         ? ` data-path="${b.path.join('-')}" tabindex="0" role="button" aria-label="${esc(`${n.l}: ${textOf(n)}`)}"` : '';
       let shown = o.blank ? '____' : esc(n.l);
       if (!o.blank && /^S\d$/.test(n.l)) shown = `S<tspan dy="5" font-size="13">${esc(n.l.slice(1))}</tspan>`;
-      if (!o.blank && n.l === "N'") shown = 'N′';
+      if (!o.blank && /'$/.test(n.l)) shown = esc(n.l.replace(/'$/, '′'));
       parts.push(`<g${hit}><rect x="${b.x - b.labelWidth / 2 - 3}" y="${b.y - 15}" width="${b.labelWidth + 6}" height="${n.f ? 44 : 29}" rx="6" fill="transparent"/>` +
         `<text x="${b.x}" y="${b.y + 6}" text-anchor="middle" font-family="${SERIF}" font-size="19" font-weight="700" fill="${o.color ? colour(n.l) : INK}">${shown}</text>` +
         (n.f && !o.blank ? label(b.x, b.y + 23, `[${n.f}]`, `font-family="${SERIF}" font-size="13" fill="${MUTED}"`) : '') + '</g>');

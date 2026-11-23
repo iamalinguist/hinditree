@@ -105,7 +105,29 @@ MyMemory returns both machine translation and crowd-sourced translation memory. 
 
 Machine translation may still change the construction. For example *The thief was caught by the police* came back as the active पुलिस ने चोर को पकड़ लिया. The app says so whenever it converts.
 
-## 8. Known limits
+## 8. Method 4: X-bar theory
+
+Method 4 analyses the same sentences with X-bar phrase structure, for students who have finished the Thomas course. It uses the same word categories as Method 1, so the word analysis and corrections work unchanged.
+
+- **Schema.** XP → (Specifier) X′, X′ → Adjunct X′, X′ → (Complement) X. Branching is binary.
+- **Head direction.** Hindi is head-final (रोटी खाई, घर में, राम ने). C is head-initial (कि, क्योंकि, अगर).
+- **Clause.** The subject is in Spec,TP. Above VP the functional heads follow the word order: TP > AspP > ModP > VoiceP or vP > VP. For example, पकाया [Voice जा] [Asp रहा] [T है], and खा [Mod सकता] [T था].
+- **Tense.** T is an auxiliary (है, था, होगा) or an unpronounced (past), (pres) or (fut). An imperative has no T.
+- **Case.** ने, को and का head a KP whose complement is the NP. A genitive KP is the specifier of NP, beside D.
+- **Verb classes.** The direct object is the complement of V. In ditransitives the को object is the specifier of VP. In complex-transitives dO is the specifier and oC the complement.
+- **Light verbs.** A vector verb (लिया, गया) is v.
+- **कि clauses.** They follow T, so they are extraposed and right-adjoined to TP. Their function, dO or sC, is read from the verb class.
+- **Relative clauses.** A relative CP is an adjunct of N′, or a correlative adjoined to TP. There is no visible C.
+- **Functions.** These are marked as in Method 1, except that P marks the lexical verb V, because the verb group is no longer one constituent.
+
+Results:
+- All 83 course sentences parse.
+- 82 give Method 1's functions (other than P) on the first tree. The last one, the ambiguous दौड़ते हुए sentence, has the other reading second.
+- Random input of up to 30 words parses within 5 ms.
+
+Not built in: scrambled objects, relative clauses on objects, PRO subjects of non-finite clauses, and VP-shell (Larsonian) ditransitives. These can be drawn by hand.
+
+## 9. Known limits
 
 - This is a teaching grammar and not a broad-coverage parser of Hindi.
 - Gender, number and person agreement are not checked. Case checking covers common ने errors only.
@@ -114,7 +136,7 @@ Machine translation may still change the construction. For example *The thief wa
 - Transliteration uses a schwa-deletion heuristic and will miss some compounds and loanwords.
 - Devanagari in exported SVG files uses the fonts of the computer that opens them. Use PNG for slides.
 
-## 9. References for checking the Hindi analysis
+## 10. References for checking the Hindi analysis
 
 - Butt, M. (1995). *The Structure of Complex Predicates in Urdu*. CSLI.
 - Kachru, Y. (2006). *Hindi*. John Benjamins.
