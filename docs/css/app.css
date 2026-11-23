@@ -72,6 +72,18 @@ pre.grammar { max-height: 420px; }
 ul.rules { list-style: none; padding: 0; }
 ul.rules li { padding: 3px 0; }
 details > summary { cursor: pointer; padding: 6px 0; font-weight: 600; }
+details.method { padding: 0; }
+details.method > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 16px 18px; list-style: none; }
+details.method > summary::-webkit-details-marker { display: none; }
+details.method > summary::before { content: '▸'; color: var(--brand); transition: transform .15s; }
+details.method[open] > summary::before { transform: rotate(90deg); }
+details.method > summary:hover { background: var(--bg); border-radius: 12px; }
+.method-title { font-size: 19px; }
+.method-summary { flex-basis: 100%; padding-left: 22px; color: var(--muted); font-weight: 400; font-size: 14px; }
+.method-body { padding: 0 18px 16px; border-top: 1px solid var(--line); }
+.with-button { display: flex; gap: 8px; }
+.with-button input { flex: 1; min-width: 0; }
+.with-button .btn { height: 46px; }
 
 /* Studio */
 .compose { display: grid; grid-template-columns: 3fr 2fr; gap: 10px 14px; }

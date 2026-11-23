@@ -87,17 +87,27 @@ No code was copied.
 
 ## 5. What changed from the earlier HindiTree
 
-- Methods 1 and 2 keep their algorithm, rules, sentence splitting and credits. In a comparison with the old code on 160,000 random category sequences and 80,000 random sentences there were no differences.
-- The client-side password for editing Method 1 was not carried over. It was readable in the public source and so protected nothing. Methods 1 and 2 are read-only, and changes go in My grammar.
+- The earlier app's Method 2 is kept as **Method 2: Toy Fragment by Tripathi et al.**, with its algorithm, rules, sentence splitting and credits. In a comparison with the old code on 80,000 random category sequences and 80,000 random sentences there were no differences.
+- The earlier app's Method 1 was removed at the owner's request, together with its client-side editing password. Method 2 is read-only, and changes go in Method 3: My Grammar.
 - The old parser returned one tree. The Thomas grammar returns ranked alternatives.
 
 ## 6. Verification
 
-- `node tests/run.js` checks all 83 examples at all six levels, unseen sentences, notation round-trips, input validation and Methods 1 and 2.
+- `node tests/run.js` checks all 83 examples at all six levels, unseen sentences, notation round-trips, input validation, Method 2 and the English converter.
 - On 30 fresh sentences that played no part in writing the grammar, 28 received an acceptable first analysis. The two failures were missing verbs, added afterwards. This is a small sample chosen by the developer, not a formal evaluation.
 - The trees and Hindi examples have **not been reviewed by a second linguist or native-speaker teacher**. Read each chapter's examples before teaching it.
 
-## 7. Known limits
+## 7. English to Hindi conversion
+
+The Convert button in the Tree Studio is a rule-based converter (`docs/js/translate.js`), not machine translation. Using an online service would have needed an API key, would not work offline, and would send students' sentences to a third party.
+
+It covers simple clauses: subject–object–verb order, ने and को, postpositions, tense, aspect, modals, passive, negation, agreement (including honorific plurals and अपना), possession with के पास, existential *there is*, यह/कि clauses, जो relative clauses, -कर and -ते हुए clauses, and *if/when/because*.
+
+- Converting the English translations of the 83 course examples reproduced the course's Hindi word for word in 78 cases. All 83 outputs could be parsed.
+- On 30 unseen English sentences written by the developer, all 30 outputs were parseable. On review, a few needed small changes: the verb's tense or aspect, a missing honorific, or a stylistic word order.
+- Not handled: object and adverb questions (*what, where, why*), object relative clauses (*the dress that she wore*), and most idioms. These are declined, not guessed.
+
+## 8. Known limits
 
 - This is a teaching grammar and not a broad-coverage parser of Hindi.
 - Gender, number and person agreement are not checked. Case checking covers common ने errors only.
@@ -106,7 +116,7 @@ No code was copied.
 - Transliteration uses a schwa-deletion heuristic and will miss some compounds and loanwords.
 - Devanagari in exported SVG files uses the fonts of the computer that opens them. Use PNG for slides.
 
-## 8. References for checking the Hindi analysis
+## 9. References for checking the Hindi analysis
 
 - Butt, M. (1995). *The Structure of Complex Predicates in Urdu*. CSLI.
 - Kachru, Y. (2006). *Hindi*. John Benjamins.

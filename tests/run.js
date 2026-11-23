@@ -4,10 +4,10 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 
-for (const file of ['util', 'lexicon', 'tagger', 'grammar', 'parser', 'tree', 'legacy', 'lessons', 'render']) {
+for (const file of ['util', 'lexicon', 'tagger', 'grammar', 'parser', 'tree', 'legacy', 'lessons', 'render', 'translate']) {
   require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));
 }
-const { lexicon, tagger, grammar, parser, tree, legacy, lessons, render } = globalThis.HT;
+const { lexicon, tagger, grammar, parser, tree, legacy, lessons, render, translate } = globalThis.HT;
 const compiled = parser.compile(grammar.thomas);
 const analysis = (text) => {
   const { trees, error } = parser.parse(tagger.tag(text), compiled);
@@ -103,7 +103,6 @@ test('cyclic user rules terminate', () => {
 });
 
 for (const [id, expected] of [
-  ['method1', '[S [NP [Nm राम]] [VP [Verbi [Vi चल] [Aux [Am रहा] [Tm है]]]]]'],
   ['method2', '[S [NP [N_m राम]] [VP [NP_cm [NP [N_m आम]] [CM को]] [Verb_t [V_t खा] [Aux "-ता है"]]]]'],
 ]) {
   test(id, () => {
@@ -112,6 +111,35 @@ for (const [id, expected] of [
     assert.equal(tree.toBracket(legacy.parse(tokens, id).trees[0]), expected);
   });
 }
+
+// English to Hindi converter
+const converted = {
+  'Ram gave Sita a book': 'राम ने सीता को किताब दी',
+  'The children will be sleeping': 'बच्चे सो रहे होंगे',
+  'The thief was caught by the police': 'चोर पुलिस के द्वारा पकड़ा गया',
+  'Sita’s child is crying': 'सीता का बच्चा रो रहा है',
+  'The students should read the book': 'छात्रों को किताब पढ़नी चाहिए',
+  'Mohan made Gita angry': 'मोहन ने गीता को नाराज़ किया',
+  'The child is afraid of the lion': 'बच्चा शेर से डरता है',
+  'I saw the running boy': 'मैंने दौड़ते हुए लड़के को देखा',
+  'My father reads the newspaper every day': 'मेरे पिता हर दिन अख़बार पढ़ते हैं',
+  'Mohan wrote a letter to his friend': 'मोहन ने पत्र अपने दोस्त को लिखा',
+  'Mohan wrote his friend a letter': 'मोहन ने अपने दोस्त को पत्र लिखा',
+  'There is a book on the table': 'मेज़ पर एक किताब है',
+  'Did you see the film?': 'क्या तुमने फ़िल्म देखी?',
+  "Don't open the window": 'खिड़की मत खोलो',
+  'The window was broken by the boys': 'खिड़की लड़कों के द्वारा तोड़ी गई',
+};
+for (const [english, hindi] of Object.entries(converted)) {
+  test(`convert: ${english}`, () => assert.equal(translate(english).hindi, hindi));
+}
+test('the converter reports unknown words', () => {
+  assert.deepEqual(translate('The dog chased a zebra').unknown, ['zebra']);
+});
+test('most course translations convert back to the course sentence', () => {
+  const same = lessons.all.filter((e) => translate(e.english).hindi.replace(/[,?]/g, '') === e.sentence).length;
+  assert.ok(same >= 75, `${same} of ${lessons.all.length}`);
+});
 
 console.log(`${passed} passed, ${failed} failed`);
 process.exitCode = failed ? 1 : 0;

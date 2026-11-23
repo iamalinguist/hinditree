@@ -31,12 +31,12 @@ VP -> PP* NP? NP? V TENSE?`;
   function course(el, param) {
     const ch = HT.lessons.chapters.find((c) => String(c.n) === param) || HT.lessons.chapters[0];
     el.innerHTML = `
-      <header class="page-head"><h1>Course <span lang="hi">वाक्यविज्ञान परिचय</span></h1>
+      <header class="page-head"><h1>Course</h1>
         <p>Follows the six chapters of Linda Thomas, <cite>Beginning Syntax</cite> (1993), with original Hindi examples.</p></header>
       <nav class="chapters" aria-label="Chapters">${HT.lessons.chapters.map((c) => `<a href="#course/${c.n}" class="${c === ch ? 'on' : ''}" ${c === ch ? 'aria-current="page"' : ''}>
         <b>${c.n}</b><span>${esc(c.title)}</span></a>`).join('')}</nav>
       <section class="card lesson">
-        <div class="row between"><h2>${ch.n}. ${esc(ch.title)} <span lang="hi">${esc(ch.hindi)}</span></h2><span class="pill">Thomas, pp. ${ch.pages}</span></div>
+        <div class="row between"><h2>${ch.n}. ${esc(ch.title)}</h2><span class="pill">Thomas, pp. ${ch.pages}</span></div>
         <p class="lead">${esc(ch.ideas)}</p>
         <div class="lesson-grid">
           <div><h3>Rules for Hindi</h3><ul class="mono rules">${ch.rules.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -98,7 +98,7 @@ VP -> PP* NP? NP? V TENSE?`;
       : [{ text: ex.key.find((k) => k.fn === 'P').text, answer: verbClass(ex), choices: Object.entries(CLASS_NAMES) }];
 
     el.innerHTML = `
-      <header class="page-head"><h1>Practice <span lang="hi">अभ्यास</span></h1></header>
+      <header class="page-head"><h1>Practice</h1></header>
       <section class="card">
         <div class="row">
           <label class="inline">Chapter <select id="quiz-chapter"><option value="0">All</option>${HT.lessons.chapters.map((c) =>
@@ -148,31 +148,37 @@ VP -> PP* NP? NP? V TENSE?`;
     }
   }
 
-  // Syntax rules
+  // Syntax rules: one collapsible card per method.
   function rules(el) {
-    const { method1, method2 } = HT.legacy.methods;
-    const listing = (m) => `${Object.entries(m.grammar).map(([lhs, list]) => `${lhs} → ${list.map((r) => r.join(' ')).join(' | ')}`).join('\n')}\nroots: ${m.roots.join(' ')}`;
+    const toy = HT.legacy.methods.method2;
+    const toyRules = `${Object.entries(toy.grammar).map(([lhs, list]) => `${lhs} → ${list.map((r) => r.join(' ')).join(' | ')}`).join('\n')}\nroots: ${toy.roots.join(' ')}`;
+    const current = HT.studio.state.method;
+    const card = (id, title, summary, body, use = 'Use this method') => `<details class="card method" data-method="${id}">
+      <summary><span class="method-title">${esc(title)}</span>${id === current ? '<span class="pill">In use</span>' : ''}
+        <span class="method-summary">${esc(summary)}</span></summary>
+      <div class="method-body">${body}<div class="row"><button class="btn primary" data-use="${id}">${esc(use)}</button></div></div></details>`;
+
     el.innerHTML = `
-      <header class="page-head"><h1>Syntax rules <span lang="hi">वाक्य-नियम</span></h1>
-        <p>Choose a method here or in the Tree Studio.</p></header>
-      <section class="card"><div class="row between"><h2>Thomas, adapted to Hindi</h2><button class="btn primary" data-use="thomas">Use</button></div>
-        <p>The rules of the six chapters in one grammar. Every function (S, P, dO, iO, sC, oC, pO, A) is part of a rule or follows from position in the tree.</p>
+      <header class="page-head"><h1>Syntax rules</h1>
+        <p>Click a method to see its rules. The Tree Studio uses the method you choose here.</p></header>
+      ${card('thomas', 'Method 1: Thomas, adapted to Hindi', 'The rules of the six chapters of Beginning Syntax, adapted to Hindi.', `
+        <p>Every function (S, P, dO, iO, sC, oC, pO, A) is part of a rule or follows from position in the tree.</p>
         <div class="lesson-grid">${HT.lessons.chapters.map((c) => `<div><h3>${c.n}. ${esc(c.title)}</h3>
           <ul class="mono rules">${c.rules.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>`).join('')}</div>
         <details><summary>Complete parser grammar</summary>
           <p class="hint"><code>?</code> optional, <code>*</code> repeatable, <code>=dO</code> function, <code>@1.5</code> a cost that ranks less likely readings lower. A suffix such as <code>NP.erg</code> is internal.</p>
           <pre class="mono grammar" tabindex="0">${esc(HT.grammar.thomas)}</pre>
-          <button class="btn" id="copy-grammar">Copy into My grammar</button></details></section>
-      ${[['method1', method1], ['method2', method2]].map(([id, m]) => `<section class="card">
-        <div class="row between"><h2>${esc(m.name)}</h2><button class="btn primary" data-use="${id}">Use</button></div>
-        <p>By ${esc(m.authors)}${m.paper ? `. <a href="${m.paper}" target="_blank" rel="noopener noreferrer">Read the paper</a>` : ''}</p>
-        <pre class="mono" tabindex="0">${esc(listing(m))}</pre>
-        ${id === 'method2' ? '<p class="hint">-ता है and -ती है are split off as Aux. Neg scopes over the whole sentence and is drawn as ऐसा नहीं है कि.</p>' : ''}</section>`).join('')}
-      <section class="card"><div class="row between"><h2>My grammar</h2><button class="btn primary" data-use="custom">Save and use</button></div>
-        <p>Write rules for any textbook or analysis. Word categories are the symbols that never appear left of an arrow.</p>
+          <button class="btn" id="copy-grammar">Copy into Method 3: My Grammar</button></details>`)}
+      ${card('method2', toy.name, `By ${toy.authors}. A small grammar of simple Hindi clauses.`, `
+        <p>By ${esc(toy.authors)}. <a href="${toy.paper}" target="_blank" rel="noopener noreferrer">Read the paper</a></p>
+        <pre class="mono" tabindex="0">${esc(toyRules)}</pre>
+        <p class="hint">-ता है and -ती है are split off as Aux. Neg scopes over the whole sentence and is drawn as ऐसा नहीं है कि.</p>`)}
+      ${card('custom', 'Method 3: My Grammar', 'Write rules for any textbook or analysis.', `
+        <p>Word categories are the symbols that never appear left of an arrow.</p>
         <textarea id="grammar-text" class="mono" rows="14" spellcheck="false" aria-label="My grammar">${esc(store.get('grammar', STARTER_GRAMMAR))}</textarea>
         <p id="grammar-status" class="hint" role="status"></p>
-        <div class="row"><button class="btn" id="grammar-save">Save</button><button class="btn" id="grammar-reset">Reset to starter grammar</button></div></section>`;
+        <div class="row"><button class="btn" id="grammar-save">Save</button><button class="btn" id="grammar-reset">Reset to starter grammar</button></div>`,
+      'Save and use this method')}`;
 
     const area = el.querySelector('#grammar-text');
     const status = el.querySelector('#grammar-status');
@@ -198,8 +204,9 @@ VP -> PP* NP? NP? V TENSE?`;
     el.querySelector('#copy-grammar').onclick = () => {
       area.value = HT.grammar.thomas;
       validate();
+      el.querySelector('[data-method="custom"]').open = true;
       area.scrollIntoView({ block: 'center' });
-      toast('Copied below. Save to keep it.');
+      toast('Copied into Method 3. Save to keep it.');
     };
     el.querySelectorAll('[data-use]').forEach((button) => {
       button.onclick = () => {
@@ -248,7 +255,7 @@ VP -> PP* NP? NP? V TENSE?`;
   ];
 
   function abbreviations(el) {
-    el.innerHTML = `<header class="page-head"><h1>Abbreviations <span lang="hi">संकेत-सूची</span></h1></header>
+    el.innerHTML = `<header class="page-head"><h1>Abbreviations</h1></header>
       <div class="glossary">${ABBREVIATIONS.map(([title, list]) => `<section class="card"><h2>${esc(title)}</h2><table>${list.map(([short, en, hi]) =>
         `<tr><th scope="row">${esc(short)}</th><td>${esc(en)}<br><span lang="hi">${esc(hi)}</span></td></tr>`).join('')}</table></section>`).join('')}</div>`;
   }
@@ -277,7 +284,7 @@ VP -> PP* NP? NP? V TENSE?`;
 
   function adaptation(el) {
     el.innerHTML = `
-      <header class="page-head"><h1>From English to Hindi <span lang="hi">अंग्रेज़ी से हिंदी</span></h1>
+      <header class="page-head"><h1>From English to Hindi</h1>
         <p>Where Thomas’s English rules do not fit Hindi, and the decision this app makes. These are teaching decisions, and several have respectable alternatives.</p></header>
       <section class="card table-scroll"><table class="adaptation">
         <tr><th>Topic</th><th>Thomas, English</th><th>This app, Hindi</th><th>Example</th></tr>
@@ -297,7 +304,7 @@ VP -> PP* NP? NP? V TENSE?`;
   function mine(el) {
     const list = store.get('examples', []);
     el.innerHTML = `
-      <header class="page-head"><h1>My examples <span lang="hi">मेरे उदाहरण</span></h1>
+      <header class="page-head"><h1>My examples</h1>
         <p>Saved only in this browser. Export the collection to back it up or share it with students.</p></header>
       <div class="row">
         <button class="btn" id="mine-export" ${list.length ? '' : 'disabled'}>Export collection</button>
@@ -358,20 +365,21 @@ VP -> PP* NP? NP? V TENSE?`;
       ['Does an accepted sentence mean a grammatical one?', 'No. The rules check constituent structure. Agreement in gender, number and person is not checked, and case is checked only for common errors with ने.'],
       ['Where is my work kept?', 'In your browser. Nothing is sent to a server. A share link contains the tree in the link itself.'],
       ['Does it work without the internet?', 'Yes. Download the site folder and open index.html.'],
+      ['What technology does the Hindi tree app use behind the scenes?', 'Everything runs in your browser; there is no server, database or account. The site is plain HTML, CSS and JavaScript without frameworks, hosted on GitHub Pages. A lexicon of Hindi words and verb forms suggests a category for each word. A chart parser (a ranked form of the CKY algorithm) then finds every tree that the chosen grammar allows and lists the most likely first. Trees are drawn as SVG, which is also how PNG, JPEG and LaTeX exports are produced. English sentences are converted to Hindi by built-in rules for simple clauses, without an online translation service. Saved examples stay in your browser storage.'],
     ];
     el.innerHTML = `
-      <header class="page-head"><h1>Help and about <span lang="hi">सहायता</span></h1></header>
+      <header class="page-head"><h1>Help and about</h1></header>
       <section class="card"><h2>Questions</h2>${faq.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>
       <section class="card"><h2>About</h2>
         <p>HindiTree is an open-access tool for creating and teaching constituency trees for Hindi.</p>
         <ul>
-          <li>Methods 1 and 2 and the earlier HindiTree app: Tripathi Vivek and Rathod Dinesh.
+          <li>Method 2 (the toy fragment) and the earlier HindiTree app: Tripathi Vivek and Rathod Dinesh.
             <a href="https://rupkatha.com/v16n103g/" target="_blank" rel="noopener noreferrer">Paper</a>.</li>
           <li>The idea of annotating words and solving for all trees comes from
             <a href="https://github.com/adambcomer/lin-tree-solver" target="_blank" rel="noopener noreferrer">Linguistics Tree Solver</a> by Adam Comer. The code here is written independently.</li>
           <li>The course sequence and notation follow Linda Thomas (1993), <cite>Beginning Syntax</cite>, Blackwell. The app does not contain the book and is not affiliated with its author or publisher.</li>
         </ul>
-        <p>Support: <a href="mailto:sopan.tripathi@gmail.com">sopan.tripathi@gmail.com</a></p></section>`;
+        <p>Support: <a href="mailto:vivek.tripathi@ashoka.edu.in">vivek.tripathi@ashoka.edu.in</a></p></section>`;
   }
 
   HT.pages = { STARTER_GRAMMAR, print, course, practice, rules, abbreviations, adaptation, mine, about };

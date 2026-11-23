@@ -40,6 +40,13 @@
     window.scrollTo(0, 0);
   }
 
+  // The logo reloads the app from the start.
+  document.querySelectorAll('[data-reload]').forEach((a) => a.addEventListener('click', (event) => {
+    event.preventDefault();
+    history.replaceState(null, '', location.pathname + location.search);
+    location.reload();
+  }));
+
   document.getElementById('menu').addEventListener('click', (event) => {
     event.currentTarget.setAttribute('aria-expanded', String(document.body.classList.toggle('menu-open')));
   });

@@ -17,7 +17,7 @@
   const s = {
     text: '', english: '', note: '', tokens: [], trees: [], index: 0, tree: null, chunks: null,
     error: '', warnings: [], exercise: null, feedback: null,
-    method: store.get('method', 'thomas'),
+    method: ['thomas', 'method2', 'custom'].includes(store.get('method')) ? store.get('method') : 'thomas',
     level: 4,
     opts: { functions: true, gloss: false, translit: false, english: false, triangles: false, align: true, color: true, blank: false, ...store.get('options', {}) },
     selected: [], word: null, several: false, undo: [], redo: [],
@@ -432,7 +432,7 @@
 
   function stage(view) {
     if (!view) {
-      return '<section class="card stage empty"><p lang="hi" class="big">वाक्य लिखिए</p><p>Type a Hindi sentence and choose Analyse, or open an example from the course.</p></section>';
+      return '<section class="card stage empty"><p class="big">No tree yet</p><p>Type a Hindi sentence and choose Analyse, write English and choose Convert, or open an example from the course.</p></section>';
     }
     return `<section class="card stage" id="stage">
       <div class="toolbar">
@@ -475,17 +475,19 @@
     const bracketsOpen = !!host.querySelector('#bracket-box[open]');
     host.classList.toggle('presenting', s.presenting);
     host.innerHTML = `
-      <header class="page-head"><h1>Tree Studio <span lang="hi">वृक्ष-आरेख</span></h1></header>
+      <header class="page-head"><h1>Tree Studio</h1></header>
       <section class="card compose">
         <label class="grow">Hindi sentence
           <input id="sentence" class="sentence" lang="hi" maxlength="600" value="${esc(s.text)}" placeholder="राम ने सीता को किताब दी" autocomplete="off" spellcheck="false"></label>
-        <label class="grow translation">English translation (optional)<input id="english" maxlength="600" value="${esc(s.english)}"></label>
+        <div class="grow translation"><label for="english">English translation (optional)</label>
+          <div class="with-button"><input id="english" maxlength="600" value="${esc(s.english)}" placeholder="Ram gave Sita a book" autocomplete="off">
+          <button class="btn" data-act="convert" title="Write the Hindi sentence from the English">Convert</button></div></div>
         <div class="row">
           <button class="btn primary" data-act="analyse">Analyse</button>
           <button class="btn" data-act="hand">Draw by hand</button>
           <label class="inline">Method <select id="method">${[
-            ['thomas', 'Thomas, adapted to Hindi'], ['method1', 'Method 1 (Tripathi)'],
-            ['method2', 'Method 2 (Tripathi & Rathod)'], ['custom', 'My grammar'],
+            ['thomas', 'Method 1: Thomas, adapted to Hindi'], ['method2', 'Method 2: Toy Fragment by Tripathi et al.'],
+            ['custom', 'Method 3: My Grammar'],
           ].map(([id, name]) => `<option value="${id}" ${id === s.method ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select></label>
           ${s.method === 'thomas' ? `<label class="inline">Detail as in chapter <select id="level">${LEVELS.map((name, i) =>
             `<option value="${i + 1}" ${i + 1 === s.level ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select></label>` : ''}
@@ -560,7 +562,24 @@
     }
   }
 
+  /** Writes the Hindi sentence from the English one, then analyses it. */
+  function convert() {
+    const english = s.english.trim();
+    if (!english) return toast('Write an English sentence first.');
+    const result = HT.translate(english);
+    if (!result.hindi || !/[ऀ-ॿ]/.test(result.hindi)) {
+      return toast('This sentence is beyond the built-in rules. Please type the Hindi yourself.');
+    }
+    if (s.method !== 'thomas') setMethod('thomas');
+    s.text = result.hindi;
+    analyse();
+    const missing = result.unknown.length ? ` These words were not converted and are left in English: ${result.unknown.join(', ')}.` : '';
+    s.note = `Converted by HindiTree's built-in rules for simple sentences, without an online service. Check the Hindi before you use it.${missing}`;
+    return undefined;
+  }
+
   const actions = {
+    convert,
     analyse,
     hand: drawByHand,
     parse() { remember(); s.word = null; parse(); },
@@ -718,6 +737,11 @@
   function onKey(event) {
     if (!host || !host.isConnected) return;
     const el = event.target;
+    if (el.id === 'english' && event.key === 'Enter' && !event.isComposing) {
+      convert();
+      render();
+      return;
+    }
     if (el.id === 'sentence' && event.key === 'Enter' && !event.isComposing) {
       analyse();
       render();

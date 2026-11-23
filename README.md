@@ -6,11 +6,11 @@ Analyse Hindi sentence structure using formal grammar. HindiTree draws, parses a
 
 | Page | Purpose |
 |---|---|
-| **Tree Studio** | Type a sentence and get every tree the grammar allows. Correct categories, edit any node, draw by hand, build step by step, present full screen, and export to PNG, JPEG, SVG or LaTeX. |
+| **Tree Studio** | Type a Hindi sentence, or write English and choose **Convert**, and get every tree the grammar allows. Correct categories, edit any node, draw by hand, build step by step, present full screen, and export to PNG, JPEG, SVG or LaTeX. |
 | **Course** | Six chapters matching the book, with rules, tests, 83 Hindi examples, printable handouts and worksheets. |
 | **Practice** | Students name functions or verb classes, or draw a tree and have it checked. |
 | **My examples** | Save trees in the browser, export or import a collection, print a handout. |
-| **Syntax rules** | The Thomas grammar for Hindi, Methods 1 and 2 from the earlier HindiTree, and an editable grammar of your own. |
+| **Syntax rules** | Method 1: Thomas, adapted to Hindi. Method 2: the toy fragment by Tripathi et al. Method 3: your own editable grammar. |
 | **English to Hindi** | Where the book's English rules change for Hindi, and why. |
 
 The research behind the design is in [RESEARCH.md](RESEARCH.md).
@@ -52,6 +52,7 @@ Open `docs/index.html` in a browser. It works without an internet connection.
 | Examples and lesson text | `docs/js/lessons.js`: one line per example, for example `['S:राम / P:सोया', 'Ram slept']` |
 | Grammar rules | `docs/js/grammar.js` |
 | How words get categories | `docs/js/tagger.js` |
+| English to Hindi conversion | `docs/js/translate.js` |
 | Tree appearance | `docs/js/render.js` |
 
 After a change, run the tests (Node.js 18 or later):
@@ -62,10 +63,12 @@ node tests/run.js
 
 Every course example is tested, so a rule change that breaks an example is reported by name.
 
+The **Convert** button uses built-in rules for simple clauses (no online translation service), so it works offline and sends nothing anywhere. It handles the kinds of sentences in the course. Words it does not know are left in English and listed, and sentences beyond its rules (for example *What did you eat?*) are declined rather than guessed. Check its Hindi before teaching with it.
+
 When adding a script file, also add it to `docs/index.html`. The scripts are deliberately not ES modules, because modules do not load when the page is opened from disk.
 
 ## Credits
 
-- Earlier HindiTree app, Method 1 and Method 2: Tripathi Vivek and Rathod Dinesh ([paper](https://rupkatha.com/v16n103g/)).
+- Earlier HindiTree app and Method 2 (toy fragment): Tripathi Vivek and Rathod Dinesh ([paper](https://rupkatha.com/v16n103g/)).
 - The annotate-then-solve idea: [Linguistics Tree Solver](https://github.com/adambcomer/lin-tree-solver) by Adam Comer (Apache-2.0). No code from it is used.
 - Course sequence and notation: Linda Thomas (1993), *Beginning Syntax*, Blackwell. This project does not reproduce the book and is not affiliated with its author or publisher.

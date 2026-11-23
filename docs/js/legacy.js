@@ -1,32 +1,16 @@
 /*
- * Method 1 (Tripathi Vivek) and Method 2 (Tripathi Vivek, Rathod Dinesh),
+ * Toy fragment by Tripathi Vivek and Rathod Dinesh (the earlier app's "Method 2"),
  * carried over from the earlier HindiTree app (branch feature_trials, da20901).
  *
- * These deliberately keep that app's algorithm, rule order and sentence
+ * This deliberately keeps that app's algorithm, rule order and sentence
  * splitting, so trees already used in teaching or publication do not change.
  */
 (function (HT) {
   'use strict';
 
   const methods = {
-    method1: {
-      name: 'Method 1: Constituency, Rules and Trees',
-      authors: 'Tripathi Vivek',
-      roots: ['S', 'NP', 'VP'],
-      grammar: {
-        S: [['NP', 'VP']],
-        NP: [['Nm'], ['Nf'], ['NP', 'PP']],
-        VP: [['Verbi']],
-        Verbi: [['Vi', 'Aux']],
-        Aux: [['Am', 'Tm']],
-      },
-      tags: [['D', 'determiner'], ['Adj', 'adjective'], ['Adv', 'adverb'], ['Prep', 'preposition'], ['Conj', 'conjunction'],
-        ['I', 'interjection'], ['P', 'pronoun'], ['Nm', 'masculine noun'], ['Nf', 'feminine noun'], ['Vt', 'transitive verb'],
-        ['Vi', 'intransitive verb'], ['PP', 'postpositional phrase'], ['neg', 'negative'], ['Am', 'aspect marker'], ['Tm', 'tense marker']],
-      example: { text: 'राम चल रहा है', tags: ['Nm', 'Vi', 'Am', 'Tm'] },
-    },
     method2: {
-      name: 'Method 2: Constituency, Rules and Trees',
+      name: 'Method 2: Toy Fragment by Tripathi et al.',
       authors: 'Tripathi Vivek, Rathod Dinesh',
       paper: 'https://rupkatha.com/v16n103g/',
       roots: ['S'],
