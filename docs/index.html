@@ -13,24 +13,32 @@
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="#studio" data-reload>hindi tree<span>open access hindi parser</span></a>
-      <button id="menu" class="btn small menu-button" aria-controls="nav" aria-expanded="false">Menu</button>
-      <nav id="nav" class="nav" aria-label="Main">
-        <a href="#studio" data-page="studio">Tree Studio</a>
-        <a href="#course" data-page="course">Course</a>
-        <a href="#practice" data-page="practice">Practice</a>
-        <a href="#mine" data-page="mine">My examples</a>
-        <a href="#rules" data-page="rules">Syntax rules</a>
-        <a href="#adaptation" data-page="adaptation">English to Hindi</a>
-        <a href="#abbreviations" data-page="abbreviations">Abbreviations</a>
-        <a href="#about" data-page="about">Help</a>
-      </nav>
-    </div>
-  </header>
+  <aside id="sidebar" class="sidebar" aria-label="Menu">
+    <a class="brand" href="#studio" data-reload>hindi tree<span>open access hindi parser</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#studio" data-page="studio">Tree Studio</a>
+      <a href="#course" data-page="course">Course</a>
+      <a href="#practice" data-page="practice">Practice</a>
+      <a href="#mine" data-page="mine">My examples</a>
+      <hr>
+      <a href="#rules" data-page="rules">Syntax rules</a>
+      <a href="#adaptation" data-page="adaptation">English to Hindi</a>
+      <a href="#abbreviations" data-page="abbreviations">Abbreviations</a>
+      <a href="#about" data-page="about">Help and about</a>
+    </nav>
+  </aside>
+  <div id="scrim" class="scrim" hidden></div>
+
+  <div class="shell">
+    <header class="topbar">
+      <button id="menu" class="menu-button" aria-controls="sidebar" aria-expanded="true" aria-label="Hide menu" title="Hide menu">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <span id="page-label" class="page-label">Tree Studio</span>
+    </header>
 
   <main id="main"><noscript>HindiTree needs JavaScript to draw trees.</noscript></main>
+  </div>
 
   <dialog id="dialog"></dialog>
   <div id="toast" role="status" aria-live="polite"></div>

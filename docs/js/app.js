@@ -32,11 +32,12 @@
     else HT.pages[page](view, param);
 
     document.querySelectorAll('.nav a').forEach((a) => {
-      if (a.dataset.page === page) a.setAttribute('aria-current', 'page');
-      else a.removeAttribute('aria-current');
+      if (a.dataset.page === page) {
+        a.setAttribute('aria-current', 'page');
+        document.getElementById('page-label').textContent = a.textContent;
+      } else a.removeAttribute('aria-current');
     });
-    document.body.classList.remove('menu-open');
-    document.getElementById('menu').setAttribute('aria-expanded', 'false');
+    if (small.matches) setMenu(false);
     window.scrollTo(0, 0);
   }
 
@@ -47,9 +48,33 @@
     location.reload();
   }));
 
-  document.getElementById('menu').addEventListener('click', (event) => {
-    event.currentTarget.setAttribute('aria-expanded', String(document.body.classList.toggle('menu-open')));
+  /*
+   * The menu: on wide screens it can be hidden (remembered); on small
+   * screens it slides in over the page and closes after a choice.
+   */
+  const small = window.matchMedia('(max-width: 820px)');
+  const button = document.getElementById('menu');
+  const scrim = document.getElementById('scrim');
+  function setMenu(open) {
+    const cls = small.matches ? 'menu-open' : 'menu-closed';
+    document.body.classList.toggle(cls, small.matches ? open : !open);
+    if (!small.matches) store.set('menuClosed', !open);
+    scrim.hidden = !(small.matches && open);
+    button.setAttribute('aria-expanded', String(open));
+    button.setAttribute('aria-label', open ? 'Hide menu' : 'Show menu');
+    button.title = open ? 'Hide menu' : 'Show menu';
+  }
+  const isOpen = () => (small.matches ? document.body.classList.contains('menu-open') : !document.body.classList.contains('menu-closed'));
+  button.addEventListener('click', () => setMenu(!isOpen()));
+  scrim.addEventListener('click', () => setMenu(false));
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && small.matches && isOpen()) setMenu(false); });
+  small.addEventListener('change', () => {
+    document.body.classList.remove('menu-open');
+    document.body.classList.toggle('menu-closed', !small.matches && store.get('menuClosed', false));
+    setMenu(!small.matches && !store.get('menuClosed', false));
   });
+  if (small.matches) setMenu(false);
+  else setMenu(!store.get('menuClosed', false));
 
   HT.studio.init();
   window.addEventListener('hashchange', route);
