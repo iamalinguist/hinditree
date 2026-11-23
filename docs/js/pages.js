@@ -394,12 +394,20 @@ VP -> PP* NP? NP? V TENSE?`;
       ['How do I present in class?', 'Choose Present. Use Start build and then the arrow keys, Space or a slide clicker. Blank labels turns the tree into a question.'],
       ['Why is a correct sentence rejected?', 'The word may be missing from the lexicon, or the verb may need another class. Correct it under Word categories. The parser is a teaching grammar and does not cover all of Hindi.'],
       ['Does an accepted sentence mean a grammatical one?', 'No. The rules check constituent structure. Agreement in gender, number and person is not checked, and case is checked only for common errors with ने.'],
-      ['Where is my work kept?', 'In your browser. Nothing is sent to a server. A share link contains the tree in the link itself.'],
+      ['Where is my work kept?', 'In your browser; there is no account or server. A share link contains the tree in the link itself. The only thing sent elsewhere is the English sentence you choose to Convert, which goes to the MyMemory translation service.'],
+      ['What can each method not handle yet?', [
+        'All methods: agreement in gender, number and person is not checked. Methods 1, 3 and 4 take sentences of up to 40 words and guess the category of unknown words from their form, so these may need correcting. Anything a method cannot parse can be drawn by hand with Draw by hand.',
+        'Method 1, Thomas adapted to Hindi: free word order beyond a fronted object (आम को राम ने खाया), causatives (करवाना), ellipsis and gapping, and questions or relative clauses that reach into a lower clause. Case is checked only for common mistakes with ने.',
+        'Method 2, toy fragment: by design it covers only simple clauses: masculine and feminine nouns, transitive and intransitive verbs with -ता है / -ती है, case-marked objects, sentence coordination and sentential negation. There are no pronouns, adjectives, determiners, adverbs, postpositional phrases or embedded clauses, and it gives one tree per sentence.',
+        'Method 3, My Grammar: it handles exactly what your rules describe and nothing more. Functions appear only where you mark them (=S, =dO …), and a word can only take the categories your rules use.',
+        'Method 4, X-bar theory: fronted (scrambled) objects, relative clauses on objects (जो किताब मैंने पढ़ी), PRO subjects of non-finite clauses, and VP-shell analyses of ditransitives. There is no visible C in relative clauses, and P marks only the lexical verb. The chapter-by-chapter notation applies to Method 1 only.',
+      ]],
       ['Does it work without the internet?', 'Yes, except Convert, which needs an online translation service. Download the site folder and open index.html.'],
       ['What technology does the Hindi tree app use behind the scenes?', 'Everything runs in your browser; there is no server, database or account. The site is plain HTML, CSS and JavaScript without frameworks, hosted on GitHub Pages. A lexicon of Hindi words and verb forms suggests a category for each word. A chart parser (a ranked form of the CKY algorithm) then finds every tree that the chosen grammar allows and lists the most likely first. Trees are drawn as SVG, which is also how PNG, JPEG and LaTeX exports are produced. When you choose Convert, the English sentence is sent to the free MyMemory translation service, so this one feature needs the internet. The interface font, DM Mono, is loaded from Google Fonts. Saved examples stay in your browser storage.'],
     ];
     el.innerHTML = `
-      <section class="card"><h2>Questions</h2>${faq.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>
+      <section class="card"><h2>Questions</h2>${faq.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary>${Array.isArray(a)
+        ? `<ul>${a.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : `<p>${esc(a)}</p>`}</details>`).join('')}</section>
       <section class="card"><h2>About</h2>
         <p>HindiTree is an open-access tool for creating and teaching constituency trees for Hindi.</p>
         <ul>
