@@ -3,32 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://api.mymemory.translated.net; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="description" content="Draw, parse and teach Hindi syntax trees, following Linda Thomas's Beginning Syntax.">
   <title>Hindi Tree: syntax trees for Hindi</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <header class="mobile-bar">
-    <a class="brand-small" href="#studio" data-reload>hindi tree</a>
-    <button id="menu" class="btn small" aria-controls="sidebar" aria-expanded="false">Menu</button>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#studio" data-reload>hindi tree<span>open access hindi parser</span></a>
+      <button id="menu" class="btn small menu-button" aria-controls="nav" aria-expanded="false">Menu</button>
+      <nav id="nav" class="nav" aria-label="Main">
+        <a href="#studio" data-page="studio">Tree Studio</a>
+        <a href="#course" data-page="course">Course</a>
+        <a href="#practice" data-page="practice">Practice</a>
+        <a href="#mine" data-page="mine">My examples</a>
+        <a href="#rules" data-page="rules">Syntax rules</a>
+        <a href="#adaptation" data-page="adaptation">English to Hindi</a>
+        <a href="#abbreviations" data-page="abbreviations">Abbreviations</a>
+        <a href="#about" data-page="about">Help</a>
+      </nav>
+    </div>
   </header>
-
-  <aside id="sidebar" class="sidebar">
-    <a class="brand" href="#studio" data-reload>hindi tree<span>open access hindi parser</span></a>
-    <nav class="nav" aria-label="Main">
-      <a href="#studio" data-page="studio">Tree Studio</a>
-      <a href="#course" data-page="course">Course</a>
-      <a href="#practice" data-page="practice">Practice</a>
-      <a href="#mine" data-page="mine">My examples</a>
-      <hr>
-      <a href="#rules" data-page="rules">Syntax rules</a>
-      <a href="#adaptation" data-page="adaptation">English to Hindi</a>
-      <a href="#abbreviations" data-page="abbreviations">Abbreviations</a>
-      <a href="#about" data-page="about">Help and about</a>
-    </nav>
-  </aside>
 
   <main id="main"><noscript>HindiTree needs JavaScript to draw trees.</noscript></main>
 
@@ -37,6 +37,7 @@
   <div id="print-root"></div>
 
   <!-- Classic scripts rather than modules, so the app also runs from file:// in a classroom. -->
+  <!-- Fonts and the Convert button use the internet; everything else works offline. -->
   <script src="js/util.js"></script>
   <script src="js/lexicon.js"></script>
   <script src="js/tagger.js"></script>
@@ -45,7 +46,6 @@
   <script src="js/tree.js"></script>
   <script src="js/legacy.js"></script>
   <script src="js/lessons.js"></script>
-  <script src="js/translate.js"></script>
   <script src="js/render.js"></script>
   <script src="js/studio.js"></script>
   <script src="js/pages.js"></script>

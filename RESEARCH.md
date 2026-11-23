@@ -93,19 +93,17 @@ No code was copied.
 
 ## 6. Verification
 
-- `node tests/run.js` checks all 83 examples at all six levels, unseen sentences, notation round-trips, input validation, Method 2 and the English converter.
+- `node tests/run.js` checks all 83 examples at all six levels, unseen sentences, notation round-trips, input validation and Method 2.
 - On 30 fresh sentences that played no part in writing the grammar, 28 received an acceptable first analysis. The two failures were missing verbs, added afterwards. This is a small sample chosen by the developer, not a formal evaluation.
 - The trees and Hindi examples have **not been reviewed by a second linguist or native-speaker teacher**. Read each chapter's examples before teaching it.
 
 ## 7. English to Hindi conversion
 
-The Convert button in the Tree Studio is a rule-based converter (`docs/js/translate.js`), not machine translation. Using an online service would have needed an API key, would not work offline, and would send students' sentences to a third party.
+The Convert button in the Tree Studio uses the free MyMemory service (`api.mymemory.translated.net`, no key), at the owner's request, and has no offline fallback. It is disabled when the browser is offline.
 
-It covers simple clauses: subject–object–verb order, ने and को, postpositions, tense, aspect, modals, passive, negation, agreement (including honorific plurals and अपना), possession with के पास, existential *there is*, यह/कि clauses, जो relative clauses, -कर and -ते हुए clauses, and *if/when/because*.
+MyMemory returns both machine translation and crowd-sourced translation memory. In testing, its top-ranked answer for *The children were playing in the garden* was a memory entry for a different sentence, with *not* added: छात्र बगीचे में नहीं खेल रहे हैं. The app therefore uses the machine translation, or a memory entry for exactly the same sentence, and ignores near matches.
 
-- Converting the English translations of the 83 course examples reproduced the course's Hindi word for word in 78 cases. All 83 outputs could be parsed.
-- On 30 unseen English sentences written by the developer, all 30 outputs were parseable. On review, a few needed small changes: the verb's tense or aspect, a missing honorific, or a stylistic word order.
-- Not handled: object and adverb questions (*what, where, why*), object relative clauses (*the dress that she wore*), and most idioms. These are declined, not guessed.
+Machine translation may still change the construction. For example *The thief was caught by the police* came back as the active पुलिस ने चोर को पकड़ लिया. The app says so whenever it converts.
 
 ## 8. Known limits
 

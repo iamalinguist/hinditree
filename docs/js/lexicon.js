@@ -16,8 +16,6 @@
 
   const words = new Map(); // key -> [{tag, gloss}]
   const verbs = new Map(); // key -> [{classes, kind, gloss}]
-  const citations = []; // citation forms: {w, tag, gloss}
-  const verbData = []; // {stem, gloss, classes, perfBase}
 
   function add(word, tag, gloss) {
     const k = key(word);
@@ -25,10 +23,7 @@
     if (!list.some((e) => e.tag === tag)) list.push({ tag, gloss: gloss || '' });
     words.set(k, list);
   }
-  const addAll = (tag, text) => entries(text).forEach(([w, g]) => {
-    add(w, tag, g);
-    citations.push({ w, tag, gloss: g || '' });
-  });
+  const addAll = (tag, text) => entries(text).forEach(([w, g]) => add(w, tag, g));
 
   // Closed classes come first: their reading is preferred for homonyms.
   addAll('CASE.erg', 'ने:ERG');
@@ -93,7 +88,6 @@
     रोचक:interesting दो:two तीन:three चार:four पाँच:five छह:six सात:seven आठ:eight दस:ten पहला:first दूसरा:second`)
     .forEach(([w, g]) => {
       add(w, 'A', g);
-      citations.push({ w, tag: 'A', gloss: g });
       if (/ा$/.test(w)) ['े', 'ी'].forEach((end) => add(w.slice(0, -1) + end, 'A', g));
     });
 
@@ -126,7 +120,6 @@
     सरकार:government समस्या:problem उत्तर:answer गिटार:guitar तबला:tabla`)
     .forEach(([w, g]) => {
       add(w, 'N', g);
-      citations.push({ w, tag: 'N', gloss: g });
       if (w === 'घर') add(w, 'Adv', 'home'); // bare goal: घर जाना
       const base = w.slice(0, -1);
       let forms;
@@ -176,7 +169,6 @@
   }
 
   entries(verbList).forEach(([stem, gloss, classes, perfBase]) => {
-    verbData.push({ stem, gloss, classes: classes.split(','), perfBase: perfBase || '' });
     const v = { stem, gloss, classes: classes.split(',') };
     const each = (kind, forms) => forms.forEach((f) => addVerb(f, v, kind));
     each('stem', [stem]);
@@ -231,6 +223,5 @@
     word: (w) => words.get(key(w)) || [],
     verb: (w) => verbs.get(key(w)) || [],
     copula: (w) => copula.get(key(w)),
-    citations, verbData,
   };
 })(globalThis.HT = globalThis.HT || {});

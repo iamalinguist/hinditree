@@ -481,7 +481,9 @@
           <input id="sentence" class="sentence" lang="hi" maxlength="600" value="${esc(s.text)}" placeholder="राम ने सीता को किताब दी" autocomplete="off" spellcheck="false"></label>
         <div class="grow translation"><label for="english">English translation (optional)</label>
           <div class="with-button"><input id="english" maxlength="600" value="${esc(s.english)}" placeholder="Ram gave Sita a book" autocomplete="off">
-          <button class="btn" data-act="convert" title="Write the Hindi sentence from the English">Convert</button></div></div>
+          <button class="btn" data-act="convert" ${navigator.onLine && !s.converting ? '' : 'disabled'}
+            title="${navigator.onLine ? 'Translate with the MyMemory online service' : 'Needs an internet connection'}">${s.converting ? 'Converting…' : 'Convert'}</button></div>
+          ${navigator.onLine ? '' : '<span class="hint">Convert needs an internet connection.</span>'}</div>
         <div class="row">
           <button class="btn primary" data-act="analyse">Analyse</button>
           <button class="btn" data-act="hand">Draw by hand</button>
@@ -562,24 +564,53 @@
     }
   }
 
-  /** Writes the Hindi sentence from the English one, then analyses it. */
-  function convert() {
+  /*
+   * Translates the English sentence online with MyMemory (no key needed),
+   * then analyses the Hindi. There is deliberately no offline fallback.
+   */
+  async function convert() {
     const english = s.english.trim();
     if (!english) return toast('Write an English sentence first.');
-    const result = HT.translate(english);
-    if (!result.hindi || !/[ऀ-ॿ]/.test(result.hindi)) {
-      return toast('This sentence is beyond the built-in rules. Please type the Hindi yourself.');
+    if (!navigator.onLine) return toast('Convert needs an internet connection.');
+    if (s.converting) return undefined;
+    s.converting = true;
+    render();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 12000);
+    try {
+      const url = `https://api.mymemory.translated.net/get?langpair=en%7Chi&q=${encodeURIComponent(english.slice(0, 450))}`;
+      const response = await fetch(url, { signal: controller.signal, credentials: 'omit', referrerPolicy: 'no-referrer' });
+      const data = await response.json();
+      if (data.quotaFinished || Number(data.responseStatus) === 429) throw new Error('The free translation limit for today has been reached. Please type the Hindi yourself.');
+      // MyMemory mixes machine translation with crowd-sourced memory, whose best
+      // match may be a different sentence (for example with "not" added). Use
+      // the machine translation, or a memory entry for exactly this sentence.
+      const same = (a) => String(a || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === english.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const matches = Array.isArray(data.matches) ? data.matches : [];
+      const chosen = matches.find((m) => m['created-by'] === 'MT!') || matches.find((m) => same(m.segment))
+        || (matches.length ? null : data.responseData);
+      // The service returns HTML entities in some answers.
+      const area = document.createElement('textarea');
+      area.innerHTML = String((chosen && (chosen.translation || chosen.translatedText)) || '');
+      const hindi = area.value.replace(/\s+/g, ' ').trim();
+      if (Number(data.responseStatus) !== 200 || !/[\u0900-\u097f]/.test(hindi)) throw new Error('No Hindi translation came back. Please type the Hindi yourself.');
+      if (s.method !== 'thomas') setMethod('thomas');
+      s.text = hindi;
+      analyse();
+      s.note = 'Translated online by the MyMemory service. Machine translation can be wrong: check the Hindi before you use it.';
+    } catch (error) {
+      toast(error.name === 'AbortError' ? 'The translation service did not answer. Try again.'
+        : error instanceof TypeError ? 'Could not reach the translation service. Check the internet connection.' : error.message);
+    } finally {
+      clearTimeout(timer);
+      s.converting = false;
+      render();
     }
-    if (s.method !== 'thomas') setMethod('thomas');
-    s.text = result.hindi;
-    analyse();
-    const missing = result.unknown.length ? ` These words were not converted and are left in English: ${result.unknown.join(', ')}.` : '';
-    s.note = `Converted by HindiTree's built-in rules for simple sentences, without an online service. Check the Hindi before you use it.${missing}`;
     return undefined;
   }
 
   const actions = {
-    convert,
+    convert() { convert(); return false; },
     analyse,
     hand: drawByHand,
     parse() { remember(); s.word = null; parse(); },
@@ -739,7 +770,6 @@
     const el = event.target;
     if (el.id === 'english' && event.key === 'Enter' && !event.isComposing) {
       convert();
-      render();
       return;
     }
     if (el.id === 'sentence' && event.key === 'Enter' && !event.isComposing) {
@@ -797,6 +827,8 @@
       else requestAnimationFrame(() => paint());
     });
     window.addEventListener('resize', () => { if (host && host.isConnected) paint(); });
+    // Convert is only available online.
+    for (const type of ['online', 'offline']) window.addEventListener(type, () => { if (host && host.isConnected) render(); });
   }
 
   HT.studio = { FUNCTIONS, init, mount, loadExample, loadExercise, loadSaved, setMethod, state: s };

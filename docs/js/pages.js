@@ -153,10 +153,10 @@ VP -> PP* NP? NP? V TENSE?`;
     const toy = HT.legacy.methods.method2;
     const toyRules = `${Object.entries(toy.grammar).map(([lhs, list]) => `${lhs} → ${list.map((r) => r.join(' ')).join(' | ')}`).join('\n')}\nroots: ${toy.roots.join(' ')}`;
     const current = HT.studio.state.method;
-    const card = (id, title, summary, body, use = 'Use this method') => `<details class="card method" data-method="${id}">
+    const card = (id, title, summary, body, use = 'Use this method', buttons = '') => `<details class="card method" data-method="${id}">
       <summary><span class="method-title">${esc(title)}</span>${id === current ? '<span class="pill">In use</span>' : ''}
         <span class="method-summary">${esc(summary)}</span></summary>
-      <div class="method-body">${body}<div class="row"><button class="btn primary" data-use="${id}">${esc(use)}</button></div></div></details>`;
+      <div class="method-body">${body}<div class="row method-actions">${buttons}<button class="btn primary" data-use="${id}">${esc(use)}</button></div></div></details>`;
 
     el.innerHTML = `
       <header class="page-head"><h1>Syntax rules</h1>
@@ -176,9 +176,9 @@ VP -> PP* NP? NP? V TENSE?`;
       ${card('custom', 'Method 3: My Grammar', 'Write rules for any textbook or analysis.', `
         <p>Word categories are the symbols that never appear left of an arrow.</p>
         <textarea id="grammar-text" class="mono" rows="14" spellcheck="false" aria-label="My grammar">${esc(store.get('grammar', STARTER_GRAMMAR))}</textarea>
-        <p id="grammar-status" class="hint" role="status"></p>
-        <div class="row"><button class="btn" id="grammar-save">Save</button><button class="btn" id="grammar-reset">Reset to starter grammar</button></div>`,
-      'Save and use this method')}`;
+        <p id="grammar-status" class="hint" role="status"></p>`,
+      'Save and use this method',
+      '<button class="btn" id="grammar-reset">Reset to starter grammar</button><button class="btn" id="grammar-save">Save</button>')}`;
 
     const area = el.querySelector('#grammar-text');
     const status = el.querySelector('#grammar-status');
@@ -364,8 +364,8 @@ VP -> PP* NP? NP? V TENSE?`;
       ['Why is a correct sentence rejected?', 'The word may be missing from the lexicon, or the verb may need another class. Correct it under Word categories. The parser is a teaching grammar and does not cover all of Hindi.'],
       ['Does an accepted sentence mean a grammatical one?', 'No. The rules check constituent structure. Agreement in gender, number and person is not checked, and case is checked only for common errors with ने.'],
       ['Where is my work kept?', 'In your browser. Nothing is sent to a server. A share link contains the tree in the link itself.'],
-      ['Does it work without the internet?', 'Yes. Download the site folder and open index.html.'],
-      ['What technology does the Hindi tree app use behind the scenes?', 'Everything runs in your browser; there is no server, database or account. The site is plain HTML, CSS and JavaScript without frameworks, hosted on GitHub Pages. A lexicon of Hindi words and verb forms suggests a category for each word. A chart parser (a ranked form of the CKY algorithm) then finds every tree that the chosen grammar allows and lists the most likely first. Trees are drawn as SVG, which is also how PNG, JPEG and LaTeX exports are produced. English sentences are converted to Hindi by built-in rules for simple clauses, without an online translation service. Saved examples stay in your browser storage.'],
+      ['Does it work without the internet?', 'Yes, except Convert, which needs an online translation service. Download the site folder and open index.html.'],
+      ['What technology does the Hindi tree app use behind the scenes?', 'Everything runs in your browser; there is no server, database or account. The site is plain HTML, CSS and JavaScript without frameworks, hosted on GitHub Pages. A lexicon of Hindi words and verb forms suggests a category for each word. A chart parser (a ranked form of the CKY algorithm) then finds every tree that the chosen grammar allows and lists the most likely first. Trees are drawn as SVG, which is also how PNG, JPEG and LaTeX exports are produced. When you choose Convert, the English sentence is sent to the free MyMemory translation service, so this one feature needs the internet. The interface font, DM Mono, is loaded from Google Fonts. Saved examples stay in your browser storage.'],
     ];
     el.innerHTML = `
       <header class="page-head"><h1>Help and about</h1></header>

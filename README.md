@@ -42,7 +42,7 @@ Do not run the old `npm run deploy` afterwards. It writes the earlier app to `gh
 
 ## Running it on your computer
 
-Open `docs/index.html` in a browser. It works without an internet connection.
+Open `docs/index.html` in a browser. Everything except Convert works without an internet connection.
 
 ## Extending it
 
@@ -52,7 +52,6 @@ Open `docs/index.html` in a browser. It works without an internet connection.
 | Examples and lesson text | `docs/js/lessons.js`: one line per example, for example `['S:राम / P:सोया', 'Ram slept']` |
 | Grammar rules | `docs/js/grammar.js` |
 | How words get categories | `docs/js/tagger.js` |
-| English to Hindi conversion | `docs/js/translate.js` |
 | Tree appearance | `docs/js/render.js` |
 
 After a change, run the tests (Node.js 18 or later):
@@ -63,7 +62,9 @@ node tests/run.js
 
 Every course example is tested, so a rule change that breaks an example is reported by name.
 
-The **Convert** button uses built-in rules for simple clauses (no online translation service), so it works offline and sends nothing anywhere. It handles the kinds of sentences in the course. Words it does not know are left in English and listed, and sentences beyond its rules (for example *What did you eat?*) are declined rather than guessed. Check its Hindi before teaching with it.
+The **Convert** button sends the English sentence to the free [MyMemory](https://mymemory.translated.net/) translation service and is disabled when there is no internet connection. Anonymous use is limited to roughly 5,000 characters a day per connection. Machine translation can be wrong, so check the Hindi before teaching with it.
+
+The interface font, DM Mono, is loaded from Google Fonts. Without the internet the app falls back to a system font, and everything except Convert still works.
 
 When adding a script file, also add it to `docs/index.html`. The scripts are deliberately not ES modules, because modules do not load when the page is opened from disk.
 
