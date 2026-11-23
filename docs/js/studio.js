@@ -475,7 +475,6 @@
     const bracketsOpen = !!host.querySelector('#bracket-box[open]');
     host.classList.toggle('presenting', s.presenting);
     host.innerHTML = `
-      <header class="page-head"><h1>Tree Studio</h1></header>
       <section class="card compose">
         <label class="grow">Hindi sentence
           <input id="sentence" class="sentence" lang="hi" maxlength="600" value="${esc(s.text)}" placeholder="राम ने सीता को किताब दी" autocomplete="off" spellcheck="false"></label>

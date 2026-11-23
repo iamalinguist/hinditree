@@ -44,7 +44,7 @@ textarea { width: 100%; resize: vertical; }
 .topbar { position: sticky; top: 0; z-index: 6; margin-top: 14px; display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 0 26px 0 14px; background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .menu-button { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid transparent; border-radius: 8px; background: none; color: var(--ink); cursor: pointer; }
 .menu-button:hover { background: var(--bg); border-color: var(--line); color: var(--brand); }
-.page-label { font: 500 14px var(--sans); color: var(--ink); letter-spacing: .02em; }
+.page-label { margin: 0; font: 500 14px var(--sans); color: var(--ink); letter-spacing: .02em; }
 .scrim { position: fixed; inset: 0; z-index: 7; background: #24213a55; }
 main { padding: 22px 26px 60px; }
 

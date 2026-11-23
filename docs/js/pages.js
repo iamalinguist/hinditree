@@ -31,8 +31,6 @@ VP -> PP* NP? NP? V TENSE?`;
   function course(el, param) {
     const ch = HT.lessons.chapters.find((c) => String(c.n) === param) || HT.lessons.chapters[0];
     el.innerHTML = `
-      <header class="page-head"><h1>Course</h1>
-        <p>Follows the six chapters of Linda Thomas, <cite>Beginning Syntax</cite> (1993), with original Hindi examples.</p></header>
       <nav class="chapters" aria-label="Chapters">${HT.lessons.chapters.map((c) => `<a href="#course/${c.n}" class="${c === ch ? 'on' : ''}" ${c === ch ? 'aria-current="page"' : ''}>
         <b>${c.n}</b><span>${esc(c.title)}</span></a>`).join('')}</nav>
       <section class="card lesson">
@@ -98,7 +96,6 @@ VP -> PP* NP? NP? V TENSE?`;
       : [{ text: ex.key.find((k) => k.fn === 'P').text, answer: verbClass(ex), choices: Object.entries(CLASS_NAMES) }];
 
     el.innerHTML = `
-      <header class="page-head"><h1>Practice</h1></header>
       <section class="card">
         <div class="row">
           <label class="inline">Chapter <select id="quiz-chapter"><option value="0">All</option>${HT.lessons.chapters.map((c) =>
@@ -159,8 +156,7 @@ VP -> PP* NP? NP? V TENSE?`;
       <div class="method-body">${body}<div class="row method-actions">${buttons}<button class="btn primary" data-use="${id}">${esc(use)}</button></div></div></details>`;
 
     el.innerHTML = `
-      <header class="page-head"><h1>Syntax rules</h1>
-        <p>Click a method to see its rules. The Tree Studio uses the method you choose here.</p></header>
+      <header class="page-head"><p>Click a method to see its rules. The Tree Studio uses the method you choose here.</p></header>
       ${card('thomas', 'Method 1: Thomas, adapted to Hindi', 'The rules of the six chapters of Beginning Syntax, adapted to Hindi.', `
         <p>Every function (S, P, dO, iO, sC, oC, pO, A) is part of a rule or follows from position in the tree.</p>
         <div class="lesson-grid">${HT.lessons.chapters.map((c) => `<div><h3>${c.n}. ${esc(c.title)}</h3>
@@ -255,7 +251,7 @@ VP -> PP* NP? NP? V TENSE?`;
   ];
 
   function abbreviations(el) {
-    el.innerHTML = `<header class="page-head"><h1>Abbreviations</h1></header>
+    el.innerHTML = `
       <div class="glossary">${ABBREVIATIONS.map(([title, list]) => `<section class="card"><h2>${esc(title)}</h2><table>${list.map(([short, en, hi]) =>
         `<tr><th scope="row">${esc(short)}</th><td>${esc(en)}<br><span lang="hi">${esc(hi)}</span></td></tr>`).join('')}</table></section>`).join('')}</div>`;
   }
@@ -284,8 +280,7 @@ VP -> PP* NP? NP? V TENSE?`;
 
   function adaptation(el) {
     el.innerHTML = `
-      <header class="page-head"><h1>From English to Hindi</h1>
-        <p>Where Thomas’s English rules do not fit Hindi, and the decision this app makes. These are teaching decisions, and several have respectable alternatives.</p></header>
+      <header class="page-head"><p>Where Thomas’s English rules do not fit Hindi, and the decision this app makes. These are teaching decisions, and several have respectable alternatives.</p></header>
       <section class="card table-scroll"><table class="adaptation">
         <tr><th>Topic</th><th>Thomas, English</th><th>This app, Hindi</th><th>Example</th></tr>
         ${ADAPTATION.map(([topic, en, hi, ex]) => `<tr><th scope="row">${esc(topic)}</th><td>${esc(en)}</td><td>${esc(hi)}</td><td lang="hi">${esc(ex)}</td></tr>`).join('')}
@@ -304,8 +299,7 @@ VP -> PP* NP? NP? V TENSE?`;
   function mine(el) {
     const list = store.get('examples', []);
     el.innerHTML = `
-      <header class="page-head"><h1>My examples</h1>
-        <p>Saved only in this browser. Export the collection to back it up or share it with students.</p></header>
+      <header class="page-head"><p>Saved only in this browser. Export the collection to back it up or share it with students.</p></header>
       <div class="row">
         <button class="btn" id="mine-export" ${list.length ? '' : 'disabled'}>Export collection</button>
         <label class="btn file">Import collection<input id="mine-import" type="file" accept=".json,application/json"></label>
@@ -368,7 +362,6 @@ VP -> PP* NP? NP? V TENSE?`;
       ['What technology does the Hindi tree app use behind the scenes?', 'Everything runs in your browser; there is no server, database or account. The site is plain HTML, CSS and JavaScript without frameworks, hosted on GitHub Pages. A lexicon of Hindi words and verb forms suggests a category for each word. A chart parser (a ranked form of the CKY algorithm) then finds every tree that the chosen grammar allows and lists the most likely first. Trees are drawn as SVG, which is also how PNG, JPEG and LaTeX exports are produced. When you choose Convert, the English sentence is sent to the free MyMemory translation service, so this one feature needs the internet. The interface font, DM Mono, is loaded from Google Fonts. Saved examples stay in your browser storage.'],
     ];
     el.innerHTML = `
-      <header class="page-head"><h1>Help and about</h1></header>
       <section class="card"><h2>Questions</h2>${faq.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('')}</section>
       <section class="card"><h2>About</h2>
         <p>HindiTree is an open-access tool for creating and teaching constituency trees for Hindi.</p>
