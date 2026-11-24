@@ -111,7 +111,11 @@
 
   /** The first Method 1 tree for a sentence, for the kāraka view. */
   function treeFor(text) {
-    return HT.parser.parse(tokensFor(text, 'thomas'), grammarFor('thomas')).trees[0] || null;
+    return treesFor(text)[0] || null;
+  }
+  /** All Method 1 readings of a sentence, best first. */
+  function treesFor(text) {
+    return HT.parser.parse(tokensFor(text, 'thomas'), grammarFor('thomas')).trees;
   }
 
   /** Opens a sentence in Make Structure with a given method. */
@@ -922,5 +926,5 @@ ${body}`;
     for (const type of ['online', 'offline']) window.addEventListener(type, () => { if (host && host.isConnected) render(); });
   }
 
-  HT.studio = { FUNCTIONS, init, mount, loadExample, loadExercise, loadSaved, loadSentence, predict, treeFor, setMethod, state: s };
+  HT.studio = { FUNCTIONS, init, mount, loadExample, loadExercise, loadSaved, loadSentence, predict, treeFor, treesFor, setMethod, state: s };
 })(globalThis.HT = globalThis.HT || {});

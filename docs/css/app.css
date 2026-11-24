@@ -73,6 +73,16 @@ table.marks td { font-weight: 400 !important; font-family: var(--sans) !importan
 table.marks td[lang] { font-family: var(--deva) !important; }
 .corpus-list td:first-child { width: 28px; }
 .flow-list { padding: 8px 14px; }
+.wc-table td, .wc-ref td { vertical-align: top; font-weight: 400 !important; font-family: var(--sans) !important; }
+.wc-table td[lang], .wc-ref td[lang] { font-family: var(--deva) !important; font-size: 15px; }
+.wc-ref td b { font-weight: 700; }
+.wc-sentence { font-size: 24px; margin: 6px 0 0; }
+.wc-sentence mark { background: #fde9b0; border-radius: 4px; padding: 0 3px; }
+.wc-choices { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.wc-choices .btn span { margin-left: 6px; color: var(--muted); }
+.wc-choices .btn.right { background: #ebf7ec; border-color: #8cc492; opacity: 1; }
+.wc-choices .btn.wrong { background: #fff1f2; border-color: #d9778a; opacity: 1; }
+#wc-text { flex: 1; min-width: 0; font: 17px var(--deva); }
 .flow-heading { margin: 18px 0 4px; }
 .flow-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .flow-row:last-child { border-bottom: 0; }

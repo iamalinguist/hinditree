@@ -169,6 +169,22 @@ test('kāraka: every course sentence gets relations', () => {
   }
 });
 
+// Word categories tab
+require(path.join(__dirname, '..', 'docs', 'js', 'wordclass.js'));
+test('word categories: coarse classes and clues', () => {
+  const W = globalThis.HT.wordclass;
+  assert.equal(W.coarse('V.trans_inf'), 'Verb');
+  assert.equal(W.coarse('PRO.erg'), 'Pronoun');
+  assert.equal(W.coarse('gen'), 'Case marker');
+  assert.equal(W.coarse('TENSE'), 'Auxiliary');
+  assert.match(W.clue({ w: 'खाता', g: '', tags: ['V.trans'] }), /habitual/);
+  assert.match(W.clue({ w: 'लड़कों', g: 'boy.INFL', tags: ['N'] }), /inflected/);
+});
+test('obligation: मुझे खाना खाना है has a noun object and an infinitive verb', () => {
+  const t = parser.parse(tagger.tag('मुझे खाना खाना है'), compiled).trees[0];
+  assert.equal(tree.functions(t).map((u) => `${u.fn}:${u.text}`).join(' / '), 'S:मुझे / dO:खाना / P:खाना है');
+});
+
 // Hindi Lab: judgement marks
 global.localStorage = { getItem: () => null, setItem: () => {} };
 for (const file of ['studio', 'pages', 'lab']) require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));

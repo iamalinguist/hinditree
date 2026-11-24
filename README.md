@@ -68,6 +68,8 @@ The **Convert** button sends the English sentence to the free [MyMemory](https:/
 
 The interface font, DM Mono, is loaded from Google Fonts. Without the internet the app falls back to a system font, and everything except Convert still works.
 
+When releasing, change the `?v=` date on the script and stylesheet links in `docs/index.html`, so returning visitors load all the new files together instead of a cached mix.
+
 When adding a script file, also add it to `docs/index.html`. The scripts are deliberately not ES modules, because modules do not load when the page is opened from disk.
 
 ## Credits

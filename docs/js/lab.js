@@ -46,7 +46,7 @@ Problems and counterexamples:
 `,
   };
 
-  const TABS = [['workbench', 'Workbench'], ['flow', 'Flow'], ['corpus', 'Corpus'], ['judgements', 'Judgements'],
+  const TABS = [['workbench', 'Workbench'], ['flow', 'Flow'], ['words', 'Word categories'], ['corpus', 'Corpus'], ['judgements', 'Judgements'],
     ['tests', 'Constituency tests'], ['argument', 'Building an argument']];
 
   const today = () => {
@@ -140,6 +140,7 @@ Problems and counterexamples:
     if (data.tab === 'workbench') workbench(panel, data, refresh);
     else if (data.tab === 'corpus') corpus(panel, data, refresh);
     else if (data.tab === 'flow') flow(panel, data, refresh);
+    else if (data.tab === 'words') HT.wordclass.render(panel);
     else lesson(panel, data, LESSONS[data.tab]);
     return undefined;
   }

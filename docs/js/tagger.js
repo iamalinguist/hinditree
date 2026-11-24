@@ -144,7 +144,10 @@
         const auxNext = continuesVerb(next) || (nextReal && /^(चाहिए|पड़)/.test(nextReal));
         const copNext = nextReal && L.copula(nextReal) && (kind === 'hab' || kind === 'perf');
         const nominalOnly = asLexical.every((t) => /^(N|A|Adv)$/.test(t));
-        verbFirst = last || auxNext || (copNext && !(nominalOnly && kind === 'perf'));
+        // Obligation: मुझे खाना खाना है (dative subject + infinitive + है)
+        const dative = info.slice(0, i).some((x) => x.tags[0] === 'PRO.dat' || x.tags[0] === 'CASE.dat');
+        const obligation = kind === 'inf' && dative && nextReal && L.copula(nextReal);
+        verbFirst = last || auxNext || obligation || (copNext && !(nominalOnly && kind === 'perf'));
       }
 
       if (verbFirst) return set([...asVerb, ...asLexical], gloss, kind);
