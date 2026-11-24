@@ -233,11 +233,23 @@ test('demonstratives: DET before a noun, a third-person pronoun alone', () => {
 
 // Hindi Lab: judgement marks
 global.localStorage = { getItem: () => null, setItem: () => {} };
-for (const file of ['studio', 'pages', 'lab']) require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));
+for (const file of ['studio', 'pages', 'whatzit', 'lab']) require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));
 test('Lab: judgement marks and headings are read', () => {
   const rows = globalThis.HT.labLines('# Heading\n#पत्थर ने रोटी खाई\n% मैंने बोला\n?? क\n* ख // note\nOK ग');
   assert.deepEqual(rows.map((r) => r.heading || `${r.judgement}${r.sentence}`), ['Heading', '#पत्थर ने रोटी खाई', '%मैंने बोला', '??क', '*ख', '✓ग']);
   assert.equal(rows[4].comment, 'note');
+});
+test('Whatzit?: stations are complete and their evidence reads as Lab lines', () => {
+  const { STATIONS, PHASES } = globalThis.HT.whatzit;
+  assert.equal(new Set(STATIONS.map((x) => x.id)).size, STATIONS.length);
+  for (const x of STATIONS) {
+    assert.ok(PHASES.some((p) => p.id === x.phase), x.id);
+    assert.equal(x.hypotheses.length, 2, x.id);
+    assert.ok(x.question && x.argument.length && x.readings.length && x.output, x.id);
+    const rows = globalThis.HT.labLines(x.evidence);
+    assert.ok(!x.evidence || rows.some((r) => r.sentence), x.id);
+    rows.filter((r) => r.sentence).forEach((r) => assert.match(r.sentence, /^[ऀ-ॿ]/, `${x.id}: ${r.sentence}`));
+  }
 });
 
 console.log(`${passed} passed, ${failed} failed`);

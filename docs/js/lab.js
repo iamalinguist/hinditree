@@ -8,6 +8,7 @@
  *   Judgements, Constituency tests, Building an argument
  *                 short lessons on linguistic method, with Hindi examples
  *                 that can be added to the current data set
+ *   Whatzit?      a research path through questions on Hindi syntax (whatzit.js)
  *
  * The password only marks the Lab as a space for invited students. It is
  * checked in the browser, so it does not protect anything.
@@ -47,7 +48,7 @@ Problems and counterexamples:
   };
 
   const TABS = [['workbench', 'Workbench'], ['flow', 'Flow'], ['words', 'Word categories'], ['corpus', 'Corpus'], ['judgements', 'Judgements'],
-    ['tests', 'Constituency tests'], ['argument', 'Building an argument']];
+    ['tests', 'Constituency tests'], ['argument', 'Building an argument'], ['whatzit', 'Whatzit?']];
 
   const today = () => {
     const d = new Date();
@@ -145,6 +146,7 @@ Problems and counterexamples:
     else if (data.tab === 'corpus') corpus(panel, data, refresh);
     else if (data.tab === 'flow') flow(panel, data, refresh);
     else if (data.tab === 'words') HT.wordclass.render(panel);
+    else if (data.tab === 'whatzit') HT.whatzit.render(panel, { data, save, addToSet });
     else lesson(panel, data, LESSONS[data.tab]);
     return undefined;
   }
@@ -232,7 +234,7 @@ Problems and counterexamples:
     };
     $('#lab-export').onclick = () => {
       keep();
-      download('hindi-lab.json', new Blob([JSON.stringify({ app: 'hinditree-lab', version: 2, sets: data.sets, corpus: data.corpus }, null, 2)], { type: 'application/json' }));
+      download('hindi-lab.json', new Blob([JSON.stringify({ app: 'hinditree-lab', version: 2, sets: data.sets, corpus: data.corpus, ...(data.whatzit ? { whatzit: data.whatzit } : {}) }, null, 2)], { type: 'application/json' }));
     };
     $('#lab-import').onchange = async (e) => {
       try {
@@ -247,6 +249,15 @@ Problems and counterexamples:
         const items = Array.isArray(incoming.corpus) ? incoming.corpus.slice(0, 5000).map((x) => ({
           id: newId(), text: String(x.text || '').slice(0, 600), source: String(x.source || '').slice(0, 120),
         })).filter((x) => x.text) : [];
+        // Research notes from Whatzit?: notes in the file fill in stations that have none here.
+        if (incoming.whatzit && typeof incoming.whatzit.notes === 'object' && incoming.whatzit.notes) {
+          const notes = (data.whatzit = data.whatzit || { notes: {} }).notes = data.whatzit.notes || {};
+          Object.entries(incoming.whatzit.notes).slice(0, 100).forEach(([id, n]) => {
+            if (!notes[id] && n && typeof n === 'object') {
+              notes[id] = { status: String(n.status || '').slice(0, 20), view: String(n.view || '').slice(0, 20000), found: String(n.found || '').slice(0, 20000) };
+            }
+          });
+        }
         data.sets.push(...sets);
         data.corpus.push(...items);
         data.current = sets[0] ? sets[0].id : data.current;
