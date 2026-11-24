@@ -393,25 +393,6 @@
     return html;
   }
 
-  /** Each word with the category directly above it, as drawn. A triangle is one row. */
-  function wordTable(view) {
-    const rows = [];
-    (function visit(n) {
-      if (T.isLeaf(n)) return;
-      if (n.tri) {
-        rows.push([T.text(n), `${n.l} (triangle)`, '', false]);
-        return;
-      }
-      for (const c of n.c) {
-        if (T.isLeaf(c)) rows.push([c.w, n.l + (n.f ? ` [${n.f}]` : ''), c.g || '', !!c.abs]);
-        else visit(c);
-      }
-    })(view);
-    if (!rows.length) return '<p class="hint">No words yet.</p>';
-    return `<table class="ff words-table"><tr><th>Word</th><th>Category</th><th>Gloss</th></tr>${rows.map(([w, cat, g, abs]) =>
-      `<tr><td ${abs ? 'class="abstract"' : 'lang="hi"'}>${esc(w)}</td><td>${esc(cat)}</td><td class="gloss">${esc(g)}</td></tr>`).join('')}</table>`;
-  }
-
   function inspector(view) {
     if (!view) return '';
     s.selected = s.selected.filter((p) => T.at(view, p));
@@ -422,9 +403,7 @@
         ${units.length ? `<table class="ff"><tr><th>Constituent</th><th>Form</th><th>Function</th></tr>${units.map((u) =>
           `<tr><td lang="hi">${esc(u.text)}</td><td>${form(u.node)}</td><td><i>${esc(u.fn)}</i></td></tr>`).join('')}</table>`
           : '<p class="hint">Functions appear when S has an NP and a VP.</p>'}
-        <details id="words-box"><summary>Word categories in this tree</summary>${wordTable(view)}
-          <p class="hint">To change a category, click the word under Word categories below the tree.</p></details>
-        <details id="rules-box"><summary>Rewrite rules in this tree</summary><ul class="mono rules">${T.rules(view).map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details>
+        <details><summary>Rewrite rules in this tree</summary><ul class="mono rules">${T.rules(view).map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details>
         <details id="bracket-box"><summary>Bracket notation</summary><textarea id="brackets" class="mono" rows="8" spellcheck="false">${esc(T.toBracket(view, 0))}</textarea>
           <button class="btn small" data-act="brackets">Draw from notation</button></details>
         <p class="hint">Click any label in the tree to inspect or edit it. Shift-click to select several.</p></aside>`;
@@ -519,8 +498,7 @@
     const view = shown();
     const canvas = host.querySelector('#canvas');
     const scroll = canvas ? [canvas.scrollLeft, canvas.scrollTop] : [0, 0];
-    // Keep the panel's collapsible sections open across redraws.
-    const openBoxes = [...host.querySelectorAll('details[id][open]')].map((d) => d.id);
+    const bracketsOpen = !!host.querySelector('#bracket-box[open]');
     host.classList.toggle('presenting', s.presenting);
     host.innerHTML = `
       <section class="card compose">
@@ -546,10 +524,7 @@
       <div class="workbench ${view ? '' : 'single'}">${stage(view)}${inspector(view)}</div>
       ${wordsPanel()}
       <datalist id="labels">${LABELS.map((l) => `<option value="${esc(l)}"></option>`).join('')}</datalist>`;
-    for (const id of openBoxes) {
-      const box = host.querySelector(`#${id}`);
-      if (box) box.open = true;
-    }
+    if (bracketsOpen && host.querySelector('#bracket-box')) host.querySelector('#bracket-box').open = true;
     paint(view);
     const fresh = host.querySelector('#canvas');
     if (fresh) [fresh.scrollLeft, fresh.scrollTop] = scroll;
@@ -721,7 +696,31 @@
       const method = { thomas: 'Method 1', method2: 'Method 2', custom: 'Method 3', xbar: 'Method 4' }[s.method] || s.method;
       const body = [`Sentence: ${s.text}`, s.english ? `English: ${s.english}` : '', `Method: ${method}`,
         view ? `Tree: ${T.toBracket(view)}` : `Problem: ${s.error || 'no tree'}`, '', 'What looks wrong:', ''].filter((x, i) => x || i > 3).join('\n');
-      location.href = `mailto:vivek.tripathi@ashoka.edu.in?subject=${encodeURIComponent(`HindiTree: ${s.text.slice(0, 60)}`)}&body=${encodeURIComponent(body.slice(0, 1800))}`;
+      const address = 'vivek.tripathi@ashoka.edu.in';
+      const subject = `HindiTree: ${s.text.slice(0, 60)}`;
+      const href = `mailto:${address}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.slice(0, 1800))}`;
+      // A visible link and copyable text, so it also works without an email program (e.g. with webmail).
+      const dialog = document.getElementById('dialog');
+      dialog.innerHTML = `<h2>Report this sentence</h2>
+        <p>Send it to <a href="mailto:${address}">${address}</a>. Write what looks wrong at the end.</p>
+        <textarea readonly rows="9" aria-label="Message">${esc(body)}</textarea>
+        <div class="row end"><button class="btn" data-close>Close</button><button class="btn" data-copy>Copy message</button>
+          <a class="btn primary" href="${esc(href)}">Open in my email program</a></div>`;
+      dialog.querySelector('[data-close]').onclick = () => dialog.close();
+      dialog.querySelector('[data-copy]').onclick = async () => {
+        const text = `To: ${address}
+Subject: ${subject}
+
+${body}`;
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch {
+          dialog.querySelector('textarea').select();
+          document.execCommand('copy');
+        }
+        toast(`Copied. Paste it into an email to ${address}.`);
+      };
+      dialog.showModal();
       return false;
     },
     brackets() {

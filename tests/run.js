@@ -140,5 +140,14 @@ test('X-bar: an extraposed कि clause is dO, or sC with an intensive verb', (
   assert.equal(fns('सच यह है कि राम बीमार है'), 'S sC P sC');
 });
 
+// Hindi Lab: judgement marks
+global.localStorage = { getItem: () => null, setItem: () => {} };
+for (const file of ['studio', 'pages', 'lab']) require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));
+test('Lab: judgement marks and headings are read', () => {
+  const rows = globalThis.HT.labLines('# Heading\n#पत्थर ने रोटी खाई\n% मैंने बोला\n?? क\n* ख // note\nOK ग');
+  assert.deepEqual(rows.map((r) => r.heading || `${r.judgement}${r.sentence}`), ['Heading', '#पत्थर ने रोटी खाई', '%मैंने बोला', '??क', '*ख', '✓ग']);
+  assert.equal(rows[4].comment, 'note');
+});
+
 console.log(`${passed} passed, ${failed} failed`);
 process.exitCode = failed ? 1 : 0;
