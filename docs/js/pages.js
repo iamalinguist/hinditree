@@ -355,18 +355,16 @@ VP -> PP* NP? NP? V TENSE?`;
       ['What technology does the Hindi tree app use behind the scenes?', 'Everything runs in your browser; there is no server, database or account. The site is plain HTML, CSS and JavaScript without frameworks, hosted on GitHub Pages. A lexicon of Hindi words and verb forms suggests a category for each word. A chart parser (a ranked form of the CKY algorithm) then finds every tree that the chosen grammar allows and lists the most likely first. Trees are drawn as SVG, which is also how PNG, JPEG and LaTeX exports are produced. When you choose Convert, the English sentence is sent to the free MyMemory translation service, so this one feature needs the internet. The interface font, DM Mono, is loaded from Google Fonts. Saved examples stay in your browser storage.'],
     ];
     el.innerHTML = `
-      <section class="card"><h2>Questions</h2>${faq.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary>${Array.isArray(a)
-        ? `<ul>${a.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : `<p>${esc(a)}</p>`}</details>`).join('')}</section>
       <section class="card"><h2>About</h2>
         <p>HindiTree is an open-access tool for creating and teaching constituency trees for Hindi.</p>
-        <p class="founder"><strong>Founder and conceptualiser:</strong> Vivek Tripathi
-          (<a href="https://iamalinguist.github.io/" target="_blank" rel="noopener noreferrer">iamalinguist.github.io</a>)</p>
         <ul>
           <li>The idea of annotating words and solving for all trees comes from
             <a href="https://github.com/adambcomer/lin-tree-solver" target="_blank" rel="noopener noreferrer">Linguistics Tree Solver</a> by Adam Comer. The code here is written independently.</li>
           <li>The course sequence and notation follow Linda Thomas (1993), <cite>Beginning Syntax</cite>, Blackwell. The app does not contain the book and is not affiliated with its author or publisher.</li>
         </ul>
-        <p><strong>Support:</strong> <a href="mailto:vivek.tripathi@ashoka.edu.in">vivek.tripathi@ashoka.edu.in</a></p></section>`;
+        <p><strong>Support:</strong> <a href="mailto:vivek.tripathi@ashoka.edu.in">vivek.tripathi@ashoka.edu.in</a></p></section>
+      <section class="card"><h2>Questions</h2>${faq.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary>${Array.isArray(a)
+        ? `<ul>${a.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : `<p>${esc(a)}</p>`}</details>`).join('')}</section>`;
   }
 
   HT.pages = { STARTER_GRAMMAR, print, course, practice, rules, abbreviations, adaptation, about };
