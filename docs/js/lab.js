@@ -136,6 +136,10 @@ Problems and counterexamples:
         refresh();
       };
     });
+    // On narrow screens the tab strip scrolls: keep the open tab in view.
+    const strip = el.querySelector('.lab-tabs');
+    const on = strip.querySelector('.on');
+    if (on) strip.scrollLeft = on.offsetLeft - (strip.clientWidth - on.offsetWidth) / 2;
     const panel = el.querySelector('#lab-panel');
     if (data.tab === 'workbench') workbench(panel, data, refresh);
     else if (data.tab === 'corpus') corpus(panel, data, refresh);
@@ -531,7 +535,7 @@ Problems and counterexamples:
 
   function lesson(el, data, content) {
     el.innerHTML = `<header class="page-head"><p>${esc(content.intro)}</p></header>
-      ${content.sections.map((sec, i) => `<section class="card lesson-card">
+      <div class="lesson-cards">${content.sections.map((sec, i) => `<section class="card lesson-card">
         <h2>${esc(sec.title)}</h2>
         ${(sec.table ? `<table class="ff marks"><tr><th>Mark</th><th>Meaning</th><th>Example</th></tr>${sec.table.map(([m, meaning, ex]) =>
           `<tr><td>${esc(m)}</td><td>${esc(meaning)}</td><td lang="hi">${esc(ex)}</td></tr>`).join('')}</table>` : '')}
@@ -539,7 +543,7 @@ Problems and counterexamples:
         ${sec.list ? `<ul>${sec.list.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : ''}
         ${sec.add ? `<pre class="mono example-lines" lang="hi">${esc(sec.add.text)}</pre>
           <button class="btn small" data-add="${i}">Add these to my data set</button>` : ''}
-      </section>`).join('')}
+      </section>`).join('')}</div>
       <p class="hint">The judgements here are starting points. Check them with speakers before relying on them.</p>`;
     el.querySelectorAll('[data-add]').forEach((b) => {
       b.onclick = () => {

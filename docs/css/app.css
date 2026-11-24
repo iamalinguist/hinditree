@@ -55,7 +55,8 @@ textarea { width: 100%; resize: vertical; }
 .verdict.over, .verdict.under { background: #fff1f2; color: #a3243b; }
 .verdict.note { background: var(--bg); color: var(--muted); }
 .summary { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
-.lab-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; overflow-x: auto; scrollbar-width: thin; }
+.lab-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; position: relative; }
+.lab-tabs::-webkit-scrollbar { display: none; }
 .lab-tabs button { white-space: nowrap; flex: none; }
 .lab-toolbar { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; }
 .lab-toolbar .row:last-child { margin-left: auto; }
@@ -65,7 +66,11 @@ textarea { width: 100%; resize: vertical; }
 .lab-tabs button { border: 0; background: none; padding: 9px 14px; font: 500 13px var(--sans); color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
 .lab-tabs button:hover { color: var(--brand); }
 .lab-tabs button.on { color: var(--brand); border-bottom-color: var(--brand); }
-.lesson-card { max-width: 900px; }
+/* Lesson cards: one column on small screens, two where there is room. */
+.lesson-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 14px; align-items: start; margin-bottom: 14px; }
+.lesson-cards .card { margin-bottom: 0; }
+.lesson-card p, .lesson-card ul, .lesson-card ol { max-width: 75ch; }
+.lesson-card ul, .lesson-card ol { padding-left: 1.3em; }
 .lesson-card p, .lesson-card li { line-height: 1.7; }
 .example-lines { font-family: var(--deva); font-size: 15px; white-space: pre-wrap; }
 table.marks td:first-child { font: 700 16px var(--serif); white-space: nowrap; }
@@ -303,6 +308,15 @@ dialog .row { margin-top: 10px; }
   .lab .results td.hi { padding-right: 30px; }
   .lab .results td[data-label]::before { content: attr(data-label) ': '; color: var(--muted); font-size: 12px; }
   .lab .results td.open { padding-top: 6px; }
+  /* The tab strip fades at the edge to show it scrolls. */
+  .lab-tabs { -webkit-mask-image: linear-gradient(to right, #000 85%, transparent); mask-image: linear-gradient(to right, #000 85%, transparent); }
+  /* Marks table: one compact card per mark */
+  table.marks tr:first-child { display: none; }
+  table.marks tr { display: grid; grid-template-columns: 4.5em minmax(0, 1fr); gap: 2px 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+  table.marks td { border: 0; padding: 0; }
+  table.marks td:first-child { grid-row: span 2; white-space: normal; }
+  table.marks td[lang]:empty { display: none; }
+  .lesson-card { padding: 14px; }
   .tag-group h4 { width: 100%; }
 }
 
