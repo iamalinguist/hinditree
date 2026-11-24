@@ -366,6 +366,13 @@ VP -> PP* NP? NP? V TENSE?`;
         <p>Code under the <a href="https://github.com/iamalinguist/hinditree/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>;
           lessons, examples and other content under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.</p>
         <p><strong>Support:</strong> <a href="mailto:vivek.tripathi@ashoka.edu.in">vivek.tripathi@ashoka.edu.in</a></p></section>
+      <section class="card"><h2>Work in progress</h2>
+        <ul class="wip">
+          <li>Tripathi, V. <cite>Not a passive: the oblique constructions of Hindi.</cite> In preparation.</li>
+          <li>Tripathi, V. <cite>Transitivity is not a category of Hindi grammar.</cite> In preparation.</li>
+          <li>Tripathi, V. <cite>Teaching syntax with Hindi data: HindiTree in the classroom.</cite> In preparation.</li>
+          <li>Tripathi, V. <cite>HindiTree: a browser-based workbench for parsing, drawing and testing grammars of Hindi syntax.</cite> In preparation.</li>
+        </ul></section>
       <section class="card"><h2>Questions</h2>${faq.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary>${Array.isArray(a)
         ? `<ul>${a.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : `<p>${esc(a)}</p>`}</details>`).join('')}</section>`;
   }
