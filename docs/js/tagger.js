@@ -74,6 +74,9 @@
       const lex = L.word(w);
       let vs = L.verb(w);
       const token = { w, g: lex[0] ? lex[0].gloss : '', tags: [], kind: null };
+      // A word listed under two categories with different glosses (वह: that / he)
+      // keeps a gloss for each, so the tree shows the one for the chosen category.
+      if (lex.length > 1 && lex.some((e) => e.gloss !== lex[0].gloss)) token.gt = Object.fromEntries(lex.map((e) => [e.tag, e.gloss]));
       info.push(token);
       const set = (tags, gloss, kind) => Object.assign(token, { tags, g: gloss, kind: kind || null });
 
@@ -163,7 +166,7 @@
     // Insert the abstract TENSE and aspect elements that the verb forms realise.
     const out = [];
     info.forEach((t, i) => {
-      out.push({ w: t.w, g: t.g, tags: [...new Set(t.tags)] });
+      out.push({ w: t.w, g: t.g, ...(t.gt ? { gt: t.gt } : {}), tags: [...new Set(t.tags)] });
       const main = t.tags[0];
       if (!isVerbal(main) || /_/.test(main)) return;
       const following = info[i + 1];

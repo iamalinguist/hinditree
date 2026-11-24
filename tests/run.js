@@ -223,6 +223,13 @@ test('obligation: मुझे खाना खाना है has a noun objec
   const t = parser.parse(tagger.tag('मुझे खाना खाना है'), compiled).trees[0];
   assert.equal(tree.functions(t).map((u) => `${u.fn}:${u.text}`).join(' / '), 'S:मुझे / dO:खाना / P:खाना है');
 });
+test('demonstratives: DET before a noun, a third-person pronoun alone', () => {
+  const b = (s) => tree.toBracket(parser.parse(tagger.tag(s), compiled).trees[0]);
+  assert.match(b('वह मोटा भूरा कुत्ता भौंका'), /\[DET वह\{that\}\]/);
+  assert.match(b('वह भौंका'), /\[PRO वह\{he\/she\/it \(far\)\}\]/);
+  assert.match(b('वे भौंके'), /\[PRO वे\{they \(far\)\}\]/);
+  assert.match(b('ये लड़के खेल रहे हैं'), /\[DET ये\{these\}\]/);
+});
 
 // Hindi Lab: judgement marks
 global.localStorage = { getItem: () => null, setItem: () => {} };

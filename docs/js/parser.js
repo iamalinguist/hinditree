@@ -149,7 +149,8 @@
     if (!entry.rule) {
       const t = tokens[entry.at];
       const leaf = { w: t.w };
-      if (t.g) leaf.g = t.g;
+      const g = (t.gt && t.gt[entry.sym]) || t.g;
+      if (g) leaf.g = g;
       if (t.abs) leaf.abs = true;
       // As in Thomas (27a), the genitive marker hangs directly from POSS.
       if (entry.sym === 'gen' && !grammar.rename.gen) return [leaf];

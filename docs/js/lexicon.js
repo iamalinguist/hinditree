@@ -44,9 +44,11 @@
   addAll('PRO', `मैं:I हम:we तू:you तुम:you आप:you कौन:who क्या:what खुद:self स्वयं:self अपने_आप:self मुझ:me तुझ:you
     किस:whom किसी:someone उसके:3SG.GEN इसके:3SG.GEN उनके:3PL.GEN मेरे:1SG.GEN तुम्हारे:2.GEN हमारे:1PL.GEN`);
   // Demonstratives and quantifiers are both DET and PRO (Thomas, ch. 5); the parser chooses.
-  for (const tag of ['DET', 'PRO']) {
-    addAll(tag, `यह:this वह:that ये:these वे:those इस:this उस:that इन:these उन:those कोई:some कुछ:some सब:all सभी:all`);
-  }
+  // Hindi has no separate third-person pronoun: alone, the demonstratives are
+  // he/she/it and they, marked for distance (near/far) rather than gender.
+  addAll('DET', `यह:this वह:that ये:these वे:those इस:this उस:that इन:these उन:those कोई:some कुछ:some सब:all सभी:all`);
+  addAll('PRO', `यह:he/she/it_(near) वह:he/she/it_(far) ये:they_(near) वे:they_(far) इस:him/her/it_(near)
+    उस:him/her/it_(far) इन:them_(near) उन:them_(far) कोई:someone कुछ:something सब:everyone सभी:everyone`);
   addAll('DET', `एक:a/one हर:every प्रत्येक:each कई:several सारे:all सारी:all सारा:all कौन_सा:which कौन_सी:which कौन_से:which
     किस:which किसी:some कितने:how_many कितनी:how_many कितना:how_much मेरा:my मेरी:my मेरे:my हमारा:our हमारी:our
     हमारे:our तेरा:your तेरी:your तेरे:your तुम्हारा:your तुम्हारी:your तुम्हारे:your आपका:your आपकी:your आपके:your

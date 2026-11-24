@@ -253,7 +253,8 @@ VP -> PP* NP? NP? V TENSE?`;
       ['PP', 'postpositional phrase', 'परसर्गीय पदबंध'], ['POSS', 'possessive (genitive) phrase', 'संबंध पदबंध'],
     ]],
     ['Word categories', [
-      ['N', 'noun', 'संज्ञा'], ['PRO', 'pronoun', 'सर्वनाम'], ['DET', 'determiner', 'निर्धारक'],
+      ['N', 'noun', 'संज्ञा'], ['PRO', 'pronoun; यह, वह, ये, वे standing alone mean he/she/it and they (near or far)', 'सर्वनाम'],
+      ['DET', 'determiner; यह, वह, ये, वे before a noun mean this, that, these, those', 'निर्धारक'],
       ['V', 'lexical verb', 'मुख्य क्रिया'], ['A', 'adjective', 'विशेषण'], ['Adv', 'adverb', 'क्रियाविशेषण'],
       ['deg', 'degree adverb', 'प्रविशेषण'], ['P', 'postposition', 'परसर्ग'], ['CASE', 'case marker: ने, को', 'कारक चिह्न'],
       ['sub', 'subordinator', 'अधीनस्थ समुच्चयबोधक'], ['coord', 'coordinator', 'समानाधिकरण समुच्चयबोधक'],
