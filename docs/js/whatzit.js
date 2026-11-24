@@ -242,7 +242,38 @@
       tool: 'The "Light verbs as one verb" switch in Make Structure draws them as one V; the notes it gives (for example नहीं between the parts) are evidence.',
       readings: ['Peter Hook (1974), The Compound Verb in Hindi', 'Miriam Butt (1995), The Structure of Complex Predicates in Urdu', 'Tara Mohanan (1994), Argument Structure in Hindi', 'Miriam Butt and Gillian Ramchand (2005), Complex aspectual structure in Hindi/Urdu'],
       output: 'A paper comparing compound and conjunct verbs on the same tests.',
-      next: 'The so-called passive is also built with a light verb (जाना). Look at it next.',
+      next: 'Vector verbs add aspect (खा लिया, खा गया). Look at tense and aspect in the verb group next.',
+    },
+    {
+      id: 'tense', phase: 'clause', title: 'Tense or perspective?', hi: 'काल या दृष्टि',
+      question: 'Do आया, आया है and आया था express three tenses (past, present perfect, past perfect), or one completed event seen from different perspectives?',
+      hypotheses: [
+        ['Three tenses', 'As in English: आया is a simple past with a silent past tense, आया है a present perfect and आया था a past perfect. This is Thomas\'s system, which Method 1 follows.'],
+        ['One event, three perspectives', 'आया presents a neutral completed event; है adds relevance to the present; था places the event within a past perspective, so context decides between a simple past and a past perfect reading. The auxiliary sets the perspective, not the time of the event.'],
+      ],
+      evidence: `# The perfective series
+वह कल आया
+वह आया है
+वह आया था
+# आया था as a plain past: the event is over
+मैं पिछले साल दिल्ली गया था
+# आया है with a past time (impossible in English: *He has come yesterday)
+% वह कल ही आया है
+# A bare perfective that is not about the past
+लो, मैं चला
+अगर तुम आए तो मैं जाऊँगा
+# है with a resulting state rather than a past event
+दरवाज़ा खुला है`,
+      argument: [
+        'State each reading with Reichenbach\'s three points: E (the event), R (the reference point) and S (the moment of speaking). आया: E before S, R open; आया है: E before R, R = S; आया था: E before R, R before S or open.',
+        'Test the present perfect puzzle: collect है-perfects with past time adverbs (कल, पिछले साल). If Hindi allows them, है marks relevance, not time.',
+        'Collect bare perfectives that are not past (immediate future, conditionals) and था-forms that are plain pasts, from speech and a corpus.',
+        'Decide whether stative uses (दरवाज़ा खुला है) fall under the same account or need a separate one.',
+      ],
+      tool: 'Method 1 gives आया a silent (past), and analyses both आया है and आया था as perfect (perf) plus tense. It also gives अगर तुम आए a past tense. Compare these trees with the readings you collect.',
+      readings: ['Hans Reichenbach (1947), Elements of Symbolic Logic', 'Bernard Comrie (1976), Aspect (Cambridge)', 'Bernard Comrie (1985), Tense (Cambridge)', 'Wolfgang Klein (1992), The present perfect puzzle, Language', 'Vladimir Plungian and Johan van der Auwera (2006), Towards a typology of discontinuous past marking'],
+      output: 'A paper: "The Hindi perfective series as perspective, not tense", with a formal version of the spoken-Hindi model.',
+      next: 'The perfective participle also builds the so-called passive with जाना. Look at it next.',
     },
     {
       id: 'passive', phase: 'clause', title: 'Is there a passive?', hi: 'कर्मवाच्य और भाववाच्य',

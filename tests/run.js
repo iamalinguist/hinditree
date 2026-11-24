@@ -223,6 +223,11 @@ test('obligation: मुझे खाना खाना है has a noun objec
   const t = parser.parse(tagger.tag('मुझे खाना खाना है'), compiled).trees[0];
   assert.equal(tree.functions(t).map((u) => `${u.fn}:${u.text}`).join(' / '), 'S:मुझे / dO:खाना / P:खाना है');
 });
+test('Method 1 accepts a dropped object, but prefers an overt one', () => {
+  const fn = (x) => tree.functions(parser.parse(tagger.tag(x), compiled).trees[0]).map((u) => `${u.fn}:${u.text}`).join(' / ');
+  assert.equal(fn('मैंने खा लिया'), 'S:मैंने / P:खा लिया');
+  assert.equal(fn('राम ने रोटी खाई'), 'S:राम ने / dO:रोटी / P:खाई');
+});
 test('complex postpositions take their complement: राम की ओर is one PP', () => {
   const t = parser.parse(tagger.tag('वह राम की ओर देख रहा है'), compiled).trees[0];
   assert.match(tree.toBracket(t), /\[PP=A \[NP \[N राम\{Ram\}\]\] \[P "की ओर"/);

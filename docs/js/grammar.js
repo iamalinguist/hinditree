@@ -78,6 +78,8 @@ VP -> _x=A* Vgp.intrans
 VP -> _x=A* NP=A _x=A* Vgp.intrans @2
 VP -> _x=A* _obj=dO _x=A* Vgp.trans
 VP -> _x=A* S2.inf=dO _x=A* Vgp.trans
+# Hindi leaves out an understood object (मैंने खा लिया); costlier than an overt one
+VP -> _x=A* Vgp.trans @2
 VP -> _x=A* Vgp.trans S2.comp=dO
 VP -> _x=A* NP.dat=iO _x=A* NP=dO _x=A* Vgp.ditrans
 VP -> _x=A* NP=dO _x=A* NP.dat=iO _x=A* Vgp.ditrans @0.2
