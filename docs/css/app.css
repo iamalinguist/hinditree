@@ -41,7 +41,7 @@ textarea { width: 100%; resize: vertical; }
 /* The menu fills the sidebar so that Hindi Lab sits at the bottom. */
 .nav { flex: 1; display: flex; flex-direction: column; }
 .nav .lab-link { margin-top: auto; border: 1px dashed var(--line); }
-.sidebar .credit { margin: 14px 4px 0; padding-top: 12px; border-top: 1px solid var(--line); font: 12px/1.6 var(--sans); color: var(--muted, #667); }
+.sidebar .credit { margin: 10px 4px 0; padding-top: 8px; border-top: 1px solid var(--line); font: 10.5px/1.5 var(--sans); color: var(--muted, #667); opacity: .85; }
 .sidebar .credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .sidebar .credit a:hover { color: var(--brand); }
 .lab-gate { max-width: 460px; }
@@ -72,7 +72,6 @@ textarea { width: 100%; resize: vertical; }
 /* Lesson cards: one column on small screens, two where there is room. */
 .lesson-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 14px; align-items: start; margin-bottom: 14px; }
 .lesson-cards .card { margin-bottom: 0; }
-.lesson-card p, .lesson-card ul, .lesson-card ol { max-width: 75ch; }
 .lesson-card ul, .lesson-card ol { padding-left: 1.3em; }
 .lesson-card p, .lesson-card li { line-height: 1.7; }
 .example-lines { font-family: var(--deva); font-size: 15px; white-space: pre-wrap; }
