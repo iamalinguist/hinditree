@@ -3,7 +3,7 @@
   'use strict';
   const { toast, store, decode } = HT.util;
 
-  const pages = ['course', 'practice', 'rules', 'abbreviations', 'adaptation', 'mine', 'about'];
+  const pages = ['course', 'practice', 'rules', 'abbreviations', 'adaptation', 'about', 'lab'];
   const main = document.getElementById('main');
 
   function route() {
@@ -15,9 +15,6 @@
         else if (example) HT.studio.loadExercise(example);
       } else if (name === 't') {
         HT.studio.loadSaved(decode(param));
-      } else if (name === 'saved') {
-        const item = store.get('examples', []).find((e) => e.id === param);
-        if (item) HT.studio.loadSaved(item);
       }
     } catch (error) {
       console.error(error);
@@ -29,12 +26,13 @@
     view.className = `page page-${page}`;
     main.replaceChildren(view);
     if (page === 'studio') HT.studio.mount(view);
+    else if (page === 'lab') HT.lab(view);
     else HT.pages[page](view, param);
 
     document.querySelectorAll('.nav a').forEach((a) => {
       if (a.dataset.page === page) {
         a.setAttribute('aria-current', 'page');
-        document.getElementById('page-label').textContent = a.textContent;
+        document.getElementById('page-label').textContent = a.textContent.replace(/\s*🔒$/, '');
       } else a.removeAttribute('aria-current');
     });
     if (small.matches) setMenu(false);

@@ -6,22 +6,22 @@ Analyse Hindi sentence structure using formal grammar. HindiTree draws, parses a
 
 | Page | Purpose |
 |---|---|
-| **Tree Studio** | Type a Hindi sentence, or write English and choose **Convert**, and get every tree the grammar allows. Correct categories, edit any node, draw by hand, build step by step, present full screen, and export to PNG, JPEG, SVG or LaTeX. |
-| **Course** | Six chapters matching the book, with rules, tests, 83 Hindi examples, printable handouts and worksheets. |
-| **Practice** | Students name functions or verb classes, or draw a tree and have it checked. |
-| **My examples** | Save trees in the browser, export or import a collection, print a handout. |
+| **Make Structure** | Type a Hindi sentence, or write English and choose **Convert**, and get every tree the grammar allows. Correct categories, edit any node, draw by hand, build step by step, present full screen, export to PNG or LaTeX, print, or **Report this sentence** by email. |
+| **Do a Course** | Six chapters matching the book, with rules, tests, 83 Hindi examples, printable handouts and worksheets. |
+| **Practice Zone** | Students name functions or verb classes, or draw a tree and have it checked. |
 | **Syntax rules** | Method 1: Thomas, adapted to Hindi (beginners). Method 2: toy fragment by Tripathi et al. (novice). Method 3: your own editable grammar (customise). Method 4: X-bar theory (intermediate). |
 | **English to Hindi** | Where the book's English rules change for Hindi, and why. |
+| **Hindi Lab** | For invited students: data sets of sentences with judgements (✓, *, ?), tested against a method to find over- and undergeneration, plus a notebook for each argument. The password is `hinditree` followed by the day of the month (`hinditree07`); it is checked in the browser and is not a security lock. |
 
 The research behind the design is in [RESEARCH.md](RESEARCH.md).
 
 ## Using it in class
 
-1. Open **Course**, choose the chapter and click an example. It opens with that chapter's notation.
+1. Open **Do a Course**, choose the chapter and click an example. It opens with that chapter's notation.
 2. Choose **Present**, then **Start build**. The arrow keys, Space or a slide clicker reveal the tree level by level.
 3. To ask rather than tell, switch on **Blank labels** before presenting, or print a worksheet.
 4. For your own sentence, type it and choose **Analyse**. If the tree is wrong, click the word and correct its category, or edit the tree directly.
-5. **Share link** gives students the exact tree you drew.
+5. **Report this sentence** opens an email with the sentence and its tree, so students can tell you when an analysis looks wrong.
 
 ## Publishing on https://iamalinguist.github.io/hinditree/
 

@@ -157,7 +157,7 @@ VP -> PP* NP? NP? V TENSE?`;
       <div class="method-body">${body}<div class="row method-actions">${buttons}<button class="btn primary" data-use="${id}">${esc(use)}</button></div></div></details>`;
 
     el.innerHTML = `
-      <header class="page-head"><p>Click a method to see its rules. The Tree Studio uses the method you choose here.</p></header>
+      <header class="page-head"><p>Click a method to see its rules. Make Structure uses the method you choose here.</p></header>
       ${card('thomas', 'Method 1: Thomas, adapted to Hindi', 'The rules of the six chapters of Beginning Syntax, adapted to Hindi.', `
         <p>Every function (S, P, dO, iO, sC, oC, pO, A) is part of a rule or follows from position in the tree.</p>
         <div class="lesson-grid">${HT.lessons.chapters.map((c) => `<div><h3>${c.n}. ${esc(c.title)}</h3>
@@ -201,7 +201,7 @@ VP -> PP* NP? NP? V TENSE?`;
           <li>A कि clause follows T, so it is extraposed and adjoined to the right of TP.</li>
           <li>Functions are marked on the tree as in Method 1. P marks the lexical verb V only.</li>
         </ul>
-        <p class="hint">Not built in: a fronted object (scrambling) and relative clauses on objects. Draw these by hand in the Tree Studio.</p>
+        <p class="hint">Not built in: a fronted object (scrambling) and relative clauses on objects. Draw these by hand in Make Structure.</p>
         <details><summary>Complete parser grammar</summary>
           <pre class="mono grammar" tabindex="0">${esc(HT.grammar.xbar)}</pre>
           <button class="btn" data-copy="xbar">Copy into Method 3: My Grammar</button></details>`)}`;
@@ -332,59 +332,6 @@ VP -> PP* NP? NP? V TENSE?`;
       </ul></section>`;
   }
 
-  // My examples
-  function mine(el) {
-    const list = store.get('examples', []);
-    el.innerHTML = `
-      <header class="page-head"><p>Saved only in this browser. Export the collection to back it up or share it with students.</p></header>
-      <div class="row">
-        <button class="btn" id="mine-export" ${list.length ? '' : 'disabled'}>Export collection</button>
-        <label class="btn file">Import collection<input id="mine-import" type="file" accept=".json,application/json"></label>
-        <button class="btn" id="mine-print" ${list.length ? '' : 'disabled'}>Print handout</button></div>
-      <div class="examples mine">${list.length ? list.map((item) => `<article class="example">
-        <a class="example-main" href="#saved/${esc(item.id)}"><span class="hindi" lang="hi">${esc(item.text)}</span><span class="english">${esc(item.english)}</span></a>
-        <button class="draw danger" data-delete="${esc(item.id)}">Delete</button></article>`).join('')
-        : '<p class="hint">Nothing saved yet. Draw a tree in the Studio and choose Save to My examples.</p>'}</div>`;
-
-    el.querySelectorAll('[data-delete]').forEach((button) => {
-      button.onclick = () => {
-        // A second click confirms.
-        if (!button.dataset.sure) {
-          button.dataset.sure = '1';
-          button.textContent = 'Click again to delete';
-          return;
-        }
-        store.set('examples', list.filter((item) => item.id !== button.dataset.delete));
-        mine(el);
-      };
-    });
-    el.querySelector('#mine-export').onclick = () => download('hinditree-examples.json',
-      new Blob([JSON.stringify({ app: 'hinditree', version: 1, examples: list }, null, 2)], { type: 'application/json' }));
-    el.querySelector('#mine-print').onclick = () => print(list.map((item) => ({
-      text: item.text, english: item.english, opts: {},
-      tree: !item.method || item.method === 'thomas' ? T.present(item.tree, item.level, { triangles: item.triangles }) : item.tree,
-    })));
-    el.querySelector('#mine-import').onchange = async (event) => {
-      try {
-        const file = event.target.files[0];
-        if (!file) return;
-        const data = JSON.parse(await file.text());
-        if (!Array.isArray(data.examples)) throw new Error('This file is not a HindiTree collection.');
-        const added = data.examples.map((x, i) => ({
-          id: Date.now().toString(36) + i.toString(36),
-          text: String(x.text || ''), english: String(x.english || ''), note: String(x.note || ''),
-          method: String(x.method || 'thomas'), triangles: !!x.triangles,
-          level: Math.min(6, Math.max(1, Number(x.level) || 4)), tree: T.sanitize(x.tree),
-        }));
-        if (!store.set('examples', [...added, ...list])) throw new Error('The browser could not store the collection.');
-        mine(el);
-        toast(`Imported ${added.length} examples.`);
-      } catch (error) {
-        toast(`Import failed: ${error.message}`);
-      }
-    };
-  }
-
   // Help and about
   function about(el) {
     const faq = [
@@ -394,7 +341,7 @@ VP -> PP* NP? NP? V TENSE?`;
       ['How do I present in class?', 'Choose Present. Use Start build and then the arrow keys, Space or a slide clicker. Blank labels turns the tree into a question.'],
       ['Why is a correct sentence rejected?', 'The word may be missing from the lexicon, or the verb may need another class. Correct it under Word categories. The parser is a teaching grammar and does not cover all of Hindi.'],
       ['Does an accepted sentence mean a grammatical one?', 'No. The rules check constituent structure. Agreement in gender, number and person is not checked, and case is checked only for common errors with ने.'],
-      ['Where is my work kept?', 'In your browser; there is no account or server. A share link contains the tree in the link itself. The only thing sent elsewhere is the English sentence you choose to Convert, which goes to the MyMemory translation service.'],
+      ['Where is my work kept?', 'In your browser; there is no account or server. Hindi Lab data sets and notes are saved in the browser you use, so export them to keep a copy. Two things leave your computer only when you choose them: the English sentence you Convert goes to the MyMemory translation service, and Report this sentence opens an email in your own email program.'],
       ['What can each method not handle yet?', [
         'All methods: agreement in gender, number and person is not checked. Methods 1, 3 and 4 take sentences of up to 40 words and guess the category of unknown words from their form, so these may need correcting. Anything a method cannot parse can be drawn by hand with Draw by hand.',
         'Method 1, Thomas adapted to Hindi: free word order beyond a fronted object (आम को राम ने खाया), causatives (करवाना), ellipsis and gapping, and questions or relative clauses that reach into a lower clause. Case is checked only for common mistakes with ने.',
@@ -402,6 +349,7 @@ VP -> PP* NP? NP? V TENSE?`;
         'Method 3, My Grammar: it handles exactly what your rules describe and nothing more. Functions appear only where you mark them (=S, =dO …), and a word can only take the categories your rules use.',
         'Method 4, X-bar theory: fronted (scrambled) objects, relative clauses on objects (जो किताब मैंने पढ़ी), PRO subjects of non-finite clauses, and VP-shell analyses of ditransitives. There is no visible C in relative clauses, and P marks only the lexical verb. The chapter-by-chapter notation applies to Method 1 only.',
       ]],
+      ['What is the Hindi Lab?', 'A space for building arguments about Hindi. Each data set holds sentences with your judgements (* for ungrammatical, ? for doubtful) and a notebook. Run a data set against a method to see where the analysis accepts sentences it should reject, or rejects sentences it should accept. The password marks the Lab as a space for invited students; it is not a security lock. Data and notes stay in your browser, so use Export Lab to keep a copy.'],
       ['Does it work without the internet?', 'Yes, except Convert, which needs an online translation service. Download the site folder and open index.html.'],
       ['What technology does the Hindi tree app use behind the scenes?', 'Everything runs in your browser; there is no server, database or account. The site is plain HTML, CSS and JavaScript without frameworks, hosted on GitHub Pages. A lexicon of Hindi words and verb forms suggests a category for each word. A chart parser (a ranked form of the CKY algorithm) then finds every tree that the chosen grammar allows and lists the most likely first. Trees are drawn as SVG, which is also how PNG, JPEG and LaTeX exports are produced. When you choose Convert, the English sentence is sent to the free MyMemory translation service, so this one feature needs the internet. The interface font, DM Mono, is loaded from Google Fonts. Saved examples stay in your browser storage.'],
     ];
@@ -418,5 +366,5 @@ VP -> PP* NP? NP? V TENSE?`;
         <p>Support: <a href="mailto:vivek.tripathi@ashoka.edu.in">vivek.tripathi@ashoka.edu.in</a></p></section>`;
   }
 
-  HT.pages = { STARTER_GRAMMAR, print, course, practice, rules, abbreviations, adaptation, mine, about };
+  HT.pages = { STARTER_GRAMMAR, print, course, practice, rules, abbreviations, adaptation, about };
 })(globalThis.HT = globalThis.HT || {});

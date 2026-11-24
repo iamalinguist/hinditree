@@ -1,7 +1,7 @@
-/* Tree Studio: analyse, edit, present and export one sentence. */
+/* Make Structure: analyse, edit, present and export one sentence. */
 (function (HT) {
   'use strict';
-  const { esc, store, toast, download, showText, encode } = HT.util;
+  const { esc, store, toast, download, showText } = HT.util;
   const T = HT.tree;
 
   const FUNCTIONS = [
@@ -26,22 +26,27 @@
     step: Infinity, direction: 'down', zoom: 0, presenting: false,
   };
   let host = null;
-  let compiled = { text: null, grammar: null };
+  const compiled = new Map();
 
   const isLegacyId = (id) => Object.prototype.hasOwnProperty.call(HT.legacy.methods, id);
   const isLegacy = () => isLegacyId(s.method);
   const customText = () => store.get('grammar', HT.pages.STARTER_GRAMMAR);
 
-  function grammar() {
-    const text = s.method === 'custom' ? customText() : s.method === 'xbar' ? HT.grammar.xbar : HT.grammar.thomas;
-    if (text !== compiled.text) compiled = { text, grammar: HT.parser.compile(text) };
-    return compiled.grammar;
+  function grammarFor(method) {
+    const text = method === 'custom' ? customText() : method === 'xbar' ? HT.grammar.xbar : HT.grammar.thomas;
+    if (!compiled.has(text)) compiled.set(text, HT.parser.compile(text));
+    return compiled.get(text);
   }
+  const grammar = () => grammarFor(s.method);
 
   function tagGroups() {
     if (isLegacy()) return [['Categories', HT.legacy.methods[s.method].tags]];
     if (s.method !== 'custom') return HT.grammar.tags;
-    const g = grammar();
+    return [['Your categories', categoriesOf(grammar())]];
+  }
+
+  /** Word categories of a grammar: symbols never on the left of a rule. */
+  function categoriesOf(g) {
     const used = new Set();
     const defined = new Set();
     for (const list of [...g.unary.values(), ...g.binary.values()]) {
@@ -50,7 +55,7 @@
         r.rhs.forEach((x) => used.add(x.sym));
       }
     }
-    return [['Your categories', [...used].filter((x) => !defined.has(x) && !/^[\u0001\u0002_]/.test(x)).map((x) => [x, ''])]];
+    return [...used].filter((x) => !defined.has(x) && !/^[\u0001\u0002_]/.test(x)).map((x) => [x, '']);
   }
 
   function shown() {
@@ -74,20 +79,43 @@
     render();
   }
 
+  function tokensFor(text, method) {
+    if (isLegacyId(method)) {
+      const tokens = HT.legacy.tokenize(text);
+      const { example } = HT.legacy.methods[method];
+      if (text.trim() === example.text) tokens.forEach((t, i) => { t.tags = [example.tags[i]]; });
+      return tokens;
+    }
+    let tokens = HT.tagger.tag(text);
+    if (method === 'custom') {
+      const known = new Set(categoriesOf(grammarFor('custom')).map(([tag]) => tag));
+      tokens = tokens.filter((t) => !t.abs || t.tags.some((x) => known.has(x)));
+      for (const t of tokens) t.tags = [...new Set(t.tags.flatMap((x) => [x, x.split('.')[0]]).filter((x) => known.has(x)))];
+    }
+    return tokens;
+  }
+
   function tokenize() {
     s.warnings = [];
-    if (isLegacy()) {
-      s.tokens = HT.legacy.tokenize(s.text);
-      const { example } = HT.legacy.methods[s.method];
-      if (s.text.trim() === example.text) s.tokens.forEach((t, i) => { t.tags = [example.tags[i]]; });
-      return;
-    }
-    s.tokens = HT.tagger.tag(s.text);
-    if (s.method === 'custom') {
-      const known = new Set(tagGroups()[0][1].map(([tag]) => tag));
-      s.tokens = s.tokens.filter((t) => !t.abs || t.tags.some((x) => known.has(x)));
-      for (const t of s.tokens) t.tags = [...new Set(t.tags.flatMap((x) => [x, x.split('.')[0]]).filter((x) => known.has(x)))];
-    }
+    s.tokens = tokensFor(s.text, s.method);
+  }
+
+  /** For the Lab: does a method give this sentence a tree, and does it flag it? */
+  function predict(text, method) {
+    const tokens = tokensFor(text, method);
+    const result = HT.parser.parse(tokens, grammarFor(method));
+    const flags = method === 'thomas' || method === 'xbar' ? HT.tagger.check(tokens) : [];
+    return { trees: result.trees.length, flags, error: result.error || '' };
+  }
+
+  /** Opens a sentence in Make Structure with a given method. */
+  function loadSentence(text, method) {
+    remember();
+    s.method = method;
+    store.set('method', method);
+    Object.assign(s, { text, english: '', note: '', exercise: null, word: null, zoom: 0 });
+    tokenize();
+    parse();
   }
 
   function parse() {
@@ -164,9 +192,6 @@
     s.opts.triangles = !!data.triangles;
   }
 
-  const saved = () => ({
-    text: s.text, english: s.english, note: s.note, tree: s.tree, level: s.level, method: s.method, triangles: s.opts.triangles,
-  });
 
   function setMethod(id) {
     remember();
@@ -345,6 +370,7 @@
       html += `<div class="notice error" role="alert"><strong>${esc(s.error)}</strong>
         <span>Check the categories, especially the verb class: a verb needs all its obligatory objects and complements.</span>
         <div class="row">${s.chunks ? '<button class="btn small" data-act="chunks">Edit the phrases that were found</button>' : ''}
+        <button class="btn small" data-act="report">Report this sentence</button>
         <button class="btn small" data-act="hand">Draw by hand</button></div></div>`;
     }
     html += s.warnings.map((w) => `<div class="notice warn">${esc(w)}</div>`).join('');
@@ -460,12 +486,10 @@
         <button class="btn" data-act="forward">Next ▶</button><button class="btn" data-act="exit">Exit</button></div>
       <div class="toolbar export">
         <span class="hint">Export</span>
-        <button class="btn small" data-act="png">PNG</button><button class="btn small" data-act="jpeg">JPEG</button>
-        <button class="btn small" data-act="svg">SVG</button><button class="btn small" data-act="latex">LaTeX</button>
+        <button class="btn small" data-act="png">PNG</button><button class="btn small" data-act="latex">LaTeX</button>
         <button class="btn small" data-act="print">Print</button>
         <span class="spacer"></span>
-        <button class="btn small" data-act="share">Share link</button>
-        <button class="btn small primary" data-act="save">Save to My examples</button>
+        <button class="btn small" data-act="report" title="Email this sentence and its tree to the course team">Report this sentence</button>
       </div></section>`;
   }
 
@@ -664,18 +688,15 @@
     present() { s.selected = []; setPresenting(true); return false; },
     exit() { setPresenting(false); return false; },
     png() { exportImage('png'); return false; },
-    jpeg() { exportImage('jpeg'); return false; },
-    svg() { exportImage('svg'); return false; },
     latex() { showText('LaTeX (forest package)', T.toForest(shown())); return false; },
     print() { HT.pages.print([{ tree: shown(), text: s.text, english: s.english, opts: s.opts }]); return false; },
-    share() {
-      showText('Share link', `${location.href.split('#')[0]}#t/${encode(saved())}`);
-      return false;
-    },
-    save() {
-      const list = store.get('examples', []);
-      list.unshift({ ...saved(), id: Date.now().toString(36) });
-      toast(store.set('examples', list) ? 'Saved in this browser. See My examples.' : 'The browser refused to save. Export the tree instead.');
+    report() {
+      // Opens the user's own email program; nothing is sent automatically.
+      const view = shown();
+      const method = { thomas: 'Method 1', method2: 'Method 2', custom: 'Method 3', xbar: 'Method 4' }[s.method] || s.method;
+      const body = [`Sentence: ${s.text}`, s.english ? `English: ${s.english}` : '', `Method: ${method}`,
+        view ? `Tree: ${T.toBracket(view)}` : `Problem: ${s.error || 'no tree'}`, '', 'What looks wrong:', ''].filter((x, i) => x || i > 3).join('\n');
+      location.href = `mailto:vivek.tripathi@ashoka.edu.in?subject=${encodeURIComponent(`HindiTree: ${s.text.slice(0, 60)}`)}&body=${encodeURIComponent(body.slice(0, 1800))}`;
       return false;
     },
     brackets() {
@@ -832,5 +853,5 @@
     for (const type of ['online', 'offline']) window.addEventListener(type, () => { if (host && host.isConnected) render(); });
   }
 
-  HT.studio = { FUNCTIONS, init, mount, loadExample, loadExercise, loadSaved, setMethod, state: s };
+  HT.studio = { FUNCTIONS, init, mount, loadExample, loadExercise, loadSaved, loadSentence, predict, setMethod, state: s };
 })(globalThis.HT = globalThis.HT || {});
