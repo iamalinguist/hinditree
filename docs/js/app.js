@@ -74,6 +74,61 @@
   if (small.matches) setMenu(false);
   else setMenu(!store.get('menuClosed', false));
 
+  /*
+   * How to cite?: citations in the common styles, each with a copy button.
+   * When the Zenodo DOI exists, set DOI (for example '10.5281/zenodo.1234567').
+   */
+  const CITE = { DOI: '', year: '2026', url: 'https://iamalinguist.github.io/hinditree/',
+    title: 'HindiTree: An open-access tool for Hindi syntax trees', titleCase: 'HindiTree: An Open-Access Tool for Hindi Syntax Trees' };
+  function citations() {
+    const d = new Date();
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const mla = `${d.getDate()} ${d.toLocaleString('en-GB', { month: 'short' })}${d.getMonth() === 4 ? '' : '.'} ${d.getFullYear()}`;
+    const doi = CITE.DOI ? `https://doi.org/${CITE.DOI}` : '';
+    return [
+      ['APA', `Tripathi, V. (${CITE.year}). ${CITE.title} [Web application]. ${doi || CITE.url}`],
+      ['MLA', `Tripathi, Vivek. ${CITE.titleCase}. ${CITE.year}, ${(doi || CITE.url).replace(/^https:\/\//, '')}. Accessed ${mla}.`],
+      ['Chicago', `Tripathi, Vivek. ${CITE.year}. ${CITE.titleCase}. Web application. ${doi || CITE.url}.`],
+      ['BibTeX', `@software{tripathi${CITE.year}hinditree,
+  author  = {Tripathi, Vivek},
+  title   = {{HindiTree}: An open-access tool for {Hindi} syntax trees},
+  year    = {${CITE.year}},
+  url     = {${CITE.url}},${CITE.DOI ? `
+  doi     = {${CITE.DOI}},` : ''}
+  note    = {Web application. Accessed ${iso}}
+}`],
+    ];
+  }
+  document.getElementById('cite-open').addEventListener('click', (event) => {
+    event.preventDefault();
+    const { esc } = HT.util;
+    const list = citations();
+    const dialog = document.getElementById('dialog');
+    dialog.innerHTML = `<h2>How to cite HindiTree</h2>
+      <div class="cite-list">${list.map(([style, text], i) => `<section class="cite-item"><div class="row between"><b>${style}</b>
+        <button class="btn small" data-cite="${i}">Copy</button></div><pre class="cite-text">${esc(text)}</pre></section>`).join('')}</div>
+      <p class="hint">If you use Method 2 (Toy Fragment), please also cite the paper by Tripathi and Rathod.</p>
+      <div class="row end"><button class="btn" data-close>Close</button></div>`;
+    dialog.querySelector('[data-close]').onclick = () => dialog.close();
+    dialog.querySelectorAll('[data-cite]').forEach((b) => {
+      b.onclick = async () => {
+        const [style, text] = list[Number(b.dataset.cite)];
+        try {
+          await navigator.clipboard.writeText(text);
+          toast(`${style} citation copied.`);
+        } catch {
+          const range = document.createRange();
+          range.selectNodeContents(b.closest('.cite-item').querySelector('pre'));
+          getSelection().removeAllRanges();
+          getSelection().addRange(range);
+          toast('Select the text and copy it.');
+        }
+      };
+    });
+    if (small.matches) setMenu(false);
+    dialog.showModal();
+  });
+
   HT.studio.init();
   window.addEventListener('hashchange', route);
   route();

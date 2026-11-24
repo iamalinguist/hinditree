@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use HindiTree, please cite it as below."
+type: software
+title: "HindiTree: An open-access tool for Hindi syntax trees"
+abstract: >-
+  An open-access web application for drawing, parsing and teaching
+  constituency trees for Hindi, with kāraka analysis and a Hindi Lab for
+  building arguments from acceptability judgements.
+authors:
+  - family-names: Tripathi
+    given-names: Vivek
+    website: "https://iamalinguist.github.io/"
+repository-code: "https://github.com/iamalinguist/hinditree"
+url: "https://iamalinguist.github.io/hinditree/"
+keywords:
+  - Hindi
+  - syntax
+  - constituency trees
+  - parsing
+  - linguistics education
+  - kāraka
+version: "1.0.0"
+date-released: "2026-11-25"

@@ -279,6 +279,9 @@ table.adaptation { border-collapse: collapse; min-width: 760px; width: 100%; }
 dialog { border: 0; border-radius: 12px; padding: 18px; width: min(680px, 92vw); box-shadow: 0 20px 60px #0004; }
 dialog::backdrop { background: #24213a66; }
 dialog .row { margin-top: 10px; }
+.cite-list { display: grid; gap: 10px; max-height: 60vh; overflow-y: auto; }
+.cite-item .row { margin-top: 0; }
+.cite-text { margin: 6px 0 0; padding: 10px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.6 var(--mono); }
 #toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); max-width: 90vw; background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; opacity: 0; visibility: hidden; transition: opacity .15s; z-index: 30; }
 #toast.show { opacity: 1; visibility: visible; }
 #print-root { display: none; }
