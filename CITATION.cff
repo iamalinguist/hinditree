@@ -18,6 +18,9 @@ identifiers:
   - type: doi
     value: "10.5281/zenodo.24513675"
     description: "Version 1.0.1"
+license:
+  - MIT
+  - CC-BY-4.0
 repository-code: "https://github.com/iamalinguist/hinditree"
 url: "https://iamalinguist.github.io/hinditree/"
 keywords:

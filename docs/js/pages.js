@@ -363,6 +363,8 @@ VP -> PP* NP? NP? V TENSE?`;
             <a href="https://github.com/adambcomer/lin-tree-solver" target="_blank" rel="noopener noreferrer">Linguistics Tree Solver</a> by Adam Comer. The code here is written independently.</li>
           <li>The course sequence and notation follow Linda Thomas (1993), <cite>Beginning Syntax</cite>, Blackwell. The app does not contain the book and is not affiliated with its author or publisher.</li>
         </ul>
+        <p>Code under the <a href="https://github.com/iamalinguist/hinditree/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>;
+          lessons, examples and other content under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.</p>
         <p><strong>Support:</strong> <a href="mailto:vivek.tripathi@ashoka.edu.in">vivek.tripathi@ashoka.edu.in</a></p></section>
       <section class="card"><h2>Questions</h2>${faq.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary>${Array.isArray(a)
         ? `<ul>${a.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : `<p>${esc(a)}</p>`}</details>`).join('')}</section>`;

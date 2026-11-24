@@ -80,6 +80,10 @@ Tripathi, V. (2026). *HindiTree: An open-access tool for Hindi syntax trees* [We
 
 This DOI always points to the latest release; each release also has its own DOI on Zenodo. See `CITATION.cff`, or "How to cite?" in the app's menu, for other styles.
 
+## Licence
+
+The code is under the [MIT License](LICENSE). The content (lessons, example sentences and judgements, glosses, explanations, research notes and documentation) is under [CC BY 4.0](LICENSE-CONTENT). See `LICENSE` for exactly what counts as content.
+
 ## Credits
 
 - Founder and conceptualiser: Vivek Tripathi ([iamalinguist.github.io](https://iamalinguist.github.io/)). Support: vivek.tripathi@ashoka.edu.in
