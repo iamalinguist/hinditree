@@ -228,6 +228,16 @@ test('Method 1 accepts a dropped object, but prefers an overt one', () => {
   assert.equal(fn('मैंने खा लिया'), 'S:मैंने / P:खा लिया');
   assert.equal(fn('राम ने रोटी खाई'), 'S:राम ने / dO:रोटी / P:खाई');
 });
+test('participles modify a noun with or without हुआ, but not a pronoun', () => {
+  const xbar = parser.compile(grammar.xbar);
+  const b = (s, g = compiled) => tree.toBracket(parser.parse(tagger.tag(s), g).trees[0]);
+  assert.match(b('बहता पानी ठंडा है'), /^\[S \[NP=S \[S2 \[VP \[Vgp.intrans \[V.intrans बहता\{flow.PTCP\}\]\]\]\] \[N पानी/);
+  assert.match(b('बहता हुआ पानी ठंडा है'), /^\[S \[NP=S \[S2 \[VP \[Vgp.intrans \[V.intrans "बहता हुआ"/);
+  assert.match(b('बहता पानी ठंडा है', xbar), /^\[TP \[NP=S \[N' \[VP.intrans/);
+  assert.match(b('दौड़ते हुए वह गिरा'), /\[S2=A .*\[NP=S \[PRO वह/);
+  assert.match(b('दौड़ते हुए वह गिरा', xbar), /^\[TP \[VP.intrans=A/);
+  assert.match(b('जब शिक्षक आए छात्र उठे'), /आए\{come.PFV\}/);
+});
 test('complex postpositions take their complement: राम की ओर is one PP', () => {
   const t = parser.parse(tagger.tag('वह राम की ओर देख रहा है'), compiled).trees[0];
   assert.match(tree.toBracket(t), /\[PP=A \[NP \[N राम\{Ram\}\]\] \[P "की ओर"/);

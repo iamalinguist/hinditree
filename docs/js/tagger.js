@@ -144,6 +144,15 @@
           .map((c) => `V.${c}${suffix}`);
         const label = { hab: 'HAB', perf: 'PFV', fut: 'FUT', inf: 'INF', cp: 'CP', imp: 'IMP', subj: 'SBJV' }[kind];
         if (label) gloss += `.${label}`;
+        // A participle before a noun modifies it, with or without हुआ:
+        // बहता पानी is read like बहता हुआ पानी, बैठा आदमी like बैठा हुआ आदमी.
+        const nounNext = next && !last && L.word(next).some((e) => e.tag === 'N') && !L.copula(next) && !continuesVerb(next);
+        // Not the verb that ends a subordinate clause: जब शिक्षक आए छात्र उठे.
+        const opener = info.map((x) => x.tags[0] || '').findLastIndex((t) => /^(sub|PRO\.rel|DET\.rel)/.test(t));
+        const openClause = opener >= 0 && !info.slice(opener + 1).some((x) => isVerbal(x.tags[0]));
+        if ((kind === 'hab' || kind === 'perf') && !suffix && nounNext && !openClause && !lex.length) {
+          return set(asVerb.map((c) => `${c}_pt`), `${v.gloss}.PTCP`);
+        }
       }
 
       // For homonyms (खाना, खेल, की), position decides which reading comes first.

@@ -246,6 +246,18 @@
     },
     {
       id: 'tense', phase: 'clause', title: 'Tense or perspective?', hi: 'काल या दृष्टि',
+      table: {
+        title: 'Aspect and auxiliary: the verb group as a grid',
+        head: ['Aspect ↓  Auxiliary →', 'है (present)', 'था (past)', 'होगा (future or presumptive)', 'no auxiliary'],
+        rows: [
+          ['Habitual -ता', 'आता है', 'आता था', 'आता होगा', 'आता (after नहीं; in अगर … तो)'],
+          ['Progressive रहा', 'आ रहा है', 'आ रहा था', 'आ रहा होगा', '—'],
+          ['Perfective -या / -आ', 'आया है', 'आया था', 'आया होगा', 'आया'],
+          ['Completive चुका', 'आ चुका है', 'आ चुका था', 'आ चुका होगा', 'आ चुका'],
+          ['No aspect', '—', '—', 'आएगा (-एगा on the verb)', '—'],
+        ],
+        note: '-या follows a stem ending in a vowel (आ-या), -आ one ending in a consonant (लिख-ा): one perfective marker. With an aspect marker the future goes on हो (आ रहा होगा, not *आ रहेगा). The "no auxiliary" column is where Method 1 adds a silent tense, (past) or (hab); the होगा column is often a guess (आया होगा "must have come") rather than a future.',
+      },
       question: 'Do आया, आया है and आया था express three tenses (past, present perfect, past perfect), or one completed event seen from different perspectives?',
       hypotheses: [
         ['Three tenses', 'As in English: आया is a simple past with a silent past tense, आया है a present perfect and आया था a past perfect. This is Thomas\'s system, which Method 1 follows.'],
@@ -263,16 +275,63 @@
 लो, मैं चला
 अगर तुम आए तो मैं जाऊँगा
 # है with a resulting state rather than a past event
-दरवाज़ा खुला है`,
+दरवाज़ा खुला है
+# होगा as a guess, not a future (presumptive)
+वह आया होगा
+वह घर पर होगा
+वह रोज़ आता होगा
+# A future habit needs करना
+वह आया करेगा`,
       argument: [
         'State each reading with Reichenbach\'s three points: E (the event), R (the reference point) and S (the moment of speaking). आया: E before S, R open; आया है: E before R, R = S; आया था: E before R, R before S or open.',
         'Test the present perfect puzzle: collect है-perfects with past time adverbs (कल, पिछले साल). If Hindi allows them, है marks relevance, not time.',
         'Collect bare perfectives that are not past (immediate future, conditionals) and था-forms that are plain pasts, from speech and a corpus.',
         'Decide whether stative uses (दरवाज़ा खुला है) fall under the same account or need a separate one.',
+        'Fill in the grid with real examples. Ask of the होगा column whether it is a tense (future) or a mood (presumptive: "must be"), and of the "no auxiliary" column whether a silent tense is needed at all.',
       ],
       tool: 'Method 1 gives आया a silent (past), and analyses both आया है and आया था as perfect (perf) plus tense. It also gives अगर तुम आए a past tense. Compare these trees with the readings you collect.',
       readings: ['Hans Reichenbach (1947), Elements of Symbolic Logic', 'Bernard Comrie (1976), Aspect (Cambridge)', 'Bernard Comrie (1985), Tense (Cambridge)', 'Wolfgang Klein (1992), The present perfect puzzle, Language', 'Vladimir Plungian and Johan van der Auwera (2006), Towards a typology of discontinuous past marking'],
       output: 'A paper: "The Hindi perfective series as perspective, not tense", with a formal version of the spoken-Hindi model.',
+      next: 'The perfective -आ is one participle; the imperfective -ता is the other. Ask what -ता means next.',
+    },
+    {
+      id: 'ta', phase: 'clause', title: 'What does -ता mean?', hi: '-ता के अर्थ',
+      question: 'The ending -ता/-ती/-ते appears in habits, in counterfactuals and in adjectives. Does one form have several functions, or do all its uses share one meaning? More generally: must each form have one function?',
+      hypotheses: [
+        ['Several functions', '-ता has distinct functions (habitual, counterfactual, participle used as an adjective), each chosen by its context: है/था after it, अगर … तो around it, or a noun after it.'],
+        ['One core meaning', 'All uses share one meaning. One proposal: a routine, regular or irregular. A more abstract one: the event is not presented as a single completed, actual fact.'],
+      ],
+      evidence: `# Habit
+वह रोज़ आता है
+# Counterfactual
+अगर वह आता तो मैं जाता
+# Counterfactual about one occasion, and about a state
+अगर तुम कल आते तो मैं तुम्हें स्टेशन से ले लेता
+अगर मैं राजा होता
+# Adjective: is बहता पानी just बहता हुआ पानी with हुआ left out?
+बहता पानी ठंडा है
+बहता हुआ पानी ठंडा है
+# An idiom that does not survive adding हुआ
+बहती गंगा में हाथ धोना
+? बहती हुई गंगा में हाथ धोना
+# With and without हुआ, different meanings
+वह गाता हुआ चला गया
+वह गाता चला गया
+# Without है: natural under negation, not in a plain statement
+वह नहीं आता
+? वह रोज़ आता
+# A past auxiliary cannot be left out
+वह नहीं आता था`,
+      argument: [
+        'List every use of -ता you can find, and for each say which context selects it. A "several functions" account is only complete when these conditions are stated.',
+        'Test whether the adjective use is -ता plus a silent हुआ: if हुआ is only left out for economy, it can always be added back without a change in meaning. Idioms (बहती गंगा) and चलना constructions (गाता चला गया) are the hard cases, and बहता पानी may lean towards a kind of water rather than water flowing now.',
+        'Test each one-meaning candidate against the hardest cases: counterfactuals about one occasion (कल आते) and about states (राजा होता) have no routine.',
+        'Explain the negation asymmetry: why can है be absent after नहीं, but not in a plain habitual statement, and why can था never be absent? Economy alone does not predict this.',
+        'Compare other languages that use an imperfective form in counterfactuals ("fake imperfective"): is Hindi -ता an instance of the same pattern?',
+      ],
+      tool: 'Method 1 labels every finite -ता as HAB with a silent (hab): the counterfactual अगर वह आता तो मैं जाता gets two habituals and no tense. Before a noun, बहता पानी and बहता हुआ पानी get the same structure (a participle modifying the noun), which builds in the silent-हुआ view: compare it with the idiom and चलना cases.',
+      readings: ['Sabine Iatridou (2000), The grammatical ingredients of counterfactuality, Linguistic Inquiry', 'Bernard Comrie (1976), Aspect (Cambridge)', 'Martin Haspelmath (2003), The geometry of grammatical meaning: semantic maps and cross-linguistic comparison', 'Yamuna Kachru (2006), Hindi'],
+      output: 'A paper on the meaning of Hindi -ता, and a position on one form with many functions that can be applied to other Hindi forms.',
       next: 'The perfective participle also builds the so-called passive with जाना. Look at it next.',
     },
     {
@@ -492,6 +551,11 @@
         <div class="wz-hyp">${st.hypotheses.map(([name, claim], i) => `${i ? '<span class="wz-vs">or</span>' : ''}
           <div class="wz-h"><b>H${i + 1}. ${esc(name)}</b><p>${esc(claim)}</p></div>`).join('')}</div>
       </section>
+
+      ${st.table ? `<section class="card wz-table"><h2>${esc(st.table.title)}</h2>
+        <div class="wz-table-scroll"><table class="ff"><tr>${st.table.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>
+        ${st.table.rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td lang="hi">${esc(c)}</td>` : `<td>${esc(c)}</td>`)).join('')}</tr>`).join('')}</table></div>
+        ${st.table.note ? `<p class="hint">${esc(st.table.note)}</p>` : ''}</section>` : ''}
 
       <div class="lesson-cards">
         ${evidence ? `<section class="card lesson-card"><h2>Evidence</h2><ul class="wz-evidence">${evidence}</ul>

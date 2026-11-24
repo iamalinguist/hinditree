@@ -37,7 +37,8 @@ _adjunct -> AdvP | PP | S2.cp | S2.pt
 # NOUN PHRASE (ch. 5)
 NP -> PRO | N | DET N'
 NP -> AP N' | PP.adn N'
-NP -> S2.pt N' @0.6
+# A participle phrase before a noun modifies it: बहता (हुआ) पानी
+NP -> S2.pt N' @0.1
 NP -> PP N' @3
 NP -> N.c @2.5
 NP -> N S2.rel @0.3
@@ -48,7 +49,7 @@ NP -> NP NP coord NP @1
 N' -> N | PP.adn N'
 N' -> AP N' @0.05
 N' -> N S2.rel @0.2
-N' -> S2.pt N' @0.6
+N' -> S2.pt N' @0.1
 N' -> DET N' @2
 N' -> N.c @2.5
 N.c -> N N
@@ -295,6 +296,9 @@ NP -> NP coord NP @0.4
 N' -> N | PRO
 N' -> AP N' | PP.adn N'
 N' -> _vp_pt N' @0.6
+# A participle before a noun (not a pronoun) modifies it: बहता (हुआ) पानी
+N' -> _vp_pt N'.n @0.1
+N'.n -> N | AP N'.n
 N' -> PP N' @3
 N' -> N' CP.rel @0.3
 N -> N N @2.5
