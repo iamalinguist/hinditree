@@ -359,12 +359,14 @@ VP -> PP* NP? NP? V TENSE?`;
         ? `<ul>${a.map((item) => `<li>${esc(item)}</li>`).join('')}</ul>` : `<p>${esc(a)}</p>`}</details>`).join('')}</section>
       <section class="card"><h2>About</h2>
         <p>HindiTree is an open-access tool for creating and teaching constituency trees for Hindi.</p>
+        <p class="founder"><strong>Founder and conceptualiser:</strong> Vivek Tripathi
+          (<a href="https://iamalinguist.github.io/" target="_blank" rel="noopener noreferrer">iamalinguist.github.io</a>)</p>
         <ul>
           <li>The idea of annotating words and solving for all trees comes from
             <a href="https://github.com/adambcomer/lin-tree-solver" target="_blank" rel="noopener noreferrer">Linguistics Tree Solver</a> by Adam Comer. The code here is written independently.</li>
           <li>The course sequence and notation follow Linda Thomas (1993), <cite>Beginning Syntax</cite>, Blackwell. The app does not contain the book and is not affiliated with its author or publisher.</li>
         </ul>
-        <p>Support: <a href="mailto:vivek.tripathi@ashoka.edu.in">vivek.tripathi@ashoka.edu.in</a></p></section>`;
+        <p><strong>Support:</strong> <a href="mailto:vivek.tripathi@ashoka.edu.in">vivek.tripathi@ashoka.edu.in</a></p></section>`;
   }
 
   HT.pages = { STARTER_GRAMMAR, print, course, practice, rules, abbreviations, adaptation, about };

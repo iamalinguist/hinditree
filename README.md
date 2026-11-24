@@ -74,6 +74,7 @@ When adding a script file, also add it to `docs/index.html`. The scripts are del
 
 ## Credits
 
+- Founder and conceptualiser: Vivek Tripathi ([iamalinguist.github.io](https://iamalinguist.github.io/)). Support: vivek.tripathi@ashoka.edu.in
 - Earlier HindiTree app and Method 2 (toy fragment): Tripathi Vivek and Rathod Dinesh ([paper](https://rupkatha.com/v16n103g/)).
 - The annotate-then-solve idea: [Linguistics Tree Solver](https://github.com/adambcomer/lin-tree-solver) by Adam Comer (Apache-2.0). No code from it is used.
 - Course sequence and notation: Linda Thomas (1993), *Beginning Syntax*, Blackwell. This project does not reproduce the book and is not affiliated with its author or publisher.

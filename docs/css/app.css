@@ -41,6 +41,9 @@ textarea { width: 100%; resize: vertical; }
 /* The menu fills the sidebar so that Hindi Lab sits at the bottom. */
 .nav { flex: 1; display: flex; flex-direction: column; }
 .nav .lab-link { margin-top: auto; border: 1px dashed var(--line); }
+.sidebar .credit { margin: 14px 4px 0; padding-top: 12px; border-top: 1px solid var(--line); font: 12px/1.6 var(--sans); color: var(--muted, #667); }
+.sidebar .credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.sidebar .credit a:hover { color: var(--brand); }
 .lab-gate { max-width: 460px; }
 .lab-gate form { display: flex; gap: 8px; margin-top: 10px; }
 .lab-gate input { flex: 1; min-width: 0; }
