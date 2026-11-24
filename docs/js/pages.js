@@ -337,7 +337,7 @@ VP -> PP* NP? NP? V TENSE?`;
   function about(el) {
     const faq = [
       ['How do I make a tree?', 'Type a sentence and choose Analyse. If a category is wrong, click the word and select another one. If the sentence has several structures, step through the readings.'],
-      ['How do I draw a structure the parser does not give?', 'Choose Start from the words in the tree toolbar (or Draw by hand when no tree is found). Shift-click neighbouring labels (or switch on Select several on a tablet), type a label and choose Group. Any node can be renamed, moved, deleted or turned into a triangle. You can also type bracket notation.'],
+      ['How do I draw a structure the parser does not give?', 'When no tree is found, choose Draw by hand. Shift-click neighbouring labels (or switch on Select several on a tablet), type a label and choose Group. Any node can be renamed, moved, deleted or turned into a triangle. You can also type bracket notation.'],
       ['Why does the tree change with the chapter?', 'Thomas adds detail gradually. The chapter selector shows one analysis with the notation that students have reached.'],
       ['How do I present in class?', 'Choose Present. Use Start build and then the arrow keys, Space or a slide clicker. Blank labels turns the tree into a question.'],
       ['Why is a correct sentence rejected?', 'The word may be missing from the lexicon, or the verb may need another class. Correct it under Word categories. The parser is a teaching grammar and does not cover all of Hindi.'],

@@ -21,7 +21,10 @@
     error: '', warnings: [], exercise: null, feedback: null,
     method: ['thomas', 'method2', 'custom', 'xbar'].includes(store.get('method')) ? store.get('method') : 'thomas',
     level: 4,
-    opts: { functions: true, gloss: false, translit: false, english: false, triangles: false, align: true, color: true, blank: false, ...store.get('options', {}) },
+    opts: { functions: true, gloss: false, translit: false, triangles: false, align: true, color: true, blank: false, ...store.get('options', {}), english: false },
+    // The analysed Hindi sentence that the English translation belongs to,
+    // and whether the English was typed since the last analysis.
+    englishFor: '', englishFresh: false,
     selected: [], word: null, several: false, undo: [], redo: [],
     step: Infinity, direction: 'down', zoom: 0, presenting: false,
     view: store.get('view', 'tree') === 'karaka' ? 'karaka' : 'tree', karakaFix: {},
@@ -123,7 +126,7 @@
     remember();
     s.method = method;
     store.set('method', method);
-    Object.assign(s, { text, english: '', note: '', exercise: null, word: null, zoom: 0 });
+    Object.assign(s, { text, english: '', englishFor: '', note: '', exercise: null, word: null, zoom: 0 });
     tokenize();
     parse();
   }
@@ -139,6 +142,9 @@
   }
 
   function analyse() {
+    // A translation of an earlier sentence is dropped, unless the English was just typed.
+    if (s.englishFor !== s.text.trim() && !s.englishFresh) s.english = '';
+    Object.assign(s, { englishFor: s.text.trim(), englishFresh: false });
     remember();
     Object.assign(s, { word: null, exercise: null, note: '' });
     tokenize();
@@ -166,7 +172,7 @@
     remember();
     const solved = HT.lessons.solve(example);
     Object.assign(s, {
-      method: 'thomas', text: example.sentence, english: example.english, note: example.note || '',
+      method: 'thomas', text: example.sentence, english: example.english, englishFor: example.sentence, note: example.note || '',
       level: example.chapter, tokens: T.clone(solved.tokens), trees: solved.trees, index: solved.index,
       tree: solved.trees[solved.index] || null, error: solved.error || '', warnings: [], chunks: null,
       selected: [], word: null, step: Infinity, exercise: null, feedback: null, zoom: 0,
@@ -195,7 +201,7 @@
     remember();
     Object.assign(s, {
       tree, trees: [], tokens: [], chunks: null, error: '', warnings: [], word: null, selected: [], exercise: null, feedback: null,
-      text: String(data.text || T.text(tree)).slice(0, 1000), english: String(data.english || '').slice(0, 1000),
+      text: String(data.text || T.text(tree)).slice(0, 1000), english: String(data.english || '').slice(0, 1000), englishFor: String(data.text || T.text(tree)).slice(0, 1000),
       note: String(data.note || '').slice(0, 2000), step: Infinity, zoom: 0,
       method: ['custom', 'xbar'].includes(data.method) || isLegacyId(data.method) ? data.method : 'thomas',
       level: Math.min(6, Math.max(1, Math.floor(Number(data.level)) || 4)),
@@ -493,7 +499,7 @@
       const meaning = L[arc.label] || [arc.label, '', ''];
       return `<tr><td lang="hi">${esc(text)}</td><td><select data-karaka="${esc(text)}" aria-label="Kāraka of ${esc(text)}">${Object.keys(L).filter((k) => k !== 'ccof').map((k) =>
         `<option value="${k}" ${k === arc.label ? 'selected' : ''}>${k}</option>`).join('')}</select></td>
-        <td>${esc(meaning[0])}<br><span class="hint" lang="hi">${esc(meaning[1])}</span>${arc.alt && !arc.fixed ? `<br><span class="hint">or ${esc(arc.alt)}?</span>` : ''}</td></tr>`;
+        <td>${esc(meaning[0])}<br><span class="hint">${esc(meaning[2])}</span>${arc.alt && !arc.fixed ? `<br><span class="hint">or ${esc(arc.alt)}: ${esc((L[arc.alt] || ['', '', ''])[2])}?</span>` : ''}</td></tr>`;
     }).join('');
     return `<aside class="card inspector"><h3>Kāraka relations</h3>
       <table class="ff karaka-table"><tr><th>Chunk</th><th>Label</th><th>Relation</th></tr>${rows}</table>
@@ -511,8 +517,7 @@
         <div class="cluster switch" role="group" aria-label="View"><button class="btn small ${s.view === 'tree' ? 'on' : ''}" data-act="viewTree" aria-pressed="${s.view === 'tree'}">Tree</button>
           <button class="btn small ${s.view === 'karaka' ? 'on' : ''}" data-act="viewKaraka" aria-pressed="${s.view === 'karaka'}">Kāraka</button></div>
         <div class="cluster"><button class="btn small" data-act="undo" title="Undo (Ctrl+Z)" ${s.undo.length ? '' : 'disabled'}>Undo</button>
-          <button class="btn small" data-act="redo" title="Redo (Ctrl+Y)" ${s.redo.length ? '' : 'disabled'}>Redo</button>
-          ${s.view === 'tree' ? '<button class="btn small" data-act="hand" title="Replace the tree with the word categories and build the phrases yourself">Start from the words</button>' : ''}</div>
+          <button class="btn small" data-act="redo" title="Redo (Ctrl+Y)" ${s.redo.length ? '' : 'disabled'}>Redo</button></div>
         ${s.trees.length > 1 ? `<div class="cluster readings"><button class="btn small" data-act="prev" aria-label="Previous reading">‹</button>
           <span>Reading ${s.index + 1} of ${s.trees.length}</span><button class="btn small" data-act="next" aria-label="Next reading">›</button></div>` : ''}
         ${s.view === 'tree' ? `<div class="cluster"><button class="btn small" data-act="back" title="One step back">◀</button>
@@ -644,48 +649,84 @@
   }
 
   /*
-   * Translates the English sentence online with MyMemory (no key needed),
-   * then analyses the Hindi. There is deliberately no offline fallback.
+   * Online translation with MyMemory (no key needed). There is deliberately
+   * no offline fallback. pair is 'en|hi' or 'hi|en'.
    */
-  async function convert() {
-    const english = s.english.trim();
-    if (!english) return toast('Write an English sentence first.');
-    if (!navigator.onLine) return toast('Convert needs an internet connection.');
-    if (s.converting) return undefined;
-    s.converting = true;
-    render();
+  async function translateOnline(text, pair) {
+    if (!navigator.onLine) throw new Error('Translation needs an internet connection.');
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 12000);
     try {
-      const url = `https://api.mymemory.translated.net/get?langpair=en%7Chi&q=${encodeURIComponent(english.slice(0, 450))}`;
+      const url = `https://api.mymemory.translated.net/get?langpair=${encodeURIComponent(pair)}&q=${encodeURIComponent(text.slice(0, 450))}`;
       const response = await fetch(url, { signal: controller.signal, credentials: 'omit', referrerPolicy: 'no-referrer' });
       const data = await response.json();
-      if (data.quotaFinished || Number(data.responseStatus) === 429) throw new Error('The free translation limit for today has been reached. Please type the Hindi yourself.');
+      if (data.quotaFinished || Number(data.responseStatus) === 429) throw new Error('The free translation limit for today has been reached.');
       // MyMemory mixes machine translation with crowd-sourced memory, whose best
       // match may be a different sentence (for example with "not" added). Use
       // the machine translation, or a memory entry for exactly this sentence.
-      const same = (a) => String(a || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === english.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const plain = (x) => String(x || '').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim();
       const matches = Array.isArray(data.matches) ? data.matches : [];
-      const chosen = matches.find((m) => m['created-by'] === 'MT!') || matches.find((m) => same(m.segment))
+      const chosen = matches.find((m) => m['created-by'] === 'MT!') || matches.find((m) => plain(m.segment) === plain(text))
         || (matches.length ? null : data.responseData);
       // The service returns HTML entities in some answers.
       const area = document.createElement('textarea');
       area.innerHTML = String((chosen && (chosen.translation || chosen.translatedText)) || '');
-      const hindi = area.value.replace(/\s+/g, ' ').trim();
-      if (Number(data.responseStatus) !== 200 || !/[\u0900-\u097f]/.test(hindi)) throw new Error('No Hindi translation came back. Please type the Hindi yourself.');
+      const out = area.value.replace(/\s+/g, ' ').trim();
+      const script = pair.endsWith('hi') ? /[\u0900-\u097f]/ : /[A-Za-z]/;
+      if (Number(data.responseStatus) !== 200 || !script.test(out)) throw new Error('No translation came back.');
+      return out;
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('The translation service did not answer. Try again.');
+      if (error instanceof TypeError) throw new Error('Could not reach the translation service. Check the internet connection.');
+      throw error;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  /** English to Hindi, then analyse the Hindi. */
+  async function convert() {
+    const english = s.english.trim();
+    if (!english) return toast('Write an English sentence first.');
+    if (s.converting) return undefined;
+    s.converting = true;
+    render();
+    try {
+      const hindi = await translateOnline(english, 'en|hi');
       if (s.method !== 'thomas') setMethod('thomas');
-      s.text = hindi;
+      Object.assign(s, { text: hindi, englishFresh: true });
       analyse();
       s.note = 'Translated online by the MyMemory service. Machine translation can be wrong: check the Hindi before you use it.';
     } catch (error) {
-      toast(error.name === 'AbortError' ? 'The translation service did not answer. Try again.'
-        : error instanceof TypeError ? 'Could not reach the translation service. Check the internet connection.' : error.message);
+      toast(`${error.message} Please type the Hindi yourself.`);
     } finally {
-      clearTimeout(timer);
       s.converting = false;
       render();
     }
     return undefined;
+  }
+
+  /** The Translation option: fetch an English translation of the current sentence when there is none. */
+  async function fetchEnglish() {
+    const hindi = s.text.trim();
+    if (!hindi) {
+      s.opts.english = false;
+      render();
+      return;
+    }
+    s.converting = true;
+    render();
+    try {
+      const english = await translateOnline(hindi, 'hi|en');
+      Object.assign(s, { english, englishFor: hindi });
+      s.note = 'English translation by the MyMemory service. Machine translation can be wrong: correct it in the English box if needed.';
+    } catch (error) {
+      s.opts.english = false;
+      toast(`${error.message} You can type the English yourself.`);
+    } finally {
+      s.converting = false;
+      render();
+    }
   }
 
   const actions = {
@@ -846,15 +887,19 @@ ${body}`;
     if (id === 'sentence') s.text = value;
     else if (id === 'english') {
       s.english = value;
+      s.englishFresh = true;
       if (s.opts.english) paint();
     } else if (id === 'token-gloss' && s.tokens[s.word]) s.tokens[s.word].g = value;
   }
 
   function onChange(event) {
     const el = event.target;
-    if (el.dataset.opt) {
+    if (el.dataset.opt === 'english' && el.checked && !s.english.trim()) {
+      s.opts.english = true;
+      fetchEnglish();
+    } else if (el.dataset.opt) {
       s.opts[el.dataset.opt] = el.checked;
-      store.set('options', { ...s.opts, triangles: false, blank: false });
+      store.set('options', { ...s.opts, triangles: false, blank: false, english: false });
       render();
     } else if (el.id === 'method') {
       setMethod(el.value);
@@ -924,7 +969,7 @@ ${body}`;
     el.addEventListener('change', onChange);
     if (!s.text && !s.tree) {
       s.text = isLegacy() ? HT.legacy.methods[s.method].example.text : 'राम ने सीता को किताब दी';
-      if (s.method === 'thomas') s.english = 'Ram gave Sita a book';
+      if (s.method === 'thomas') Object.assign(s, { english: 'Ram gave Sita a book', englishFor: s.text });
       tokenize();
       parse();
     }
