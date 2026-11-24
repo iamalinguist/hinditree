@@ -76,9 +76,9 @@
 
   /*
    * How to cite?: citations in the common styles, each with a copy button.
-   * When the Zenodo DOI exists, set DOI (for example '10.5281/zenodo.1234567').
+   * DOI is Zenodo's concept DOI, which always resolves to the latest release.
    */
-  const CITE = { DOI: '', year: '2026', url: 'https://iamalinguist.github.io/hinditree/',
+  const CITE = { DOI: '10.5281/zenodo.24513674', year: '2026', url: 'https://iamalinguist.github.io/hinditree/',
     title: 'HindiTree: An open-access tool for Hindi syntax trees', titleCase: 'HindiTree: An Open-Access Tool for Hindi Syntax Trees' };
   function citations() {
     const d = new Date();

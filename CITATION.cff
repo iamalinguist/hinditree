@@ -10,6 +10,14 @@ authors:
   - family-names: Tripathi
     given-names: Vivek
     website: "https://iamalinguist.github.io/"
+doi: "10.5281/zenodo.24513674"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24513674"
+    description: "All versions (resolves to the latest release)"
+  - type: doi
+    value: "10.5281/zenodo.24513675"
+    description: "Version 1.0.1"
 repository-code: "https://github.com/iamalinguist/hinditree"
 url: "https://iamalinguist.github.io/hinditree/"
 keywords:
@@ -19,5 +27,5 @@ keywords:
   - parsing
   - linguistics education
   - kāraka
-version: "1.0.0"
-date-released: "2026-11-25"
+version: "1.0.1"
+date-released: "2026-11-24"

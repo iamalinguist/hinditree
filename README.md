@@ -1,5 +1,7 @@
 # HindiTree
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24513674.svg)](https://doi.org/10.5281/zenodo.24513674)
+
 Analyse Hindi sentence structure using formal grammar. HindiTree draws, parses and teaches constituency trees for Hindi, following the course sequence of Linda Thomas, *Beginning Syntax* (1993).
 
 ## What it does
@@ -71,6 +73,12 @@ The interface font, DM Mono, is loaded from Google Fonts. Without the internet t
 When releasing, change the `?v=` date on the script and stylesheet links in `docs/index.html`, so returning visitors load all the new files together instead of a cached mix.
 
 When adding a script file, also add it to `docs/index.html`. The scripts are deliberately not ES modules, because modules do not load when the page is opened from disk.
+
+## How to cite
+
+Tripathi, V. (2026). *HindiTree: An open-access tool for Hindi syntax trees* [Web application]. https://doi.org/10.5281/zenodo.24513674
+
+This DOI always points to the latest release; each release also has its own DOI on Zenodo. See `CITATION.cff`, or "How to cite?" in the app's menu, for other styles.
 
 ## Credits
 
