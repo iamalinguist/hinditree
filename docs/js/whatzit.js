@@ -73,7 +73,39 @@
       tool: 'Method 4 (X-bar) draws D; Method 1 draws DET inside NP. Run the same phrases in both and note what each predicts.',
       readings: ['Veneeta Dayal (2004), Number marking and (in)definiteness in kind terms, Linguistics and Philosophy', 'Željko Bošković (2008), What will you have, DP or NP?', 'Giuseppe Longobardi (1994), Reference and proper names, Linguistic Inquiry', 'Guglielmo Cinque (2005), Deriving Greenberg\'s Universal 20 and its exceptions, Linguistic Inquiry'],
       output: 'A paper on the Hindi noun phrase as evidence in the NP/DP debate.',
-      next: 'Once the noun phrase is settled, look at what marks it: ने and को.',
+      next: 'Nouns are settled. Now the verb: does the transitive/intransitive split work for Hindi?',
+    },
+    {
+      id: 'transitivity', phase: 'units', title: 'Is there transitivity?', hi: 'सकर्मक और अकर्मक',
+      question: 'Grammars divide Hindi verbs into सकर्मक (transitive) and अकर्मक (intransitive). Does that feature actually predict how a Hindi verb behaves, as it does in English?',
+      hypotheses: [
+        ['A lexical feature', 'Each verb is listed as transitive or intransitive, and that feature drives ने, the passive and object marking, much as in English.'],
+        ['No English-style transitivity', 'No single transitive/intransitive feature predicts Hindi behaviour. What matters is the verb\'s morphological family (टूटना, तोड़ना, तुड़वाना), the meaning of the event (control, completion) and the clause, not a listed valency.'],
+      ],
+      evidence: `# Transitive verbs that refuse ने
+* राम ने किताब लाया
+राम किताब लाया
+# Intransitive verbs that allow ने
+% मैंने छींका
+% उसने नहाया
+# The object can be left out and ने stays
+मैंने खा लिया
+# Verbs that go either way
+मैं समझा
+मैंने समझा
+# Transitivity comes in morphological families
+गिलास टूटा
+राम ने गिलास तोड़ा
+राम ने गिलास तुड़वाया`,
+      argument: [
+        'Write the traditional definition precisely: what exactly is a सकर्मक verb supposed to do? (Take an object, take ने in the perfective, passivise.)',
+        'For 50 common verbs, check each behaviour separately: takes an object, takes ने, passivises, can drop the object, has an intransitive or causative partner.',
+        'If the behaviours do not cluster, the single feature is not doing the work, and you can say what does instead (family, meaning, aspect).',
+      ],
+      tool: 'The Method 1 verb classes ([trans], [intrans], [ditrans]...) are exactly this feature: list the verbs where the class gives the wrong prediction, using the Workbench to see which sentences it accepts wrongly.',
+      readings: ['Paul Hopper and Sandra Thompson (1980), Transitivity in grammar and discourse, Language', 'Colin Masica (1976), Defining a Linguistic Area: South Asia (Chicago)', 'Gillian Ramchand (2008), Verb Meaning and the Lexicon (Cambridge)', 'Tara Mohanan (1994), Argument Structure in Hindi'],
+      output: 'A paper: "Transitivity is not a category of Hindi grammar", with the 50-verb table as its evidence.',
+      next: 'If transitivity does not decide ने, what does? Look at ने next.',
     },
     {
       id: 'ne', phase: 'marking', title: 'What licenses ने?', hi: 'ने का नियम',
@@ -176,7 +208,39 @@
       tool: 'The "Light verbs as one verb" switch in Make Structure draws them as one V; the notes it gives (for example नहीं between the parts) are evidence.',
       readings: ['Peter Hook (1974), The Compound Verb in Hindi', 'Miriam Butt (1995), The Structure of Complex Predicates in Urdu', 'Tara Mohanan (1994), Argument Structure in Hindi', 'Miriam Butt and Gillian Ramchand (2005), Complex aspectual structure in Hindi/Urdu'],
       output: 'A paper comparing compound and conjunct verbs on the same tests.',
-      next: 'Complex predicates show that case, agreement and roles do not line up. That is the subject question.',
+      next: 'The so-called passive is also built with a light verb (जाना). Look at it next.',
+    },
+    {
+      id: 'passive', phase: 'clause', title: 'Is there a passive?', hi: 'कर्मवाच्य और भाववाच्य',
+      question: 'Hindi grammars call V + जाना with a से or द्वारा agent the passive (कर्मवाच्य). Are these really passives, or are the oblique constructions something else?',
+      hypotheses: [
+        ['A real passive', 'V + जाना demotes the agent to an optional से/द्वारा phrase and promotes the object, as in an English passive.'],
+        ['Not a passive', 'The oblique constructions are not passives: the object is not promoted, and the से phrase still behaves like a subject. They express inability, lack of control or an impersonal event.'],
+      ],
+      evidence: `# The textbook passive
+किताब राम द्वारा लिखी गई
+किताब लिखी गई
+# The object keeps को: it is not promoted
+लड़की को बुलाया गया
+# Inability with से, mostly under negation
+मुझसे खाना नहीं खाया गया
+? मुझसे खाना खाया गया
+# Intransitive verbs too
+मुझसे चला नहीं जाता
+# Involuntary agent without जाना
+मुझसे गिलास टूट गया
+# Does the से phrase bind अपना?
+% मुझसे अपना काम नहीं किया गया`,
+      argument: [
+        'Define a passive by its properties (object becomes subject, agent becomes optional and oblique, the meaning stays the same) before looking at Hindi.',
+        'Test each Hindi construction for each property: does the object lose को and agree with the verb? Can the agent be left out? Does the meaning change (inability)?',
+        'Apply the subject tests (अपना, -कर) to the से phrase. If it passes them, it is still a subject and the construction is not a passive.',
+        'Check the register of द्वारा passives: are they native, or a written and translated style?',
+      ],
+      tool: 'Method 1 labels जाना as PASS. Draw the sentences above and note where the PASS analysis and the Functions labels (S, dO) give the wrong subject.',
+      readings: ['Alice Davison (1982), On the form and meaning of Hindi passive sentences, Lingua', 'Tara Mohanan (1994), Argument Structure in Hindi', 'Edward Keenan and Matthew Dryer (2007), Passive in the world\'s languages', 'Yamuna Kachru (2006), Hindi'],
+      output: 'A paper: "The Hindi oblique constructions are not passives", with the property table as its evidence.',
+      next: 'If the से phrase can be a subject, "subject" needs defining. That is the subject question.',
     },
     {
       id: 'subject', phase: 'clause', title: 'Subjecthood and kāraka', hi: 'कर्ता और उद्देश्य',
