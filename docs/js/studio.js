@@ -495,14 +495,16 @@
 
   function stage(view) {
     if (!view) {
-      return '<section class="card stage empty"><p class="big">No tree yet</p><p>Type a Hindi sentence and choose Analyse, write English and choose Convert, or open an example from the course.</p></section>';
+      return `<section class="card stage empty"><p class="big">No tree yet</p><p>Type a Hindi sentence and choose Analyse, write English and choose Convert, or open an example from the course.</p>
+        ${s.text.trim() ? '<p><button class="btn small" data-act="hand">or draw it by hand</button></p>' : ''}</section>`;
     }
     return `<section class="card stage" id="stage">
       <div class="toolbar">
         <div class="cluster switch" role="group" aria-label="View"><button class="btn small ${s.view === 'tree' ? 'on' : ''}" data-act="viewTree" aria-pressed="${s.view === 'tree'}">Tree</button>
           <button class="btn small ${s.view === 'karaka' ? 'on' : ''}" data-act="viewKaraka" aria-pressed="${s.view === 'karaka'}">Kāraka</button></div>
         <div class="cluster"><button class="btn small" data-act="undo" title="Undo (Ctrl+Z)" ${s.undo.length ? '' : 'disabled'}>Undo</button>
-          <button class="btn small" data-act="redo" title="Redo (Ctrl+Y)" ${s.redo.length ? '' : 'disabled'}>Redo</button></div>
+          <button class="btn small" data-act="redo" title="Redo (Ctrl+Y)" ${s.redo.length ? '' : 'disabled'}>Redo</button>
+          ${s.view === 'tree' ? '<button class="btn small" data-act="hand" title="Replace the tree with the word categories and build the phrases yourself">Start from the words</button>' : ''}</div>
         ${s.trees.length > 1 ? `<div class="cluster readings"><button class="btn small" data-act="prev" aria-label="Previous reading">‹</button>
           <span>Reading ${s.index + 1} of ${s.trees.length}</span><button class="btn small" data-act="next" aria-label="Next reading">›</button></div>` : ''}
         ${s.view === 'tree' ? `<div class="cluster"><button class="btn small" data-act="back" title="One step back">◀</button>
@@ -548,7 +550,6 @@
           ${navigator.onLine ? '' : '<span class="hint">Convert needs an internet connection.</span>'}</div>
         <div class="row">
           <button class="btn primary" data-act="analyse">Analyse</button>
-          <button class="btn" data-act="hand">Draw by hand</button>
           <label class="inline">Method <select id="method">${[
             ['thomas', 'Method 1: Thomas, adapted to Hindi'], ['method2', 'Method 2: Toy Fragment by Tripathi et al.'],
             ['custom', 'Method 3: My Grammar'], ['xbar', 'Method 4: X-Bar Theory'],
