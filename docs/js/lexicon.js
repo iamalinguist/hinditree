@@ -85,7 +85,7 @@
     होशियार:clever मूर्ख:foolish चालाक:cunning आलसी:lazy मेहनती:hardworking ईमानदार:honest शरारती:naughty
     महत्वपूर्ण:important ज़रूरी:necessary संभव:possible असंभव:impossible बंद:closed तैयार:ready तेज़:sharp
     गरीब:poor अमीर:rich निर्दोष:innocent सही:correct गलत:wrong परेशान:worried डरावना:frightening स्वादिष्ट:tasty
-    रोचक:interesting दो:two तीन:three चार:four पाँच:five छह:six सात:seven आठ:eight दस:ten पहला:first दूसरा:second`)
+    रोचक:interesting शुरू:begun ख़त्म:finished दो:two तीन:three चार:four पाँच:five छह:six सात:seven आठ:eight दस:ten पहला:first दूसरा:second`)
     .forEach(([w, g]) => {
       add(w, 'A', g);
       if (/ा$/.test(w)) ['े', 'ी'].forEach((end) => add(w.slice(0, -1) + end, 'A', g));
@@ -117,7 +117,9 @@
     बारिश:rain हवा:wind सूरज:sun चाँद:moon आग:fire काम:work सच:truth झूठ:lie बात:matter मदद:help प्यार:love
     गुस्सा:anger डर:fear भूख:hunger नींद:sleep बुखार:fever खुशी:happiness भरोसा:trust सपना:dream उपहार:gift
     तोहफ़ा:gift चोरी:theft इनाम:prize नाम:name आदत:habit लक्ष्य:aim ज़मीन:ground बैठक:meeting चुनाव:election
-    सरकार:government समस्या:problem उत्तर:answer गिटार:guitar तबला:tabla`)
+    सरकार:government समस्या:problem उत्तर:answer गिटार:guitar तबला:tabla मेहनत:hard_work कोशिश:effort
+    याद:memory इंतज़ार:waiting पसंद:liking शादी:marriage स्वागत:welcome इस्तेमाल:use शिकायत:complaint बहस:argument
+    ध्यान:attention पूजा:worship मज़ाक:joke आराम:rest`)
     .forEach(([w, g]) => {
       add(w, 'N', g);
       if (w === 'घर') add(w, 'Adv', 'home'); // bare goal: घर जाना

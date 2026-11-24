@@ -185,6 +185,7 @@ abbr[title] { text-decoration: underline dotted #9b97ad; text-underline-offset: 
 .canvas [data-path]:focus { outline: none; }
 .canvas [data-path]:focus-visible rect { stroke: var(--gold); stroke-width: 3; }
 .present-caption, .present-bar { display: none; }
+.oneverb-note { margin: 0; padding: 6px 12px; border-bottom: 1px solid var(--line); background: #fff8e6; }
 .inspector label { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--muted); margin: 8px 0; min-width: 0; }
 .inspector label input, .inspector label select { width: 100%; color: var(--ink); font-size: 14px; }
 .inspector .row input { flex: 1; min-width: 0; }

@@ -13,7 +13,7 @@
     'NP', "N'", 'VP', 'Vgp', 'AP', 'AdvP', 'PP', 'POSS', 'DET', 'N', 'PRO', 'V', 'AUX', 'TENSE',
     'MOD', 'PERF', 'PROG', 'HAB', 'PASS', 'VEC', 'NEG', 'A', 'Adv', 'deg', 'P', 'CASE', 'sub', 'coord', 'part'];
   const LEVELS = ['1 · Categories and phrases', '2 · AdvP, PP, AP', '3 · Verb classes', '4 · Verb group', '5 · N′ in the noun phrase', '6 · Clauses and triangles'];
-  const OPTIONS = [['functions', 'Functions'], ['gloss', 'Glosses'], ['translit', 'Transliteration'], ['english', 'Translation'],
+  const OPTIONS = [['oneVerb', 'Light verbs as one verb'], ['functions', 'Functions'], ['gloss', 'Glosses'], ['translit', 'Transliteration'], ['english', 'Translation'],
     ['triangles', 'Triangles for S₂'], ['align', 'Align words'], ['color', 'Colour'], ['blank', 'Blank labels (quiz)']];
 
   const s = {
@@ -62,7 +62,7 @@
   function shown() {
     if (!s.tree) return null;
     if (s.method !== 'thomas') return s.tree;
-    return T.present(s.tree, s.level, { triangles: s.level === 6 && s.opts.triangles });
+    return T.present(baseTree(s.tree), s.level, { triangles: s.level === 6 && s.opts.triangles });
   }
 
   // History
@@ -476,7 +476,12 @@
   /** Kāraka relations of the current sentence, from its Method 1 analysis. */
   function karakaAnalysis() {
     const tree = s.method === 'thomas' && s.tree ? s.tree : s.text ? treeFor(s.text) : null;
-    return HT.karaka.analyse(tree, s.karakaFix);
+    return HT.karaka.analyse(tree && baseTree(tree), s.karakaFix);
+  }
+
+  /** The Method 1 tree, with compound and conjunct verbs as one verb if that option is on. */
+  function baseTree(tree) {
+    return s.opts.oneVerb ? T.oneVerb(tree).tree : tree;
   }
 
   function karakaPanel() {
@@ -520,8 +525,10 @@
         ${s.view === 'tree' ? `<button class="btn small ${s.several ? 'on' : ''}" data-act="several" aria-pressed="${s.several}">Select several</button>` : ''}
         <button class="btn small primary" data-act="present">Present</button>
       </div>
-      <div class="options">${OPTIONS.filter(([key]) => (s.view === 'tree' ? key !== 'triangles' || s.level === 6 : ['gloss', 'english'].includes(key))).map(([key, name]) =>
-        `<label><input type="checkbox" data-opt="${key}" ${s.opts[key] ? 'checked' : ''}> ${name}</label>`).join('')}</div>
+      <div class="options">${OPTIONS.filter(([key]) => (key === 'oneVerb' ? s.method === 'thomas'
+        : s.view === 'tree' ? key !== 'triangles' || s.level === 6 : ['gloss', 'english'].includes(key))).map(([key, name]) =>
+        `<label${key === 'oneVerb' ? ' title="Draw compound verbs (खा लिया) and conjunct verbs (मदद की) as one complex V"' : ''}><input type="checkbox" data-opt="${key}" ${s.opts[key] ? 'checked' : ''}> ${name}</label>`).join('')}</div>
+      ${s.opts.oneVerb && s.method === 'thomas' && s.tree ? T.oneVerb(s.tree).notes.map((n) => `<p class="hint oneverb-note" lang="hi">${esc(n)}</p>`).join('') : ''}
       <p class="present-caption" lang="hi">${esc(s.text)}</p>
       <div class="canvas" id="canvas"></div>
       <div class="present-bar"><button class="btn" data-act="back">◀ Back</button><button class="btn" data-act="build">Start build</button>

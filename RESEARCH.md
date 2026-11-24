@@ -64,7 +64,7 @@ Each of these is open to argument, so check that it matches what you want to tea
 4. **Aspect carried by inflection is an abstract leaf**, (hab) or (perf), just as Thomas treats (past). चुका and रहा are overt PERF and PROG.
 5. **होना after a participle is TENSE. होना alone is an intensive V** followed by (pres) or (past).
 6. **Future is a tense**, because -गा is inflectional. The book's two-tense claim is specific to English.
-7. **Vector (light) verbs are VEC inside AUX** (v in Method 4). The seven light verbs are जाना, लेना, देना, डालना, पड़ना, बैठना and उठना. Many analyses make V + vector a complex predicate (Butt 1995). One fact the app does take from that view: the light verb decides whether ने is possible. राम ने आम खा लिया is fine, but *राम ने आम खा गया is flagged, because जाना, पड़ना, बैठना and उठना are intransitive. Conjunct verbs (काम करना, नाराज़ करना) are still analysed as an object or complement plus करना.
+7. **Vector (light) verbs are VEC inside AUX** (v in Method 4). The seven light verbs are जाना, लेना, देना, डालना, पड़ना, बैठना and उठना. Many analyses make V + vector a complex predicate (Butt 1995). One fact the app does take from that view: the light verb decides whether ने is possible. राम ने आम खा लिया is fine, but *राम ने आम खा गया is flagged, because जाना, पड़ना, बैठना and उठना are intransitive. By default, conjunct verbs (काम करना, नाराज़ करना) are analysed as an object or complement plus करना. The option **Light verbs as one verb** in Make Structure (Method 1) draws both kinds as one complex V instead: `[V [V खा] [V लिया]]` and `[V [N मदद] [V की]]`. The noun or adjective must be on a list of about 30 conjunct nouns and adjectives, and the verb must be करना, होना, देना or लेना. When नहीं separates the parts (मदद नहीं की), they stay apart and a note gives this as evidence against single-word status. A genitive left behind (सीता की मदद की) becomes the object of the whole predicate. The kāraka view and the Lab's Flow tab follow the option.
 8. **वाला is an adnominal P.** It is also analysed as a suffix or a nominaliser.
 9. **A degree word modifies A directly** (AP → deg A). The book's rule is AP → (AdvP) A, with deg inside AdvP.
 10. **Correlative जो clauses adjoin to S₁. Postnominal ones are inside N′.**
@@ -93,7 +93,7 @@ No code was copied.
 
 ## 6. Verification
 
-- `node tests/run.js` checks all 83 examples at all six levels, unseen sentences, notation round-trips, input validation and Method 2.
+- `node tests/run.js` checks all 87 examples at all six levels, unseen sentences, notation round-trips, input validation and Method 2.
 - On 30 fresh sentences that played no part in writing the grammar, 28 received an acceptable first analysis. The two failures were missing verbs, added afterwards. This is a small sample chosen by the developer, not a formal evaluation.
 - The trees and Hindi examples have **not been reviewed by a second linguist or native-speaker teacher**. Read each chapter's examples before teaching it.
 
@@ -121,7 +121,7 @@ Method 4 analyses the same sentences with X-bar phrase structure, for students w
 - **Functions.** These are marked as in Method 1, except that P marks the lexical verb V, because the verb group is no longer one constituent.
 
 Results:
-- All 83 course sentences parse.
+- All 87 course sentences parse.
 - 82 give Method 1's functions (other than P) on the first tree. The last one, the ambiguous दौड़ते हुए sentence, has the other reading second.
 - Random input of up to 30 words parses within 5 ms.
 

@@ -311,7 +311,9 @@ Problems and counterexamples:
         previous = null;
         return `<h3 class="flow-heading">${esc(r.heading)}</h3>`;
       }
-      const a = HT.karaka.analyse(HT.studio.treeFor(r.sentence));
+      const raw = HT.studio.treeFor(r.sentence);
+      // Follows the "Light verbs as one verb" option of Make Structure.
+      const a = HT.karaka.analyse(raw && store.get('options', {}).oneVerb ? HT.tree.oneVerb(raw).tree : raw);
       if (!a) {
         previous = null;
         return `<div class="flow-row"><span class="flow-mark">${esc(r.judgement)}</span><div><p lang="hi" class="flow-missing">${esc(r.sentence)}</p>
@@ -369,7 +371,7 @@ Problems and counterexamples:
           <textarea id="corpus-text" rows="8" lang="hi" placeholder="One sentence per line, or separated by ।"></textarea>
           <div class="row"><input id="corpus-source" placeholder="Source (e.g. a newspaper, a speaker, a book)" aria-label="Source" maxlength="120">
             <button class="btn primary" id="corpus-add">Add to corpus</button></div>
-          <p class="hint">Or start from the <button class="btn small" id="corpus-course">83 course sentences</button></p>
+          <p class="hint">Or start from the <button class="btn small" id="corpus-course">${HT.lessons.all.length} course sentences</button></p>
         </section>
         <section class="card">
           <h2>Use selected sentences</h2>

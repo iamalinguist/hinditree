@@ -57,7 +57,7 @@
     const text = T.text(node);
     const last = words(node).slice(-1)[0];
     const marker = last ? last.w : '';
-    const head = (find(node, (n) => n.l === 'N' || n.l === 'PRO') || { c: [{ w: '' }] }).c[0].w;
+    const head = ((find(node, (n) => (n.l === 'N' || n.l === 'PRO') && n.c.some(T.isLeaf)) || { c: [{ w: '' }] }).c.find(T.isLeaf) || { w: '' }).w;
     if (fn === 'S') {
       if (ctx.passive) return { label: 'k2', why: 'subject of a passive verb' };
       if (marker === 'को' || DATIVE.test(text)) return { label: 'k4a', alt: 'k1', why: 'को-marked subject' };
@@ -138,7 +138,8 @@
       const vgp = verbUnit.node;
       const ctx = {
         passive: !!find(vgp, (n) => n.l === 'PASS'),
-        stem: (HT.lexicon.verb((find(vgp, (n) => n.l === 'V') || { c: [{ w: '' }] }).c[0].w)[0] || {}).stem || '',
+        // The lexical verb: the V directly above a word (a complex V contains other nodes).
+        stem: (HT.lexicon.verb(((find(vgp, (n) => n.l === 'V' && n.c.some(T.isLeaf)) || { c: [{ w: '' }] }).c.find(T.isLeaf) || { w: '' }).w)[0] || {}).stem || '',
       };
       for (const unit of units) {
         if (unit === verbUnit) continue;

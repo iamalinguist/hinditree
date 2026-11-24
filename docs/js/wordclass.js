@@ -70,6 +70,22 @@
     'Causatives change the number of participants, not the category: उठना → उठाना → उठवाना are all verbs.',
     'So ask first: is this ending inflection (same word, new form) or derivation (a new word)? Only derivation can change the category.',
   ];
+  const LIGHT = [
+    ['Shape', 'verb stem + verb', 'noun or adjective + verb'],
+    ['Examples', 'खा लेना, सो जाना, लिख डालना, गिर पड़ना', 'मदद करना, काम करना, साफ़ करना, शुरू होना'],
+    ['Meaning comes from', 'the first verb', 'the noun or adjective'],
+    ['The second verb is called', 'a vector (or explicator)', 'a verbaliser'],
+    ['The second verb adds', 'aspect and nuance: completion, suddenness, benefit', 'makes the noun or adjective into a predicate'],
+    ['Category of the first part', 'Verb (bare stem)', 'Noun or Adjective'],
+    ['In this app', 'VEC inside AUX (v in Method 4); ने depends on the vector', 'object or complement + करना / होना'],
+  ];
+  const LIGHT_NOTES = [
+    'Light verb is the wider term for both second verbs: लेना in खा लेना no longer means “take”, and करना in मदद करना adds little beyond “doing”. Vector is used only for the compound-verb kind.',
+    'The vector decides ने: राम ने आम खा लिया (लेना is transitive), but राम आम खा गया and not *राम ने आम खा गया (जाना is intransitive).',
+    'In a conjunct verb the noun keeps some independence: नहीं can come between them (राम ने मदद नहीं की), and the verb agrees with the noun (मदद की). This is why linguists disagree about whether it is one predicate.',
+    'Hindi grammars differ in their terms; some call both संयुक्त क्रिया. Check which term your textbook uses.',
+  ];
+
   const HOMONYMS = [
     ['खाना', 'Noun: खाना ठंडा है (food)', 'Verb: मुझे खाना खाना है (to eat)'],
     ['सोना', 'Noun: सोना महँगा है (gold)', 'Verb: बच्चे को सोना है (to sleep)'],
@@ -244,6 +260,10 @@
         <tr><th>Ending or process</th><th>Change</th><th>Examples</th></tr>
         ${DERIVATION.map(([ending, change, examples]) => `<tr><td lang="hi">${esc(ending)}</td><td>${esc(change)}</td><td lang="hi">${esc(examples)}</td></tr>`).join('')}</table></div>
         ${INFLECTION.map((p) => `<p>${esc(p)}</p>`).join('')}</section>
+      <section class="card"><h2>Compound verbs and conjunct verbs</h2><div class="table-scroll"><table class="ff wc-ref">
+        <tr><th></th><th>Compound verb</th><th>Conjunct verb</th></tr>
+        ${LIGHT.map(([row, a, b]) => `<tr><td><b>${esc(row)}</b></td><td lang="hi">${esc(a)}</td><td lang="hi">${esc(b)}</td></tr>`).join('')}</table></div>
+        ${LIGHT_NOTES.map((p) => `<p>${esc(p)}</p>`).join('')}</section>
       <section class="card"><h2>Same form, different category</h2><div class="table-scroll"><table class="ff wc-ref">
         <tr><th>Word</th><th>One use</th><th>Another use</th></tr>
         ${HOMONYMS.map(([w, a, b]) => `<tr><td lang="hi"><b>${esc(w)}</b></td><td lang="hi">${esc(a)}</td><td lang="hi">${esc(b)}</td></tr>`).join('')}</table></div>

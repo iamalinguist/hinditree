@@ -6,8 +6,8 @@ Analyse Hindi sentence structure using formal grammar. HindiTree draws, parses a
 
 | Page | Purpose |
 |---|---|
-| **Make Structure** | Type a Hindi sentence, or write English and choose **Convert**, and get every tree the grammar allows. Switch between **Tree** and **Kāraka** views: the kāraka view draws Pāṇinian relations (k1 kartā, k2 karma, k4 sampradāna …) as arcs, proposed from the Method 1 analysis and editable. Correct categories, edit any node, draw by hand, build step by step, present full screen, export to PNG or LaTeX, print, or **Report this sentence** by email. |
-| **Do a Course** | Six chapters matching the book, with rules, tests, 83 Hindi examples, printable handouts and worksheets. |
+| **Make Structure** | Type a Hindi sentence, or write English and choose **Convert**, and get every tree the grammar allows. The option **Light verbs as one verb** draws compound verbs (खा लिया) and conjunct verbs (मदद की) as one complex V. Switch between **Tree** and **Kāraka** views: the kāraka view draws Pāṇinian relations (k1 kartā, k2 karma, k4 sampradāna …) as arcs, proposed from the Method 1 analysis and editable. Correct categories, edit any node, draw by hand, build step by step, present full screen, export to PNG or LaTeX, print, or **Report this sentence** by email. |
+| **Do a Course** | Six chapters matching the book, with rules, tests, 87 Hindi examples, printable handouts and worksheets. |
 | **Practice Zone** | Students name functions or verb classes, or draw a tree and have it checked. |
 | **Syntax rules** | Method 1: Thomas, adapted to Hindi (beginners). Method 2: toy fragment by Tripathi et al. (novice). Method 3: your own editable grammar (customise). Method 4: X-bar theory (intermediate). |
 | **English to Hindi** | Where the book's English rules change for Hindi, and why. |

@@ -92,6 +92,29 @@ test('पड़ना: light verb after a stem, obligation after an infinitive',
   assert.deepEqual(tagger.tag('मुझे जाना पड़ा').map((t) => t.tags[0]), ['PRO.dat', 'V.intrans', 'MOD', 'TENSE']);
 });
 
+test('light verbs as one verb: compound and conjunct verbs', () => {
+  const one = (text) => {
+    const out = tree.oneVerb(parser.parse(tagger.tag(text), compiled).trees[0]);
+    return { br: tree.toBracket(out.tree).replace(/\{[^}]*\}/g, ''), fns: tree.functions(out.tree).map((u) => `${u.fn}:${u.text}`).join(' / '), notes: out.notes };
+  };
+  assert.match(one('राम ने आम खा लिया').br, /\[Vgp\.trans \[V\.trans \[V खा\] \[V लिया\]\] \[AUX \[TENSE \(past\)\]\]\]/);
+  assert.equal(one('राम ने काम किया').fns, 'S:राम ने / P:काम किया');
+  assert.equal(one('राम ने सीता की मदद की').fns, 'S:राम ने / dO:सीता की / P:मदद की');
+  assert.equal(one('माँ ने कमरा साफ़ किया').fns, 'S:माँ ने / dO:कमरा / P:साफ़ किया');
+  assert.equal(one('राम ने रोटी बनाई').fns, 'S:राम ने / dO:रोटी / P:बनाई');
+  const split = one('राम ने मदद नहीं की');
+  assert.equal(split.fns, 'S:राम ने / dO:मदद / P:नहीं की');
+  assert.equal(split.notes.length, 1);
+  // Every course sentence still works at every chapter level.
+  for (const e of lessons.all) {
+    const solved = lessons.solve(e);
+    const t = tree.oneVerb(solved.trees[solved.index]).tree;
+    assert.ok(globalThis.HT.karaka.analyse(t), `kāraka with one verb: ${e.sentence}`);
+    assert.equal(tree.text(t), e.sentence);
+    for (let level = 1; level <= 6; level++) assert.equal(tree.text(tree.present(t, level)), e.sentence);
+  }
+});
+
 test('bracket notation round-trips', () => {
   for (const example of lessons.all) {
     const { trees, index } = lessons.solve(example);

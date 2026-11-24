@@ -206,6 +206,80 @@
       `\\begin{forest}\n${out(root, 0)}\n\\end{forest}`;
   }
 
+  /*
+   * Light verbs as one verb: an optional analysis of a Method 1 tree.
+   *   compound verb  खा लिया   [V [V खा] [V लिया]]   (the vector leaves AUX)
+   *   conjunct verb  मदद की    [V [N मदद] [V की]]    (the noun leaves VP)
+   * A conjunct verb is only formed from a listed noun or adjective and a
+   * verbaliser (करना, होना, देना, लेना), and not when नहीं separates them.
+   * Returns {tree, notes}.
+   */
+  const CONJUNCT = new Set(('मदद काम बात इंतज़ार प्यार पसंद याद कोशिश शादी बहस मेहनत स्वागत इस्तेमाल शिकायत मज़ाक आराम ' +
+    'ध्यान जवाब चोरी पूजा भरोसा फ़ोन शुरू ख़त्म बंद साफ़ तैयार नाराज़ खुश परेशान गुस्सा').split(' ').map((w) => HT.lexicon.key(w)));
+  const VERBALISERS = new Set(['कर', 'हो', 'दे', 'ले']);
+
+  function oneVerb(root) {
+    const tree = clone(root);
+    const notes = [];
+    const firstVerbWord = (n) => (leaves(n).find((l) => !l.abs) || { w: '' }).w;
+    (function visit(n) {
+      if (isLeaf(n)) return;
+      n.c.forEach(visit);
+      if (n.l === 'Vgp') {
+        // Compound verb: the vector joins the lexical verb.
+        const vi = n.c.findIndex((c) => c.l === 'V');
+        const aux = n.c.find((c) => c.l === 'AUX');
+        const vec = aux ? aux.c.findIndex((c) => c.l === 'VEC') : -1;
+        if (vi >= 0 && vec >= 0) {
+          const verb = n.c[vi];
+          n.c[vi] = { l: 'V', ...(verb.f ? { f: verb.f } : {}), c: [{ l: 'V', c: verb.c }, { l: 'V', c: aux.c[vec].c }] };
+          aux.c.splice(vec, 1);
+          if (!aux.c.length) n.c.splice(n.c.indexOf(aux), 1);
+        }
+      }
+      if (n.l !== 'VP') return;
+      // Conjunct verb: a listed noun or adjective right before the verb group.
+      const gi = n.c.findIndex((c) => c.l === 'Vgp');
+      if (gi < 1) return;
+      const vgp = n.c[gi];
+      const prev = n.c[gi - 1];
+      const vi = vgp.c.findIndex((c) => c.l === 'V');
+      if (vi < 0 || isLeaf(prev)) return;
+      const forms = HT.lexicon.verb(firstVerbWord(vgp.c[vi]));
+      if (!forms.some((f) => VERBALISERS.has(f.stem))) return;
+      let part = null;
+      let keep = null;
+      let kind = '';
+      const word = (x) => (x && x.c && x.c.length === 1 && isLeaf(x.c[0]) ? x.c[0].w : '');
+      if (prev.l === 'NP' && prev.c.length === 1 && prev.c[0].l === 'N') {
+        part = prev.c[0];
+        kind = 'noun';
+      } else if (prev.l === 'NP' && prev.c.length === 2 && prev.c[0].l === 'DET' && prev.c[0].c[0] && prev.c[0].c[0].l === 'POSS' && prev.c[1].l === 'N') {
+        part = prev.c[1];
+        keep = { ...prev.c[0].c[0], fn: 'dO' };
+        kind = 'noun';
+      } else if (prev.l === 'AP' && prev.c.length === 1 && prev.c[0].l === 'A') {
+        part = prev.c[0];
+        kind = 'adjective';
+      }
+      if (!part || !CONJUNCT.has(HT.lexicon.key(word(part)))) return;
+      if (vgp.c[0].l === 'NEG') {
+        notes.push(`नहीं stands between ${word(part)} and the verb, so they are drawn as two words: this is evidence that a conjunct verb is not a single word.`);
+        return;
+      }
+      const inner = { ...vgp.c[vi] };
+      delete inner.f;
+      // The verb class loses the object or complement that joined the verb.
+      if (kind === 'adjective' || keep) vgp.f = 'trans';
+      else if (vgp.f === 'trans') vgp.f = 'intrans';
+      else if (vgp.f === 'ditrans') vgp.f = 'trans';
+      vgp.c[vi] = { l: 'V', ...(vgp.f ? { f: vgp.f } : {}), c: [part, inner] };
+      if (keep) n.c.splice(gi - 1, 1, keep);
+      else n.c.splice(gi - 1, 1);
+    })(tree);
+    return { tree, notes };
+  }
+
   /** The rewrite rules that this particular tree uses. */
   function rules(root) {
     const seen = new Set();
@@ -261,5 +335,5 @@
     return n;
   }
 
-  HT.tree = { clone, isLeaf, leaves, text, walk, at, present, functions, toBracket, fromBracket, toForest, rules, compare, sanitize };
+  HT.tree = { clone, isLeaf, leaves, text, walk, at, present, functions, toBracket, fromBracket, toForest, rules, compare, sanitize, oneVerb };
 })(globalThis.HT = globalThis.HT || {});

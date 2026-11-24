@@ -108,7 +108,8 @@
       rules: ['VP → (complements) + Vgp', 'Vgp → (NEG) + V + (AUX)', 'AUX → (VEC) / (PASS) + (MOD) + (PROG / PERF / HAB) + (TENSE)'],
       english: 'AUX + V, ordered tense/modal, perfect, progressive, passive. There are two tenses, and a modal excludes tense. Do supports negation and questions.',
       hindiRule: 'The mirror image: V + passive, modal, aspect, tense. A modal and tense combine (पढ़ सकता था), future is an inflection (जाएगा), and there is no do-support. (hab), (perf) and (past) are abstract elements, like Thomas’s (pres).',
-      tests: ['Selection: stem + रहा / सकता / चुका; perfective participle + जाना (passive); infinitive + चाहिए.', 'ने appears only with perfective transitive verbs. Then the verb agrees with an unmarked object: राम ने रोटी खाई।'],
+      tests: ['Selection: stem + रहा / सकता / चुका; perfective participle + जाना (passive); infinitive + चाहिए.',
+        'Compound or conjunct? A compound verb is a verb stem + a vector (खा लेना, सो जाना). A conjunct verb is a noun or adjective + a verbaliser (मदद करना, साफ़ करना). Both second verbs are light verbs, but only the first kind is called a vector.', 'ने appears only with perfective transitive verbs. Then the verb agrees with an unmarked object: राम ने रोटी खाई।'],
       groups: [
         ['Tense', [
           ['S:राम / dO:रोटी / P:खाता है', 'Ram eats bread'],
@@ -132,10 +133,16 @@
           ['S:किताब / iO:बच्चे को / P:दी गई', 'The book was given to the child'],
           ['S:खाना / P:पकाया जा रहा है', 'The food is being cooked'],
         ]],
-        ['Negation and compound verbs', [
+        ['Negation', [
           ['S:राम / dO:चाय / P:नहीं पीता', 'Ram does not drink tea'],
-          ['S:राम ने / dO:आम / P:खा लिया', 'Ram ate up the mango', 'लिया is a vector verb (VEC).'],
-          ['S:बच्चा / P:सो गया', 'The child fell asleep'],
+        ]],
+        ['Compound verbs and conjunct verbs', [
+          ['S:राम ने / dO:आम / P:खा लिया', 'Ram ate up the mango', 'Compound verb: the stem खा and the vector लिया (VEC). लेना is transitive, so the subject can take ने.'],
+          ['S:बच्चा / P:सो गया', 'The child fell asleep', 'Compound verb with the vector जाना. जाना is intransitive, so the subject takes no ने.'],
+          ['S:बच्चा / P:गिर पड़ा', 'The child fell down', 'The vector पड़ना adds suddenness.'],
+          ['S:राम ने / dO:सीता की मदद / P:की', 'Ram helped Sita', 'Conjunct verb मदद करना: a noun and the verbaliser करना. The verb agrees with मदद (की, feminine). This course analyses मदद as the object.'],
+          ['S:राम ने / dO:काम / P:किया', 'Ram did the work', 'Conjunct verb काम करना, analysed here as object + verb.'],
+          ['S:राम ने / dO:मदद / P:नहीं की', 'Ram did not help', 'नहीं can stand between मदद and की, so a conjunct verb is not a single word.'],
         ]],
       ],
     },
