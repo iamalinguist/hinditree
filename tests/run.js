@@ -76,6 +76,22 @@ test('ने errors are flagged', () => {
   assert.equal(tagger.check(tagger.tag('राम ने आम खा लिया')).length, 0);
 });
 
+test('ने follows the light verb in compound verbs', () => {
+  const flagged = (t) => tagger.check(tagger.tag(t)).length > 0;
+  assert.ok(flagged('राम ने आम खा गया'), 'जाना is intransitive');
+  assert.ok(flagged('उसने गलती कर बैठा'), 'बैठना is intransitive');
+  assert.ok(!flagged('राम ने आम खा लिया'), 'लेना is transitive');
+  assert.ok(!flagged('राम ने चिट्ठी लिख डाली'), 'डालना is transitive');
+  assert.ok(!flagged('राम आम खा गया'));
+});
+test('पड़ना: light verb after a stem, obligation after an infinitive', () => {
+  const fns = (t) => tree.functions(parser.parse(tagger.tag(t), compiled).trees[0]).map((u) => `${u.fn}:${u.text}`).join(' / ');
+  assert.equal(fns('पेड़ गिर पड़ा'), 'S:पेड़ / P:गिर पड़ा');
+  assert.deepEqual(tagger.tag('पेड़ गिर पड़ा').map((t) => t.tags[0]), ['N', 'V.intrans', 'VEC', 'TENSE']);
+  assert.equal(fns('मुझे जाना पड़ा'), 'S:मुझे / P:जाना पड़ा');
+  assert.deepEqual(tagger.tag('मुझे जाना पड़ा').map((t) => t.tags[0]), ['PRO.dat', 'V.intrans', 'MOD', 'TENSE']);
+});
+
 test('bracket notation round-trips', () => {
   for (const example of lessons.all) {
     const { trees, index } = lessons.solve(example);

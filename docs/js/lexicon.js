@@ -157,7 +157,7 @@
     हो:be:intens,intrans:हु लग:seem:intens बन:become:intens दिख:look:intens,intrans
     डर:fear:prep,intrans मिल:meet:prep,intrans लड़:fight:prep,intrans जुड़:join:prep निर्भर:depend:prep
     झाँक:peep:prep,intrans टकरा:collide:prep बोल:speak:trans,intrans थक:tire:intrans बह:flow:intrans उग:grow:intrans
-    बच:survive:intrans हार:lose:intrans,trans बुला:call:trans,complex निकाल:take_out:trans बो:sow:trans ढक:cover:trans
+    पड़:fall:intrans बच:survive:intrans हार:lose:intrans,trans बुला:call:trans,complex निकाल:take_out:trans बो:sow:trans ढक:cover:trans
     बाँट:distribute:trans,ditrans जोड़:join:trans खींच:pull:trans फेंक:throw:trans पीट:beat:trans रोक:stop:trans
     गिरा:drop:trans सुला:put_to_sleep:trans जगा:wake:trans चढ़:climb:intrans उतर:descend:intrans छिप:hide:intrans`;
 

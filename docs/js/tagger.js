@@ -12,6 +12,8 @@
   const ABSTRACT = { pres: 'TENSE', past: 'TENSE', fut: 'TENSE', perf: 'PERF', hab: 'HAB' };
   const AUX = ['TENSE', 'MOD', 'PERF', 'PROG', 'HAB', 'PASS', 'VEC'];
   const VECTORS = ['जा', 'ले', 'दे', 'डाल', 'पड़', 'बैठ', 'उठ'].map(L.key);
+  // Light verbs that are intransitive: with them the subject takes no ने.
+  const INTRANSITIVE_VECTORS = ['जा', 'पड़', 'बैठ', 'उठ'].map(L.key);
   const isAux = (tag) => AUX.includes(tag);
   const isVerbal = (tag) => !!tag && (tag.startsWith('V.') || isAux(tag));
 
@@ -125,8 +127,11 @@
       const forms = vs.filter((v) => v.kind !== 'stem' || last || continuesVerb(next));
       if (forms.length) {
         // A word can be an inflected form of two verbs, or two forms of one verb.
-        const order = continuesVerb(next) ? ['stem', 'perf', 'hab', 'inf', 'fut', 'imp', 'subj', 'cp']
-          : ['inf', 'perf', 'hab', 'fut', 'imp', 'cp', 'subj', 'stem'];
+        // Before पड़ना or चाहिए an infinitive means obligation: मुझे जाना पड़ा.
+        const modalNext = nextReal && /^(चाहिए|पड़)/.test(nextReal) && forms.some((f) => f.kind === 'inf');
+        const order = modalNext ? ['inf', 'stem', 'perf', 'hab', 'fut', 'imp', 'subj', 'cp']
+          : continuesVerb(next) ? ['stem', 'perf', 'hab', 'inf', 'fut', 'imp', 'subj', 'cp']
+            : ['inf', 'perf', 'hab', 'fut', 'imp', 'cp', 'subj', 'stem'];
         forms.sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind));
         const v = forms[0];
         ({ kind, gloss } = v);
@@ -189,7 +194,13 @@
     if (!v) return notes;
     const nonPerfective = L.verb(v.w).length > 0 && L.verb(v.w).every((f) => ['hab', 'fut', 'stem', 'imp', 'subj'].includes(f.kind));
     const hasVector = clause.some((t) => has(t, /^(VEC|PERF)$/) && !t.abs);
-    if ((nonPerfective && !hasVector) || clause.some((t) => has(t, /^PROG$/))) {
+    // In a compound verb the light verb decides: ने only with a transitive one.
+    // राम ने आम खा लिया, but राम आम खा गया (not *राम ने आम खा गया).
+    const vector = clause.find((t) => has(t, /^VEC$/) && !t.abs);
+    const vectorStem = vector && (L.verb(vector.w).find((f) => VECTORS.includes(L.key(f.stem))) || {}).stem;
+    if (vectorStem && INTRANSITIVE_VECTORS.includes(L.key(vectorStem))) {
+      notes.push(`* ने is not used when the light verb is intransitive (जाना, पड़ना, बैठना, उठना). Write राम आम खा गया, not *राम ने आम खा गया. Here the light verb is ${vectorStem}ना.`);
+    } else if ((nonPerfective && !hasVector) || clause.some((t) => has(t, /^PROG$/))) {
       notes.push('* ने requires a perfective verb. With habitual, progressive and future forms the subject is unmarked: राम रोटी खाता है, not *राम ने रोटी खाता है।');
     } else if (v.tags.every((t) => t === 'V.intrans')) {
       notes.push('* ने normally needs a transitive verb. Intransitive verbs take an unmarked subject: राम सोया, not *राम ने सोया।');

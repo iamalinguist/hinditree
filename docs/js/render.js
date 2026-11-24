@@ -41,6 +41,40 @@
     return INK;
   }
 
+  // Full forms shown when the pointer rests on an abbreviation.
+  const CATEGORY = {
+    S: 'sentence or clause', S1: 'main clause', S2: 'subordinate clause', NP: 'noun phrase', "N'": 'N-bar: between noun and noun phrase',
+    VP: 'verb phrase', Vgp: 'verb group', AP: 'adjective phrase', AdvP: 'adverb phrase', PP: 'postpositional phrase',
+    POSS: 'possessive (genitive) phrase', DET: 'determiner', N: 'noun', NOUN: 'noun', PRO: 'pronoun', V: 'verb', VERB: 'verb',
+    A: 'adjective', Adv: 'adverb', deg: 'degree adverb', P: 'postposition', CASE: 'case marker (ने, को)', sub: 'subordinator',
+    coord: 'coordinator', part: 'particle', NEG: 'negation', AUX: 'auxiliary', TENSE: 'tense', MOD: 'modal', PERF: 'perfect aspect',
+    PROG: 'progressive aspect', HAB: 'habitual aspect', PASS: 'passive voice', VEC: 'vector (light) verb', GEN: 'genitive marker',
+    CP: 'complementiser phrase', "C'": 'C-bar', C: 'complementiser', TP: 'tense phrase', "T'": 'T-bar', T: 'tense',
+    AspP: 'aspect phrase', "Asp'": 'Asp-bar', Asp: 'aspect', ModP: 'modal phrase', "Mod'": 'Mod-bar', Mod: 'modal',
+    VoiceP: 'voice phrase', "Voice'": 'Voice-bar', Voice: 'passive voice', vP: 'light verb phrase', "v'": 'v-bar', v: 'light (vector) verb',
+    "V'": 'V-bar', KP: 'case phrase', "K'": 'K-bar', K: 'case marker', D: 'determiner', Deg: 'degree word', "A'": 'A-bar',
+    "Adv'": 'Adv-bar', "P'": 'P-bar', Conj: 'conjunction', Prt: 'particle', Neg: 'negation',
+  };
+  const FUNCTION = {
+    S: 'subject', P: 'predicator', dO: 'direct object', iO: 'indirect object', sC: 'subject complement',
+    oC: 'object complement', pO: 'prepositional object', A: 'adverbial',
+  };
+  const CLASS = {
+    intrans: 'intransitive verb', trans: 'transitive verb', ditrans: 'ditransitive verb', intens: 'intensive (linking) verb',
+    complex: 'complex-transitive verb', prep: 'prepositional verb',
+  };
+  function fullForm(label) {
+    if (CATEGORY[label]) return CATEGORY[label];
+    // Method 2's categories
+    for (const m of Object.values((HT.legacy && HT.legacy.methods) || {})) {
+      const hit = m.tags.find(([tag]) => tag === label);
+      if (hit) return hit[1];
+    }
+    return '';
+  }
+  const fullFunction = (fn) => FUNCTION[fn] || '';
+  const title = (text) => (text ? `<title>${esc(text)}</title>` : '');
+
   const DEFAULTS = {
     functions: true, gloss: false, translit: false, align: true, color: true, blank: false,
     step: Infinity, direction: 'down', selected: [], interactive: false, english: '',
@@ -157,9 +191,9 @@
       let shown = o.blank ? '____' : esc(n.l);
       if (!o.blank && /^S\d$/.test(n.l)) shown = `S<tspan dy="5" font-size="13">${esc(n.l.slice(1))}</tspan>`;
       if (!o.blank && /'$/.test(n.l)) shown = esc(n.l.replace(/'$/, '′'));
-      parts.push(`<g${hit}><rect x="${b.x - b.labelWidth / 2 - 3}" y="${b.y - 15}" width="${b.labelWidth + 6}" height="${n.f ? 44 : 29}" rx="6" fill="transparent"/>` +
+      parts.push(`<g${hit}>${o.blank ? '' : title(fullForm(n.l) + (n.f && CLASS[n.f] ? `, ${CLASS[n.f]}` : ''))}<rect x="${b.x - b.labelWidth / 2 - 3}" y="${b.y - 15}" width="${b.labelWidth + 6}" height="${n.f ? 44 : 29}" rx="6" fill="transparent"/>` +
         `<text x="${b.x}" y="${b.y + 6}" text-anchor="middle" font-family="${SERIF}" font-size="19" font-weight="700" fill="${o.color ? colour(n.l) : INK}">${shown}</text>` +
-        (n.f && !o.blank ? label(b.x, b.y + 23, `[${n.f}]`, `font-family="${SERIF}" font-size="13" fill="${MUTED}"`) : '') + '</g>');
+        (n.f && !o.blank ? `<text x="${b.x}" y="${b.y + 23}" text-anchor="middle" font-family="${SERIF}" font-size="13" fill="${MUTED}">${title(CLASS[n.f])}${esc(`[${n.f}]`)}</text>` : '') + '</g>');
     }
 
     // Function row: shown once the tree is completely built.
@@ -171,7 +205,7 @@
         if (!b) continue;
         const y = wordBottom + 6;
         parts.push(`<path d="M${b.left + 2} ${y} v7 H${b.left + b.width - 2} v-7" fill="none" stroke="#99701a" stroke-width="1.3"/>`);
-        parts.push(label(b.left + b.width / 2, y + 28, u.fn, `font-family="${SERIF}" font-size="19" font-style="italic" fill="#7a5408"`));
+        parts.push(`<text x="${b.left + b.width / 2}" y="${y + 28}" text-anchor="middle" font-family="${SERIF}" font-size="19" font-style="italic" fill="#7a5408">${title(fullFunction(u.fn))}${esc(u.fn)}</text>`);
       }
       if (units.length) height = wordBottom + 52;
     }
@@ -215,5 +249,5 @@
     });
   }
 
-  HT.render = { draw, steps, raster };
+  HT.render = { draw, steps, raster, fullForm, fullFunction };
 })(globalThis.HT = globalThis.HT || {});

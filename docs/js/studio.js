@@ -378,14 +378,14 @@
   function messages() {
     let html = '';
     if (s.error) {
-      html += `<div class="notice error" role="alert"><strong>${esc(s.error)}</strong>
+      html += `<div class="notice error" role="alert"><button class="notice-close" data-act="dismiss" data-kind="error" aria-label="Close this message" title="Close">×</button><strong>${esc(s.error)}</strong>
         <span>Check the categories, especially the verb class: a verb needs all its obligatory objects and complements.</span>
         <div class="row">${s.chunks ? '<button class="btn small" data-act="chunks">Edit the phrases that were found</button>' : ''}
         <button class="btn small" data-act="report">Report this sentence</button>
         <button class="btn small" data-act="hand">Draw by hand</button></div></div>`;
     }
-    html += s.warnings.map((w) => `<div class="notice warn">${esc(w)}</div>`).join('');
-    if (s.note) html += `<div class="notice info">${esc(s.note)}</div>`;
+    html += s.warnings.map((w, i) => `<div class="notice warn"><button class="notice-close" data-act="dismiss" data-kind="warn" data-i="${i}" aria-label="Close this message" title="Close">×</button>${esc(w)}</div>`).join('');
+    if (s.note) html += `<div class="notice info"><button class="notice-close" data-act="dismiss" data-kind="note" aria-label="Close this message" title="Close">×</button>${esc(s.note)}</div>`;
     if (s.exercise) {
       html += `<div class="notice info"><strong>Exercise: draw the tree for this sentence (chapter ${s.exercise.chapter} conventions).</strong>
         <div class="row"><button class="btn small primary" data-act="check">Check my tree</button>
@@ -404,6 +404,9 @@
     return html;
   }
 
+  /** An abbreviation that shows its full form on hover. */
+  const abbr = (short, full) => (full ? `<abbr title="${esc(full)}">${esc(short)}</abbr>` : esc(short));
+
   function inspector(view) {
     if (!view) return '';
     if (s.view === 'karaka') return karakaPanel();
@@ -413,7 +416,7 @@
       const form = (n) => esc(n.l);
       return `<aside class="card inspector"><h3>Form and function</h3>
         ${units.length ? `<table class="ff"><tr><th>Constituent</th><th>Form</th><th>Function</th></tr>${units.map((u) =>
-          `<tr><td lang="hi">${esc(u.text)}</td><td>${form(u.node)}</td><td><i>${esc(u.fn)}</i></td></tr>`).join('')}</table>`
+          `<tr><td lang="hi">${esc(u.text)}</td><td>${abbr(u.node.l, HT.render.fullForm(u.node.l))}</td><td><i>${abbr(u.fn, HT.render.fullFunction(u.fn))}</i></td></tr>`).join('')}</table>`
           : '<p class="hint">Functions appear when S has an NP and a VP.</p>'}
         <details><summary>Rewrite rules in this tree</summary><ul class="mono rules">${T.rules(view).map((r) => `<li>${esc(r)}</li>`).join('')}</ul></details>
         <details id="bracket-box"><summary>Bracket notation</summary><textarea id="brackets" class="mono" rows="8" spellcheck="false">${esc(T.toBracket(view, 0))}</textarea>
@@ -736,6 +739,11 @@
     viewTree() { s.view = 'tree'; store.set('view', 'tree'); s.zoom = 0; },
     viewKaraka() { s.view = 'karaka'; store.set('view', 'karaka'); Object.assign(s, { zoom: 0, selected: [], step: Infinity }); },
     karakaReset() { s.karakaFix = {}; },
+    dismiss(el) {
+      if (el.dataset.kind === 'note') s.note = '';
+      else if (el.dataset.kind === 'error') s.error = '';
+      else s.warnings = s.warnings.filter((_, i) => i !== Number(el.dataset.i));
+    },
     print() { HT.pages.print([{ tree: shown(), text: s.text, english: s.english, opts: s.opts }]); return false; },
     report() {
       // Opens the user's own email program; nothing is sent automatically.

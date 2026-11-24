@@ -159,6 +159,11 @@ details.method > summary:hover { background: var(--bg); border-radius: 12px; }
 .notice p { margin: 8px 0 0; }
 .notice .row { margin-top: 6px; }
 .notice.error { background: #fff1f2; border-color: #f2b8c0; }
+.notice { position: relative; }
+.notice:has(.notice-close) { padding-right: 40px; }
+.notice-close { position: absolute; top: 6px; right: 8px; width: 28px; height: 28px; border: 0; border-radius: 6px; background: none; color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer; }
+.notice-close:hover { background: #0000000f; color: var(--ink); }
+abbr[title] { text-decoration: underline dotted #9b97ad; text-underline-offset: 3px; cursor: help; }
 .notice.warn { background: #fff8e6; border-color: #ecd08c; }
 .notice.info { background: #eef4ff; border-color: #bfd2f3; }
 .workbench { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 14px; align-items: start; }
