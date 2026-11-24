@@ -1,6 +1,7 @@
 # HindiTree
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24513674.svg)](https://doi.org/10.5281/zenodo.24513674)
+[![Tests](https://github.com/iamalinguist/hinditree/actions/workflows/tests.yml/badge.svg)](https://github.com/iamalinguist/hinditree/actions/workflows/tests.yml)
 
 Analyse Hindi sentence structure using formal grammar. HindiTree draws, parses and teaches constituency trees for Hindi, following the course sequence of Linda Thomas, *Beginning Syntax* (1993).
 
@@ -58,7 +59,7 @@ Open `docs/index.html` in a browser. Everything except Convert works without an 
 | Kāraka labels and arcs | `docs/js/karaka.js` |
 | Hindi Lab | `docs/js/lab.js` |
 
-After a change, run the tests (Node.js 18 or later):
+After a change, run the tests (Node.js 22 or later):
 
 ```
 node tests/run.js
@@ -73,6 +74,10 @@ The interface font, DM Mono, is loaded from Google Fonts. Without the internet t
 When releasing, change the `?v=` date on the script and stylesheet links in `docs/index.html`, so returning visitors load all the new files together instead of a cached mix.
 
 When adding a script file, also add it to `docs/index.html`. The scripts are deliberately not ES modules, because modules do not load when the page is opened from disk.
+
+## Tests and contributing
+
+Run the tests with Node.js 22 or later (no installation needed): `node tests/run.js`. They also run automatically on GitHub for every push and pull request. To report a problem, ask for help or contribute words, judgements or code, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## How to cite
 
