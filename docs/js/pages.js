@@ -281,6 +281,7 @@ VP -> PP* NP? NP? V TENSE?`;
       ['VoiceP, Voice', 'passive जाना', 'वाच्य पदबंध'], ['vP, v', 'light (vector) verb: लिया, गया', 'रंजक क्रिया'],
       ['KP, K', 'case phrase: ने, को, का', 'कारक पदबंध'], ['D, Deg', 'determiner, degree word', 'निर्धारक, प्रविशेषण'],
     ]],
+    ['Kāraka relations (Kāraka view and the Lab’s Flow tab)', Object.entries(HT.karaka.LABELS).map(([k, [name, hindi, meaning]]) => [k, `${name}: ${meaning}`, hindi])],
     ['Notation', [
       ['→', 'consists of', 'से बना है'], ['( )', 'optional', 'वैकल्पिक'], ['*', 'ungrammatical', 'अव्याकरणिक'],
       ['?', 'doubtful', 'संदिग्ध'], ['(pres)', 'unpronounced element', 'अनुच्चारित तत्त्व'], ['△', 'constituent left unanalysed', 'अविश्लेषित घटक'],

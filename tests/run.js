@@ -4,7 +4,7 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 
-for (const file of ['util', 'lexicon', 'tagger', 'grammar', 'parser', 'tree', 'legacy', 'lessons', 'render']) {
+for (const file of ['util', 'lexicon', 'tagger', 'grammar', 'parser', 'tree', 'legacy', 'lessons', 'render', 'karaka']) {
   require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));
 }
 const { lexicon, tagger, grammar, parser, tree, legacy, lessons, render } = globalThis.HT;
@@ -138,6 +138,35 @@ test('X-bar: an extraposed कि clause is dO, or sC with an intensive verb', (
   const fns = (text) => tree.functions(parser.parse(tagger.tag(text), xbar).trees[0]).map((u) => u.fn).join(' ');
   assert.equal(fns('राम जानता है कि सीता आएगी'), 'S P dO');
   assert.equal(fns('सच यह है कि राम बीमार है'), 'S sC P sC');
+});
+
+// Kāraka view
+const karaka = (text) => {
+  const example = lessons.all.find((e) => e.sentence === text);
+  const solved = example ? lessons.solve(example) : null;
+  const t = solved ? solved.trees[solved.index] : parser.parse(tagger.tag(text), compiled).trees[0];
+  const a = globalThis.HT.karaka.analyse(t);
+  return a.arcs.map((arc) => `${a.chunks[arc.dep].text}:${arc.label}`).join(' / ');
+};
+for (const [text, expected] of [
+  ['राम ने सीता को किताब दी', 'राम ने:k1 / सीता को:k4 / किताब:k2'],
+  ['चोर पुलिस के द्वारा पकड़ा गया', 'चोर:k2 / पुलिस के द्वारा:k1'],
+  ['बच्चा शेर से डरता है', 'बच्चा:k1 / शेर से:k5'],
+  ['मेरी किताब मेज़ पर है', 'मेरी किताब:k1 / मेज़ पर:k7p'],
+  ['सीता का बच्चा रो रहा है', 'सीता का:r6 / बच्चा:k1'],
+  ['सीता सुबह बगीचे में घूमती है', 'सीता:k1 / सुबह:k7t / बगीचे में:k7p'],
+  ['वह पढ़ने के लिए आया', 'वह:k1 / पढ़ने के लिए:rt'],
+]) {
+  test(`kāraka: ${text}`, () => {
+    const got = karaka(text).split(' / ').sort().join(' / ');
+    assert.equal(got, expected.split(' / ').sort().join(' / '));
+  });
+}
+test('kāraka: every course sentence gets relations', () => {
+  for (const e of lessons.all) {
+    const solved = lessons.solve(e);
+    assert.ok(globalThis.HT.karaka.analyse(solved.trees[solved.index]), e.sentence);
+  }
 });
 
 // Hindi Lab: judgement marks

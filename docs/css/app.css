@@ -55,7 +55,13 @@ textarea { width: 100%; resize: vertical; }
 .verdict.over, .verdict.under { background: #fff1f2; color: #a3243b; }
 .verdict.note { background: var(--bg); color: var(--muted); }
 .summary { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
-.lab-tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.lab-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; overflow-x: auto; scrollbar-width: thin; }
+.lab-tabs button { white-space: nowrap; flex: none; }
+.lab-toolbar { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; }
+.lab-toolbar .row:last-child { margin-left: auto; }
+.lab-toolbar select { max-width: 220px; }
+.lab .results details.flag { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.lab .results details.flag summary { font-weight: 400; padding: 0; }
 .lab-tabs button { border: 0; background: none; padding: 9px 14px; font: 500 13px var(--sans); color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
 .lab-tabs button:hover { color: var(--brand); }
 .lab-tabs button.on { color: var(--brand); border-bottom-color: var(--brand); }
@@ -66,6 +72,16 @@ table.marks td:first-child { font: 700 16px var(--serif); white-space: nowrap; }
 table.marks td { font-weight: 400 !important; font-family: var(--sans) !important; }
 table.marks td[lang] { font-family: var(--deva) !important; }
 .corpus-list td:first-child { width: 28px; }
+.flow-list { padding: 8px 14px; }
+.flow-heading { margin: 18px 0 4px; }
+.flow-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.flow-row:last-child { border-bottom: 0; }
+.flow-row.starred .flow-svg { opacity: .55; }
+.flow-mark { font: 700 20px var(--serif); padding-top: 34px; text-align: center; }
+.flow-svg { overflow-x: auto; }
+.flow-svg svg { display: block; }
+.flow-pattern { margin: 2px 0 0; font: 13px var(--sans); color: var(--muted); }
+.flow-missing { font-size: 18px; margin: 6px 0 2px; }
 .shell { margin-left: var(--sidebar); transition: margin-left .2s ease; min-width: 0; }
 .menu-closed .sidebar { transform: translateX(-100%); }
 .menu-closed .shell { margin-left: 0; }
@@ -158,6 +174,9 @@ details.method > summary:hover { background: var(--bg); border-radius: 12px; }
 .inspector label input, .inspector label select { width: 100%; color: var(--ink); font-size: 14px; }
 .inspector .row input { flex: 1; min-width: 0; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.karaka-table select { padding: 2px 4px; font: 13px var(--sans); }
+.karaka-table td { vertical-align: top; }
+.switch .btn.on { background: var(--brand); border-color: var(--brand); color: #fff; }
 .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 8px; }
 .edit-grid .btn { white-space: normal; }
 .constituent { font-size: 20px; margin: 0 0 8px; }
@@ -253,6 +272,21 @@ dialog .row { margin-top: 10px; }
   main { padding: 16px 12px 50px; }
   .compose { grid-template-columns: minmax(0, 1fr); }
   .lab-grid { grid-template-columns: minmax(0, 1fr); }
+  .flow-row { grid-template-columns: 20px minmax(0, 1fr); }
+  .flow-row > .btn { grid-column: 2; justify-self: start; }
+  .lab-toolbar, .lab-toolbar .row { width: 100%; }
+  .lab-toolbar .row:last-child { margin-left: 0; }
+  .lab-toolbar input, .lab-toolbar select { flex: 1; min-width: 0; max-width: none; }
+  /* Results become one card per sentence */
+  .lab .results, .lab .results tbody, .lab .results tr, .lab .results td { display: block; width: 100%; }
+  .lab .results tr:first-child { display: none; }
+  .lab .results tr { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin-bottom: 8px; position: relative; }
+  .lab .results tr.group { border: 0; padding: 4px 0; }
+  .lab .results td { border: 0; padding: 2px 0; }
+  .lab .results td.mark { position: absolute; top: 8px; right: 10px; width: auto; font: 700 18px var(--serif); }
+  .lab .results td.hi { padding-right: 30px; }
+  .lab .results td[data-label]::before { content: attr(data-label) ': '; color: var(--muted); font-size: 12px; }
+  .lab .results td.open { padding-top: 6px; }
   .tag-group h4 { width: 100%; }
 }
 

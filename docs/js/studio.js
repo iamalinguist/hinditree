@@ -24,6 +24,7 @@
     opts: { functions: true, gloss: false, translit: false, english: false, triangles: false, align: true, color: true, blank: false, ...store.get('options', {}) },
     selected: [], word: null, several: false, undo: [], redo: [],
     step: Infinity, direction: 'down', zoom: 0, presenting: false,
+    view: store.get('view', 'tree') === 'karaka' ? 'karaka' : 'tree', karakaFix: {},
   };
   let host = null;
   const compiled = new Map();
@@ -108,6 +109,11 @@
     return { trees: result.trees.length, flags, error: result.error || '' };
   }
 
+  /** The first Method 1 tree for a sentence, for the kāraka view. */
+  function treeFor(text) {
+    return HT.parser.parse(tokensFor(text, 'thomas'), grammarFor('thomas')).trees[0] || null;
+  }
+
   /** Opens a sentence in Make Structure with a given method. */
   function loadSentence(text, method) {
     remember();
@@ -119,6 +125,7 @@
   }
 
   function parse() {
+    s.karakaFix = {};
     const result = isLegacy() ? HT.legacy.parse(s.tokens, s.method) : HT.parser.parse(s.tokens, grammar());
     Object.assign(s, {
       trees: result.trees, index: 0, tree: result.trees[0] || null, error: result.error || '',
@@ -395,6 +402,7 @@
 
   function inspector(view) {
     if (!view) return '';
+    if (s.view === 'karaka') return karakaPanel();
     s.selected = s.selected.filter((p) => T.at(view, p));
     if (!s.selected.length) {
       const units = T.functions(view);
@@ -458,27 +466,52 @@
     </aside>`;
   }
 
+  /** Kāraka relations of the current sentence, from its Method 1 analysis. */
+  function karakaAnalysis() {
+    const tree = s.method === 'thomas' && s.tree ? s.tree : s.text ? treeFor(s.text) : null;
+    return HT.karaka.analyse(tree, s.karakaFix);
+  }
+
+  function karakaPanel() {
+    const a = karakaAnalysis();
+    if (!a) return '<aside class="card inspector"><h3>Kāraka relations</h3><p class="hint">Method 1 found no analysis for this sentence, so there are no relations to show.</p></aside>';
+    const L = HT.karaka.LABELS;
+    const rows = a.arcs.filter((arc) => arc.label !== 'ccof').map((arc) => {
+      const text = a.chunks[arc.dep].text;
+      const meaning = L[arc.label] || [arc.label, '', ''];
+      return `<tr><td lang="hi">${esc(text)}</td><td><select data-karaka="${esc(text)}" aria-label="Kāraka of ${esc(text)}">${Object.keys(L).filter((k) => k !== 'ccof').map((k) =>
+        `<option value="${k}" ${k === arc.label ? 'selected' : ''}>${k}</option>`).join('')}</select></td>
+        <td>${esc(meaning[0])}<br><span class="hint" lang="hi">${esc(meaning[1])}</span>${arc.alt && !arc.fixed ? `<br><span class="hint">or ${esc(arc.alt)}?</span>` : ''}</td></tr>`;
+    }).join('');
+    return `<aside class="card inspector"><h3>Kāraka relations</h3>
+      <table class="ff karaka-table"><tr><th>Chunk</th><th>Label</th><th>Relation</th></tr>${rows}</table>
+      <p class="hint">Proposed from the Method 1 analysis${s.method === 'thomas' ? '' : ' of this sentence'}. Kāraka roles depend on meaning, so change any label you disagree with. A “?” marks a guess.</p>
+      ${Object.keys(s.karakaFix).length ? '<button class="btn small" data-act="karakaReset">Undo my changes</button>' : ''}</aside>`;
+  }
+
   function stage(view) {
     if (!view) {
       return '<section class="card stage empty"><p class="big">No tree yet</p><p>Type a Hindi sentence and choose Analyse, write English and choose Convert, or open an example from the course.</p></section>';
     }
     return `<section class="card stage" id="stage">
       <div class="toolbar">
+        <div class="cluster switch" role="group" aria-label="View"><button class="btn small ${s.view === 'tree' ? 'on' : ''}" data-act="viewTree" aria-pressed="${s.view === 'tree'}">Tree</button>
+          <button class="btn small ${s.view === 'karaka' ? 'on' : ''}" data-act="viewKaraka" aria-pressed="${s.view === 'karaka'}">Kāraka</button></div>
         <div class="cluster"><button class="btn small" data-act="undo" title="Undo (Ctrl+Z)" ${s.undo.length ? '' : 'disabled'}>Undo</button>
           <button class="btn small" data-act="redo" title="Redo (Ctrl+Y)" ${s.redo.length ? '' : 'disabled'}>Redo</button></div>
         ${s.trees.length > 1 ? `<div class="cluster readings"><button class="btn small" data-act="prev" aria-label="Previous reading">‹</button>
           <span>Reading ${s.index + 1} of ${s.trees.length}</span><button class="btn small" data-act="next" aria-label="Next reading">›</button></div>` : ''}
-        <div class="cluster"><button class="btn small" data-act="back" title="One step back">◀</button>
+        ${s.view === 'tree' ? `<div class="cluster"><button class="btn small" data-act="back" title="One step back">◀</button>
           <button class="btn small" data-act="build">Build step by step</button>
           <button class="btn small" data-act="forward" title="One step forward">▶</button>
           <select id="direction" aria-label="Build direction"><option value="down" ${s.direction === 'down' ? 'selected' : ''}>top-down</option>
-          <option value="up" ${s.direction === 'up' ? 'selected' : ''}>bottom-up</option></select></div>
+          <option value="up" ${s.direction === 'up' ? 'selected' : ''}>bottom-up</option></select></div>` : ''}
         <div class="cluster"><button class="btn small" data-act="out" aria-label="Zoom out">−</button>
           <button class="btn small" data-act="fit">Fit</button><button class="btn small" data-act="in" aria-label="Zoom in">+</button></div>
-        <button class="btn small ${s.several ? 'on' : ''}" data-act="several" aria-pressed="${s.several}">Select several</button>
+        ${s.view === 'tree' ? `<button class="btn small ${s.several ? 'on' : ''}" data-act="several" aria-pressed="${s.several}">Select several</button>` : ''}
         <button class="btn small primary" data-act="present">Present</button>
       </div>
-      <div class="options">${OPTIONS.filter(([key]) => key !== 'triangles' || s.level === 6).map(([key, name]) =>
+      <div class="options">${OPTIONS.filter(([key]) => (s.view === 'tree' ? key !== 'triangles' || s.level === 6 : ['gloss', 'english'].includes(key))).map(([key, name]) =>
         `<label><input type="checkbox" data-opt="${key}" ${s.opts[key] ? 'checked' : ''}> ${name}</label>`).join('')}</div>
       <p class="present-caption" lang="hi">${esc(s.text)}</p>
       <div class="canvas" id="canvas"></div>
@@ -486,8 +519,8 @@
         <button class="btn" data-act="forward">Next ▶</button><button class="btn" data-act="exit">Exit</button></div>
       <div class="toolbar export">
         <span class="hint">Export</span>
-        <button class="btn small" data-act="png">PNG</button><button class="btn small" data-act="latex">LaTeX</button>
-        <button class="btn small" data-act="print">Print</button>
+        <button class="btn small" data-act="png">PNG</button>${s.view === 'tree' ? `<button class="btn small" data-act="latex">LaTeX</button>
+        <button class="btn small" data-act="print">Print</button>` : ''}
         <span class="spacer"></span>
         <button class="btn small" data-act="report" title="Email this sentence and its tree to the course team">Report this sentence</button>
       </div></section>`;
@@ -531,6 +564,12 @@
   }
 
   function picture(view, interactive) {
+    if (s.view === 'karaka') {
+      const a = karakaAnalysis();
+      if (a) return HT.karaka.draw(a, { gloss: s.opts.gloss, caption: s.opts.english && s.english ? `‘${s.english}’` : '' });
+      const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="520" height="60"><text x="20" y="36" font-family="sans-serif" font-size="15" fill="#6b687c">Method 1 found no analysis, so there are no kāraka relations.</text></svg>';
+      return { svg, width: 520, height: 60 };
+    }
     return HT.render.draw(view, {
       ...s.opts,
       english: s.opts.english ? s.english : '',
@@ -561,7 +600,7 @@
   // Actions
   function reveal(d) {
     const view = shown();
-    if (!view) return;
+    if (!view || s.view === 'karaka') return;
     const max = HT.render.steps(view);
     if (d === 0) s.step = 1;
     else s.step = Math.max(0, Math.min(max, (Number.isFinite(s.step) ? s.step : max) + d));
@@ -689,6 +728,9 @@
     exit() { setPresenting(false); return false; },
     png() { exportImage('png'); return false; },
     latex() { showText('LaTeX (forest package)', T.toForest(shown())); return false; },
+    viewTree() { s.view = 'tree'; store.set('view', 'tree'); s.zoom = 0; },
+    viewKaraka() { s.view = 'karaka'; store.set('view', 'karaka'); Object.assign(s, { zoom: 0, selected: [], step: Infinity }); },
+    karakaReset() { s.karakaFix = {}; },
     print() { HT.pages.print([{ tree: shown(), text: s.text, english: s.english, opts: s.opts }]); return false; },
     report() {
       // Opens the user's own email program; nothing is sent automatically.
@@ -802,6 +844,9 @@ ${body}`;
       Object.assign(s, { level: Number(el.value), selected: [], step: Infinity });
       s.opts.triangles = false;
       render();
+    } else if (el.dataset.karaka !== undefined) {
+      s.karakaFix[el.dataset.karaka] = el.value;
+      render();
     } else if (el.id === 'direction') {
       s.direction = el.value;
       reveal(0);
@@ -877,5 +922,5 @@ ${body}`;
     for (const type of ['online', 'offline']) window.addEventListener(type, () => { if (host && host.isConnected) render(); });
   }
 
-  HT.studio = { FUNCTIONS, init, mount, loadExample, loadExercise, loadSaved, loadSentence, predict, setMethod, state: s };
+  HT.studio = { FUNCTIONS, init, mount, loadExample, loadExercise, loadSaved, loadSentence, predict, treeFor, setMethod, state: s };
 })(globalThis.HT = globalThis.HT || {});

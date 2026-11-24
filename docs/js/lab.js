@@ -46,7 +46,7 @@ Problems and counterexamples:
 `,
   };
 
-  const TABS = [['workbench', 'Workbench'], ['corpus', 'Corpus'], ['judgements', 'Judgements'],
+  const TABS = [['workbench', 'Workbench'], ['flow', 'Flow'], ['corpus', 'Corpus'], ['judgements', 'Judgements'],
     ['tests', 'Constituency tests'], ['argument', 'Building an argument']];
 
   const today = () => {
@@ -139,6 +139,7 @@ Problems and counterexamples:
     const panel = el.querySelector('#lab-panel');
     if (data.tab === 'workbench') workbench(panel, data, refresh);
     else if (data.tab === 'corpus') corpus(panel, data, refresh);
+    else if (data.tab === 'flow') flow(panel, data, refresh);
     else lesson(panel, data, LESSONS[data.tab]);
     return undefined;
   }
@@ -152,16 +153,14 @@ Problems and counterexamples:
     el.innerHTML = `
         <header class="page-head"><p>Collect judgements, test an analysis against them, and keep notes. Everything stays in this browser; export it to keep a copy.</p></header>
         <section class="card">
-          <div class="row">
-            <label class="inline">Data set <select id="lab-set">${data.sets.map((x) =>
+          <div class="lab-toolbar">
+            <div class="row"><label class="inline">Data set <select id="lab-set">${data.sets.map((x) =>
               `<option value="${esc(x.id)}" ${x.id === set.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></label>
-            <button class="btn small" id="lab-new">New</button>
-            <input id="lab-name" value="${esc(set.name)}" aria-label="Name of this data set" maxlength="80">
-            <button class="btn small" id="lab-rename">Rename</button>
-            <button class="btn small danger" id="lab-delete">Delete</button>
-            <span class="spacer"></span>
-            <button class="btn small" id="lab-export">Export Lab</button>
-            <label class="btn small file">Import<input id="lab-import" type="file" accept=".json,application/json"></label>
+              <button class="btn small" id="lab-new">New</button></div>
+            <div class="row"><input id="lab-name" value="${esc(set.name)}" aria-label="Name of this data set" maxlength="80">
+              <button class="btn small" id="lab-rename">Rename</button><button class="btn small danger" id="lab-delete">Delete</button></div>
+            <div class="row"><button class="btn small" id="lab-export">Export Lab</button>
+              <label class="btn small file">Import<input id="lab-import" type="file" accept=".json,application/json"></label></div>
           </div>
         </section>
         <div class="lab-grid">
@@ -277,10 +276,10 @@ Problems and counterexamples:
         count[verdict[0]]++;
       }
       const prediction = p.trees ? `${p.trees} tree${p.trees > 1 ? 's' : ''}${p.flags.length ? ', flagged' : ''}` : 'no tree';
-      return `<tr><td>${esc(r.judgement)}</td><td class="hi">${esc(r.sentence)}${r.comment ? `<br><span class="hint">${esc(r.comment)}</span>` : ''}</td>
-        <td>${esc(prediction)}${p.flags.length ? `<br><span class="hint">${esc(p.flags[0])}</span>` : ''}</td>
-        <td><span class="verdict ${verdict[0]}">${esc(verdict[1])}</span></td>
-        <td><button class="btn small" data-open="${i}">Open</button></td></tr>`;
+      return `<tr><td class="mark">${esc(r.judgement)}</td><td class="hi">${esc(r.sentence)}${r.comment ? `<br><span class="hint">${esc(r.comment)}</span>` : ''}</td>
+        <td data-label="Analysis">${esc(prediction)}${p.flags.length ? `<details class="flag"><summary>Why flagged</summary>${esc(p.flags[0])}</details>` : ''}</td>
+        <td data-label="Result"><span class="verdict ${verdict[0]}">${esc(verdict[1])}</span></td>
+        <td class="open"><button class="btn small" data-open="${i}">Open</button></td></tr>`;
     }).join('');
     const name = (METHODS.find(([id]) => id === method) || ['', method])[1];
     results.hidden = false;
@@ -297,6 +296,63 @@ Problems and counterexamples:
       };
     });
     results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Flow: every sentence of the data set as kāraka arcs, stacked for comparison
+  function flow(el, data, refresh) {
+    const set = currentSet(data);
+    const rows = lines(set.text);
+    let previous = null;
+    const patterns = new Map();
+    const markers = new Map();
+    const items = rows.map((r, i) => {
+      if (r.heading) {
+        previous = null;
+        return `<h3 class="flow-heading">${esc(r.heading)}</h3>`;
+      }
+      const a = HT.karaka.analyse(HT.studio.treeFor(r.sentence));
+      if (!a) {
+        previous = null;
+        return `<div class="flow-row"><span class="flow-mark">${esc(r.judgement)}</span><div><p lang="hi" class="flow-missing">${esc(r.sentence)}</p>
+          <p class="hint">No Method 1 analysis. Open it in Make Structure to draw it by hand.</p></div>
+          <button class="btn small" data-open="${i}">Open</button></div>`;
+      }
+      const texts = new Set(a.chunks.map((c) => c.text));
+      const changed = previous ? new Set([...texts].filter((t) => !previous.has(t))) : null;
+      previous = texts;
+      const p = HT.karaka.pattern(a);
+      if (r.judgement !== '*') patterns.set(p, (patterns.get(p) || 0) + 1);
+      a.words.forEach((w) => { if (/^(ने|को|से|में|पर|का|के|की)$/.test(w.w)) markers.set(w.w, (markers.get(w.w) || 0) + 1); });
+      const { svg } = HT.karaka.draw(a, { gloss: !!data.flowGloss, changed });
+      return `<div class="flow-row ${r.judgement === '*' ? 'starred' : ''}"><span class="flow-mark">${esc(r.judgement)}</span>
+        <div class="flow-body"><div class="flow-svg">${svg}</div><p class="flow-pattern">${esc(p)}${r.comment ? ` <span class="hint">// ${esc(r.comment)}</span>` : ''}</p></div>
+        <button class="btn small" data-open="${i}">Open</button></div>`;
+    });
+    const count = (map) => [...map.entries()].sort((x, y) => y[1] - x[1]);
+    el.innerHTML = `
+      <header class="page-head"><p>Each sentence of the data set <b>${esc(set.name)}</b> drawn as kāraka relations, in order, so you can compare them.
+        Gold outlines show chunks that changed from the sentence above. A dashed arc with “?” is a guess you may want to change.</p></header>
+      <section class="card">
+        <div class="row between"><h2>Patterns</h2><label class="inline"><input type="checkbox" id="flow-gloss" ${data.flowGloss ? 'checked' : ''}> Glosses</label></div>
+        ${patterns.size ? `<div class="lab-grid"><table class="ff"><tr><th>Order of relations (acceptable sentences)</th><th>Sentences</th></tr>${count(patterns).map(([p, n]) =>
+          `<tr><td>${esc(p)}</td><td>${n}</td></tr>`).join('')}</table>
+          <table class="ff"><tr><th>Marker</th><th>Times used</th></tr>${count(markers).map(([m, n]) => `<tr><td lang="hi">${esc(m)}</td><td>${n}</td></tr>`).join('')}</table></div>`
+          : '<p class="hint">Add sentences on the Workbench to see their patterns.</p>'}
+        <p class="hint">Labels: k1 kartā, k2 karma, k3 karaṇa, k4 sampradāna, k4a experiencer, k5 apādāna, k7p place, k7t time, k1s/k2s complements, r6 genitive, rt purpose. See Abbreviations for all of them.</p>
+      </section>
+      <section class="card flow-list">${items.join('') || '<p class="hint">This data set is empty.</p>'}</section>`;
+    el.querySelector('#flow-gloss').onchange = (e) => {
+      data.flowGloss = e.target.checked;
+      save(data);
+      refresh();
+    };
+    el.querySelectorAll('[data-open]').forEach((b) => {
+      b.onclick = () => {
+        HT.studio.loadSentence(rows[Number(b.dataset.open)].sentence, 'thomas');
+        HT.studio.state.view = 'karaka';
+        location.hash = '#studio';
+      };
+    });
   }
 
   // Corpus
