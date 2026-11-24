@@ -223,6 +223,16 @@ test('obligation: मुझे खाना खाना है has a noun objec
   const t = parser.parse(tagger.tag('मुझे खाना खाना है'), compiled).trees[0];
   assert.equal(tree.functions(t).map((u) => `${u.fn}:${u.text}`).join(' / '), 'S:मुझे / dO:खाना / P:खाना है');
 });
+test('complex postpositions take their complement: राम की ओर is one PP', () => {
+  const t = parser.parse(tagger.tag('वह राम की ओर देख रहा है'), compiled).trees[0];
+  assert.match(tree.toBracket(t), /\[PP=A \[NP \[N राम\{Ram\}\]\] \[P "की ओर"/);
+  assert.equal(tree.functions(t).filter((u) => u.fn === 'dO').length, 0);
+});
+test('X-bar: a genitive can come before a demonstrative (राम की वह किताब)', () => {
+  const xbar = parser.compile(grammar.xbar);
+  const b = tree.toBracket(parser.parse(tagger.tag('राम की वह किताब मेज़ पर है'), xbar).trees[0]);
+  assert.match(b, /\[NP=S \[KP .*राम.*की.*\] \[NP \[D वह\{that\}\] \[N' \[N किताब/);
+});
 test('demonstratives: DET before a noun, a third-person pronoun alone', () => {
   const b = (s) => tree.toBracket(parser.parse(tagger.tag(s), compiled).trees[0]);
   assert.match(b('वह मोटा भूरा कुत्ता भौंका'), /\[DET वह\{that\}\]/);

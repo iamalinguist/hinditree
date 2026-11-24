@@ -73,7 +73,7 @@
     वास्तव_में:actually बेशक:certainly अवश्य:certainly स्पष्टतः:clearly संभवतः:possibly`);
   addAll('Adv', `धीरे:slowly धीरे-धीरे:slowly जल्दी:quickly तेज़ी_से:quickly ज़ोर_से:loudly ध्यान_से:carefully
     आराम_से:comfortably प्यार_से:lovingly खुशी_से:happily चुपचाप:quietly लगातार:continually अचानक:suddenly
-    आज:today कल:yesterday/tomorrow परसों:day_after अब:now अभी:right_now तब:then फिर:again यहाँ:here वहाँ:there
+    आज:today कल:yesterday/tomorrow परसों:day_after अब:now अभी:right_now तब:then फिर:again यहाँ:here वहाँ:there इधर:this_way उधर:that_way
     हमेशा:always रोज़:daily हर_रोज़:every_day हर_दिन:every_day अक्सर:often कभी-कभी:sometimes कब:when कहाँ:where
     कैसे:how क्यों:why तेज़:fast अच्छा:well सुबह:in_the_morning शाम:in_the_evening देर:late`);
   addAll('deg', 'बहुत:very ज़्यादा:too काफ़ी:quite थोड़ा:a_little बेहद:extremely अत्यंत:extremely इतना:so इतनी:so इतने:so कम:less बिल्कुल:absolutely');
@@ -148,7 +148,7 @@
     कूद:jump:intrans चमक:shine:intrans भाग:run_away:intrans निकल:go_out:intrans घूम:wander:intrans लेट:lie_down:intrans
     टूट:break:intrans खुल:open:intrans जाग:wake:intrans रह:live:intrans बरस:rain:intrans लौट:return:intrans जीत:win:trans,intrans
     खेल:play:intrans,trans पढ़:read:trans,intrans लिख:write:trans,intrans,ditrans गा:sing:trans,intrans पी:drink:trans
-    खा:eat:trans सोच:think:trans,intrans देख:see:trans सुन:hear:trans जान:know:trans पहचान:recognise:trans
+    खा:eat:trans सोच:think:trans,intrans देख:see/look:trans,intrans सुन:hear:trans जान:know:trans पहचान:recognise:trans
     चाह:want:trans पा:get:trans खरीद:buy:trans,ditrans बेच:sell:trans,ditrans तोड़:break:trans मार:hit:trans
     पकड़:catch:trans खोल:open:trans धो:wash:trans काट:cut:trans ढूँढ:search:trans छू:touch:trans ला:bring:trans,ditrans
     चुरा:steal:trans पका:cook:trans बजा:play:trans उठा:lift:trans पहन:wear:trans भूल:forget:trans सीख:learn:trans

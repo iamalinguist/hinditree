@@ -284,6 +284,10 @@ V'.complex_pass -> _adjunct=A V'.complex_pass | _oc=oC V.complex=P
 
 # NP: D or a genitive KP is the specifier; AP and PP are adjuncts of N'
 NP -> N' | DET N' | KP.gen N'
+# Hindi, unlike English, allows a genitive with a demonstrative (राम की वह
+# किताब). Here the genitive adjoins to NP; whether it is a specifier at all is
+# an open question (Whatzit?, "The genitive").
+NP -> KP.gen NP @0.3
 NP -> NP part @0.2
 NP -> NP coord NP @0.4
 N' -> N | PRO

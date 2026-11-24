@@ -158,7 +158,41 @@
       tool: 'Use the Judgements tab marks (?, %, #) for gradient answers. The kāraka view shows को objects as k2.',
       readings: ['Judith Aissen (2003), Differential object marking: iconicity vs. economy, NLLT', 'Tara Mohanan (1994), Argument Structure in Hindi', 'Helen de Hoop and Bhuvana Narasimhan (2005), Differential case-marking in Hindi'],
       output: 'A judgement study of को across animacy and definiteness.',
-      next: 'ने and को both block agreement. So what does the verb agree with?',
+      next: 'को is one marker; का/के/की is another, and unlike को it agrees. Look at the genitive next.',
+    },
+    {
+      id: 'genitive', phase: 'marking', title: 'The genitive and complex postpositions', hi: 'संबंध कारक और परसर्ग',
+      question: 'Is का/के/की a case marker, an adjective-like modifier or a determiner? And are की ओर, के लिए and के पीछे single postpositions, or a genitive plus a noun?',
+      hypotheses: [
+        ['Case marker and single postpositions', 'का/के/की is a genitive case marker heading a phrase inside the noun phrase; की ओर, के लिए and the like are single complex postpositions, like में and पर.'],
+        ['One genitive throughout', 'The की of की ओर is the same genitive: complex postpositions are a genitive plus a noun, fused to different degrees (के लिए more than की ओर).'],
+      ],
+      evidence: `# The genitive agrees with the noun after it
+राम का भाई आया
+राम की बहन आई
+राम के भाई ने सीता को किताब दी
+# A genitive and a demonstrative together (impossible in English)
+राम की वह किताब
+# In complex postpositions the genitive also agrees
+राम की ओर देखो
+राम के लिए
+# Words can come between the parts
+राम की दाईं ओर
+घर के ठीक पीछे
+# The second part without a genitive
+उस ओर देखो
+# Pronouns fuse with the genitive
+मेरे लिए
+* मैं के लिए`,
+      argument: [
+        'For the simple genitive: list how it behaves like an adjective (agreement, position) and like a determiner (it can stand where यह/वह stands). राम की वह किताब is a problem for the determiner view.',
+        'For 10 to 15 complex postpositions (के लिए, के साथ, के पास, के पीछे, की ओर, की तरफ़, के बारे में...), apply four tests: does the genitive agree, can a word come between the parts, can the second part stand without a genitive, do pronouns fuse (मेरे लिए)?',
+        'Place each on a scale from "genitive plus noun" to "single postposition". A scale, rather than two classes, would show grammaticalisation in progress.',
+      ],
+      tool: 'Method 1 puts the genitive in DET (POSS) and Method 4 in a KP, which adjoins to NP when a demonstrative follows. Note that the tool reads राम के लिए as one postposition but तुम्हारे लिए as a genitive pronoun plus लिए: the tool itself shows both analyses.',
+      readings: ['Colin Masica (1991), The Indo-Aryan Languages (Cambridge), on layers of case marking', 'Paul Hopper and Elizabeth Closs Traugott (2003), Grammaticalization (Cambridge)', 'Andrew Spencer (2005), Case in Hindi (LFG conference proceedings)', 'Miriam Butt and Tracy Holloway King (2004), The status of case'],
+      output: 'A paper placing Hindi complex postpositions on a scale of grammaticalisation, with the four tests as evidence.',
+      next: 'The genitive agrees with its noun; verbs agree too. Look at agreement next.',
     },
     {
       id: 'agreement', phase: 'marking', title: 'Agreement', hi: 'अन्विति',
