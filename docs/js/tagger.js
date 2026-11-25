@@ -172,15 +172,15 @@
       return set(asVerb.length ? [...asVerb, 'N'] : ['N', 'A', 'Adv'], gloss);
     });
 
-    // A transitive verb whose verb group is not imperative or subjunctive can
-    // leave its object unsaid (मैंने खा लिया, राम खाता है); the extra tag V.trans_od
-    // lets Method 1 draw that object as a silent ϕ. With an imperative the
-    // subject is the silent one instead: दरवाज़ा खोलो.
+    // A transitive verb whose verb group is not imperative can leave its object
+    // unsaid (मैंने खा लिया, राम खाता है, मैं खाऊँ?); the extra tag V.trans_od lets
+    // Method 1 draw that object as pro. With an imperative the subject is
+    // the silent one instead: दरवाज़ा खोलो.
     info.forEach((t, i) => {
       if (t.tags[0] !== 'V.trans') return;
       const kinds = [t.kind];
       for (let j = i + 1; j < info.length && isAux(info[j].tags[0] || ''); j++) kinds.push(info[j].kind);
-      if (!kinds.some((k) => k === 'imp' || k === 'subj')) t.tags.push('V.trans_od');
+      if (!kinds.some((k) => k === 'imp')) t.tags.push('V.trans_od');
     });
 
     // Insert the abstract TENSE and aspect elements that the verb forms realise.

@@ -102,7 +102,7 @@
         'For 50 common verbs, check each behaviour separately: takes an object, takes ने, passivises, can drop the object, has an intransitive or causative partner.',
         'If the behaviours do not cluster, the single feature is not doing the work, and you can say what does instead (family, meaning, aspect).',
       ],
-      tool: 'The Method 1 verb classes ([trans], [intrans], [ditrans]...) are exactly this feature: list the verbs where the class gives the wrong prediction, using the Workbench to see which sentences it accepts wrongly. Method 1 draws मैंने खा लिया with a silent object [NP=dO ϕ]: that is H1 in the tree. H2 says there is no object at all, so the ϕ is the claim to argue against.',
+      tool: 'The Method 1 verb classes ([trans], [intrans], [ditrans]...) are exactly this feature: list the verbs where the class gives the wrong prediction, using the Workbench to see which sentences it accepts wrongly. Method 1 draws मैंने खा लिया with an understood object [NP=dO pro]: that is H1 in the tree. H2 says there is no object at all, so the pro is the claim to argue against.',
       readings: ['Paul Hopper and Sandra Thompson (1980), Transitivity in grammar and discourse, Language', 'Colin Masica (1976), Defining a Linguistic Area: South Asia (Chicago)', 'Gillian Ramchand (2008), Verb Meaning and the Lexicon (Cambridge)', 'Tara Mohanan (1994), Argument Structure in Hindi'],
       output: 'A paper: "Transitivity is not a category of Hindi grammar", with the 50-verb table as its evidence.',
       next: 'If transitivity does not decide ने, what does? Look at ने next.',
@@ -294,12 +294,16 @@
 वह घर पर होगा
 वह रोज़ आता होगा
 # A future habit needs करना
-वह आया करेगा`,
+वह आया करेगा
+# Is there an empty aspect slot in the simple future?
+जब तुम आओगे, मैं खाना खाऊँगा
+जब तुम आओगे, मैं खाना खा रहा होऊँगा`,
       argument: [
         'State each reading with Reichenbach\'s three points: E (the event), R (the reference point) and S (the moment of speaking). आया: E before S, R open; आया है: E before R, R = S; आया था: E before R, R before S or open.',
         'Test the present perfect puzzle: collect है-perfects with past time adverbs (कल, पिछले साल). If Hindi allows them, है marks relevance, not time.',
         'Collect bare perfectives that are not past (immediate future, conditionals) and था-forms that are plain pasts, from speech and a corpus.',
         'Decide whether stative uses (दरवाज़ा खुला है) fall under the same account or need a separate one.',
+        'Test the hypothesis that every clause has an aspect position, empty (∅) in the simple future. The challenge: the bare future seems to exclude a progressive reading (जब तुम आओगे, मैं खाना खाऊँगा means "I will eat", not "I will be eating"). If the slot is empty rather than unspecified, that is predicted: a progressive needs an overt रहा.',
         'Fill in the grid with real examples. Ask of the होगा column whether it is a tense (future) or a mood (presumptive: "must be"), and of the "no auxiliary" column whether a silent tense is needed at all.',
       ],
       tool: 'Method 1 gives आया a silent (past), and analyses both आया है and आया था as perfect (perf) plus tense. It also gives अगर तुम आए a past tense. Compare these trees with the readings you collect.',
@@ -358,7 +362,17 @@
           ['Suffix as a node', '[V खा] [AUX [HAB -ता] [TENSE है]]', '[V आ] [PERF -या]; [V देख] [PERF -आ]', 'listed whole, like English went'],
           ['Suffix as a node with features', '[V खा] [HAB -त- {M, SG}] [TENSE है]', '[V आ] [PERF -य- {M, SG}]', 'listed whole, with the same features'],
         ],
-        note: '-ता is regular for every verb. The perfective is regular too: -या after a stem ending in a vowel (आ-या, सो-या), -आ after one ending in a consonant (देख-ा), with ई shortened (पी → पिया). Only a few forms are listed: गया, किया, दिया, लिया, हुआ, the old participles inherited from Sanskrit and Prakrit (kṛta → किया, gata → गया). Many speakers now say करा for किया: the regular rule replacing an exception. Features in braces carry gender and number without a separate agreement node.',
+        note: 'The habitual -ता is regular for every verb. The perfective is regular too: -या after a stem ending in a vowel (आ-या, सो-या), -आ after one ending in a consonant (देख-ा), with ई shortened (पी → पिया). Only a few forms are listed: गया, किया, दिया, लिया, हुआ, the old participles inherited from Sanskrit and Prakrit (kṛta → किया, gata → गया). Many speakers now say करा for किया: the regular rule replacing an exception. Features in braces carry gender and number without a separate agreement node.',
+      }, {
+        title: 'Where tense goes: the verb itself, or होना',
+        head: ['Verb group', 'Aspect', 'Tense carried by', 'Why'],
+        rows: [
+          ['खाऊँगा', 'none (∅)', 'the verb: खा-ऊँ-गा', 'no participle, so the ending goes straight on the stem'],
+          ['खा रहा होऊँगा', 'रहा', 'होना: हो-ऊँ-गा', 'रहा is a participle and cannot carry tense'],
+          ['खा चुका होगा', 'चुका', 'होना: हो-गा', 'होगा = subjunctive हो + गा, not a shortened होयेगा'],
+          ['खाता है / था', '-ता', 'होना: है, था', 'the same support in the present and past'],
+        ],
+        note: 'Subjunctive of होना: होऊँ, हो, हों, होओ; + -गा/-गे gives होऊँगा, होगा, होंगे, होओगे. Forms such as होयेगा and हूँगा are regional or variant forms; whether one developed from another needs historical evidence.',
       }],
       hypotheses: [
         ['Whole words', 'Words enter the syntax fully inflected; the tree shows their features (HAB, PERF, TENSE) as silent elements. This is Thomas\'s practice and the Lexical Integrity Principle of LFG.'],
@@ -390,6 +404,7 @@
         'State the perfective rule (-या after a vowel, -आ after a consonant, ई shortened in पिया) and list its exceptions (गया, किया, दिया, लिया, हुआ). A regular rule with a few listed exceptions is normal (English go and went), so the exceptions do not by themselves defeat the analysis.',
         'Compare with LFG, where the tree keeps whole words but the suffix still contributes its meaning as a feature: the lexicon says that -ता adds ASPECT = HABITUAL. So the question is not whether -ता means HAB, but whether it needs its own node in the tree. A node is justified if some syntactic rule must see it separately from the stem.',
         'Count किया against करा in written and spoken corpora, by region. If करा is spreading, the perfective rule is productive: strong evidence that it is a real rule. Check whether the causative करा- (करा देना, "get done") holds some speakers back.',
+        'State the finiteness rule: when the last verb is a participle (खाता, खा रहा, खा चुका), होना carries tense, like English do-support. Does it need its own node in the tree (TENSE है / होगा), and is that the same node as -गा in खाऊँगा?',
         'Ask what the split explains that the whole-word tree does not. For example, नहीं and particles never come between खा and -ता, which is what whole words predict; is there anything that only the split predicts?',
         'Limit the claim to habitual -ता, and leave the counterfactual use to "What does -ता mean?". Check the share of each in a corpus.',
       ],

@@ -23,11 +23,12 @@
     const rename = {};
     let showClass = null;
     let elide = [];
-    // Silent elements: "ϕNP=dO" in a rule draws an empty NP with that function.
-    // It takes no word, so it is attached to the item after it (or before it).
+    // Silent elements take no word, so each is attached to the item after it
+    // (or before it). "proNP=dO" (or the older "ϕNP=dO") draws an understood
+    // argument, pro; "∅ASP" draws an empty slot, ∅.
     const empties = new Map();
     const silent = (item, before, after) => {
-      const list = (xs) => xs.map((e) => `${e.sym}=${e.fn}`).join(',');
+      const list = (xs) => xs.map((e) => `${e.mark}${e.sym}=${e.fn}`).join(',');
       const id = `\u0003${list(before)}|${item.sym}=${item.fn}|${list(after)}`;
       if (!empties.has(id)) {
         empties.set(id, { before, after });
@@ -100,10 +101,10 @@
         const items = [];
         let pending = [];
         for (const name of names) {
-          const e = name.match(/^[ϕ∅]([^=?*+ϕ∅]+)(?:=([A-Za-z]+))?$/);
+          const e = name.match(/^(ϕ|∅|pro(?=[A-Z]))([^=?*+ϕ∅]+)(?:=([A-Za-z]+))?$/);
           if (e) {
-            if (!LABEL.test(e[1])) return fail(`cannot read "${name}"`);
-            pending.push({ sym: e[1], fn: e[2] || '' });
+            if (!LABEL.test(e[2])) return fail(`cannot read "${name}"`);
+            pending.push({ sym: e[2], fn: e[3] || '', mark: e[1] === '∅' ? '∅' : 'pro' });
           } else {
             items.push({ name, before: pending, after: [] });
             pending = [];
@@ -191,7 +192,7 @@
     if (entry.right) children.push(...build(entry.right, tokens, rhs[1].fn, grammar));
     const empty = grammar.empties && grammar.empties.get(entry.sym);
     if (empty) {
-      const make = (e) => node(e.sym, [{ w: 'ϕ', empty: true }], e.fn, grammar);
+      const make = (e) => node(e.sym, [{ w: e.mark, empty: true }], e.fn, grammar);
       return [...empty.before.map(make), ...children, ...empty.after.map(make)];
     }
     if (/^[\u0001\u0002_]/.test(entry.sym)) {

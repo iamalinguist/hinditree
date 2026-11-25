@@ -250,8 +250,8 @@
     const { trees, error } = HT.parser.parse(tokens, grammar);
     const want = example.key.map((k) => `${k.fn}:${k.text}`).join('/');
     const index = trees.findIndex((tree) => {
-      // Silent ϕ subjects and objects are drawn but not written in the keys.
-      const fns = HT.tree.functions(tree).filter((u) => u.text !== 'ϕ');
+      // Silent pro subjects and objects (and ∅) are drawn but not written in the keys.
+      const fns = HT.tree.functions(tree).filter((u) => u.text !== 'pro' && u.text !== '∅');
       if (fns.map((u) => `${u.fn}:${u.text}`).join('/') !== want) return false;
       if (!example.need) return true;
       let found = false;

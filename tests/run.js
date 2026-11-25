@@ -223,15 +223,17 @@ test('obligation: मुझे खाना खाना है has a noun objec
   const t = parser.parse(tagger.tag('मुझे खाना खाना है'), compiled).trees[0];
   assert.equal(tree.functions(t).map((u) => `${u.fn}:${u.text}`).join(' / '), 'S:मुझे / dO:खाना / P:खाना है');
 });
-test('Method 1 draws dropped subjects and objects as silent ϕ, but prefers overt ones', () => {
+test('Method 1 draws dropped subjects and objects as pro, but prefers overt ones', () => {
   const fn = (x) => tree.functions(parser.parse(tagger.tag(x), compiled).trees[0]).map((u) => `${u.fn}:${u.text}`).join(' / ');
-  assert.equal(fn('मैंने खा लिया'), 'S:मैंने / dO:ϕ / P:खा लिया');
-  assert.equal(fn('खा लिया'), 'S:ϕ / dO:ϕ / P:खा लिया');
-  assert.equal(fn('दरवाज़ा खोलो'), 'S:ϕ / dO:दरवाज़ा / P:खोलो');
-  assert.equal(fn('राम खाता है'), 'S:राम / dO:ϕ / P:खाता है');
-  assert.equal(fn('खाना खा लो'), 'S:ϕ / dO:खाना / P:खा लो');
+  assert.equal(fn('मैंने खा लिया'), 'S:मैंने / dO:pro / P:खा लिया');
+  assert.equal(fn('खा लिया'), 'S:pro / dO:pro / P:खा लिया');
+  assert.equal(fn('दरवाज़ा खोलो'), 'S:pro / dO:दरवाज़ा / P:खोलो');
+  assert.equal(fn('राम खाता है'), 'S:राम / dO:pro / P:खाता है');
+  assert.equal(fn('खाना खा लो'), 'S:pro / dO:खाना / P:खा लो');
+  assert.equal(fn('मैं खाऊँ'), 'S:मैं / dO:pro / P:खाऊँ');
+  assert.equal(fn('मैं खाऊँगा'), 'S:मैं / dO:pro / P:खाऊँगा');
   const t = parser.parse(tagger.tag('मैंने खा लिया है'), compiled).trees[0];
-  assert.match(tree.toBracket(t), /\[VP \[NP=dO ϕ\] \[Vgp.trans/);
+  assert.match(tree.toBracket(t), /\[VP \[NP=dO pro\] \[Vgp.trans/);
   assert.equal(tree.text(t), 'मैंने खा लिया है');
   assert.deepEqual(tree.fromBracket(tree.toBracket(t)), t);
   assert.equal(fn('राम ने रोटी खाई'), 'S:राम ने / dO:रोटी / P:खाई');
@@ -253,6 +255,20 @@ test('Show suffixes: -ता and -या under their own node; irregular forms s
   assert.match(b('उसने फ़िल्म देखी'), /\[V देख\{see\/look\}\] \[AUX \[PERF -ई/);
   assert.match(b('वह गया'), /\[V गया\{go.PFV\}\] \[AUX \[TENSE \(past\)\]\]/);
   assert.match(b('उसने किताब दी'), /\[V दी\{give.PFV\}\]/);
+});
+test('pro for understood arguments, ∅ for an empty slot', () => {
+  const g = parser.compile(['S -> proNP=S V', 'S -> ϕNP=dO V V', 'S -> ∅ASP V V V'].join('\n'));
+  assert.deepEqual(g.errors, []);
+  const one = parser.parse([{ w: 'आ', tags: ['V'] }], g).trees[0];
+  assert.equal(tree.toBracket(one), '[S [NP=S pro] [V आ]]');
+  const old = tree.fromBracket('[S [NP=S ϕ] [V आ]]');
+  assert.deepEqual(old, tree.fromBracket('[S [NP=S pro] [V आ]]'));
+  const slot = tree.fromBracket('[AUX [ASP ∅] [TENSE (fut)]]');
+  assert.equal(slot.c[0].c[0].empty, true);
+  assert.equal(tree.text(slot), '');
+  const fut = tree.suffixes(tree.present(parser.parse(tagger.tag('मैं खाऊँगा'), compiled).trees[0], 6));
+  assert.match(tree.toBracket(fut), /\[AUX \[ASP ∅\] \[TENSE \(fut\)\]\]/);
+  assert.equal(tree.text(fut), 'मैं खाऊँगा');
 });
 test('complex postpositions take their complement: राम की ओर is one PP', () => {
   const t = parser.parse(tagger.tag('वह राम की ओर देख रहा है'), compiled).trees[0];

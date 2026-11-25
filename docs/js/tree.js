@@ -1,7 +1,7 @@
 /*
  * Operations on trees.
  * Node: {l: label, c: children, f?: verb class, fn?: function, tri?: triangle}
- * Leaf: {w: word, g?: gloss, abs?: unpronounced, empty?: silent argument ϕ}
+ * Leaf: {w: word, g?: gloss, abs?: unpronounced, empty?: silent: pro (understood argument) or ∅ (empty slot)}
  */
 (function (HT) {
   'use strict';
@@ -120,7 +120,7 @@
       else marked(root);
     }
     for (const u of units) if (u.fn === 'CL') u.fn = verbClass(root) === 'intens' ? 'sC' : 'dO';
-    return units.map((u) => ({ ...u, text: text(u.node) || (leaves(u.node).some((l) => l.empty) ? 'ϕ' : '') }));
+    return units.map((u) => ({ ...u, text: text(u.node) || (leaves(u.node).find((l) => l.empty) || { w: '' }).w }));
   }
 
   /* Bracket notation: [NP=S [DET यह] [N लड़का]]   [Vgp.trans ...]   [S2^ triangle]   {gloss} after a word */
@@ -175,7 +175,9 @@
           const leaf = { w: t.w };
           if (t.g) leaf.g = t.g;
           if (/^\([a-z]+\)$/.test(t.w)) leaf.abs = true;
-          if (t.w === 'ϕ' || t.w === '∅') Object.assign(leaf, { w: 'ϕ', empty: true });
+          // pro: an understood argument (older trees wrote ϕ); ∅: an empty slot.
+          if (t.w === 'pro' || t.w === 'ϕ') Object.assign(leaf, { w: 'pro', empty: true });
+          if (t.w === '∅') Object.assign(leaf, { empty: true });
           n.c.push(leaf);
           run = t.quoted || leaf.abs || leaf.empty ? null : leaf;
         }
@@ -287,6 +289,7 @@
    *   [V खाता] [AUX [HAB (hab)] ...]   becomes   [V खा] [AUX [HAB -ता] ...]
    *   [V आया] [AUX [PERF (perf)] ...]  becomes   [V आ] [AUX [PERF -या] ...]
    *   [V आया] [AUX [TENSE (past)]]     becomes   [V आ] [AUX [PERF -या] [TENSE (past)]]
+   *   [V खाऊँगा] [AUX [TENSE (fut)]]  becomes   [V खाऊँगा] [AUX [ASP ∅] [TENSE (fut)]]
    * Forms that cannot be cut (गया, किया, दी, पिया) stay whole.
    */
   const VOWEL_SIGNS = { 'ा': 'आ', 'ि': 'इ', 'ी': 'ई', 'ु': 'उ', 'ू': 'ऊ', 'े': 'ए', 'ै': 'ऐ', 'ो': 'ओ', 'ौ': 'औ' };
@@ -305,6 +308,14 @@
     order.forEach(({ leaf, parent }, i) => {
       if (!parent || parent.l !== 'V' || leaf.abs || leaf.empty) return;
       const word = leaf.w.normalize('NFC');
+      // Simple future: an aspect position with nothing in it, [ASP ∅] (Whatzit?,
+      // "Tense or perspective?": every clause has an aspect slot).
+      if (HT.lexicon.verb(word).some((f) => f.kind === 'fut')) {
+        const vgp = parentOf(parent);
+        const aux = vgp && vgp.c.find((c) => c.l === 'AUX');
+        if (aux && !aux.c.some((c) => /^(HAB|PERF|PROG|ASP)$/.test(c.l))) aux.c.unshift({ l: 'ASP', c: [{ w: '∅', empty: true }] });
+        return;
+      }
       const form = HT.lexicon.verb(word).find((f) => (f.kind === 'hab' || f.kind === 'perf')
         && f.stem && word.startsWith(f.stem.normalize('NFC')) && word.length > f.stem.length);
       if (!form) return;
