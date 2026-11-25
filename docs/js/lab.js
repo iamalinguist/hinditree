@@ -48,8 +48,10 @@ Problems and counterexamples:
 `,
   };
 
-  const TABS = [['workbench', 'Workbench'], ['flow', 'Flow'], ['words', 'Word categories'], ['corpus', 'Corpus'], ['judgements', 'Judgements'],
-    ['tests', 'Constituency tests'], ['argument', 'Building an argument'], ['concepts', 'Concepts'], ['whatzit', 'Whatzit?']];
+  // In the order a newcomer grows: learn the terms, analyse words and phrases,
+  // collect and judge data, test a grammar on it, compare patterns, argue, then research.
+  const TABS = [['concepts', 'Concepts'], ['words', 'Word categories'], ['tests', 'Constituency tests'], ['corpus', 'Corpus'],
+    ['judgements', 'Judgements'], ['workbench', 'Workbench'], ['flow', 'Flow'], ['argument', 'Building an argument'], ['whatzit', 'Whatzit?']];
 
   const today = () => {
     const d = new Date();
@@ -66,7 +68,7 @@ Problems and counterexamples:
       data = { sets: [set], current: set.id, method: 'thomas', ...(data && Array.isArray(data.corpus) ? { corpus: data.corpus } : {}) };
     }
     if (!Array.isArray(data.corpus)) data.corpus = [];
-    if (!TABS.some(([id]) => id === data.tab)) data.tab = 'workbench';
+    if (!TABS.some(([id]) => id === data.tab)) data.tab = TABS[0][0];
     return data;
   }
   const save = (data) => store.set('lab', data) || toast('The browser could not save. Export the Lab to keep your work.');
@@ -137,8 +139,8 @@ Problems and counterexamples:
       window.scrollTo(0, 0);
     };
     el.innerHTML = `<div class="lab">
-      <nav class="lab-tabs" role="tablist" aria-label="Hindi Lab">${TABS.map(([id, name]) =>
-        `<button role="tab" data-tab="${id}" aria-selected="${id === data.tab}" class="${id === data.tab ? 'on' : ''}">${esc(name)}</button>`).join('')}</nav>
+      <nav class="lab-tabs" role="tablist" aria-label="Hindi Lab">${TABS.map(([id, name], i) =>
+        `<button role="tab" data-tab="${id}" aria-selected="${id === data.tab}" class="${id === data.tab ? 'on' : ''}"><span class="lab-step">${i + 1}</span> ${esc(name)}</button>`).join('')}</nav>
       <div id="lab-panel" role="tabpanel"></div></div>`;
     el.querySelectorAll('[data-tab]').forEach((b) => {
       b.onclick = () => {
@@ -276,7 +278,7 @@ Problems and counterexamples:
             const term = String((c && c.term) || '').slice(0, 120);
             if (term && !own.some((x) => x.term === term)) {
               own.push({ id: `mine-${newId()}`, term, hi: String(c.hi || '').slice(0, 120), area: ['word', 'sentence', 'meaning', 'change', 'method'].includes(c.area) ? c.area : 'word',
-                text: String(c.text || '').slice(0, 5000), examples: String(c.examples || '').slice(0, 5000) });
+                text: String(c.text || '').slice(0, 5000), examples: String(c.examples || '').slice(0, 5000), why: String(c.why || '').slice(0, 5000) });
             }
           });
         }

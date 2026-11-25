@@ -403,7 +403,14 @@ dialog .row { margin-top: 10px; }
 .concept[open] summary::before { content: "▾"; }
 .concept summary [lang="hi"] { color: var(--brand); }
 .concept-area { margin-left: auto; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-.concept p { line-height: 1.7; }
+.concept p { line-height: 1.7; margin: 0 0 10px; }
+.concept-text { margin-top: 10px; }
+.concept-text b, .concept-why b { color: var(--ink, inherit); font-weight: 650; }
+.concept-label { margin: 14px 0 4px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.concept-why { margin: 10px 0; padding: 2px 12px 2px; border-left: 3px solid var(--brand); }
+.concept-why .concept-label { margin-top: 8px; }
+.lab-step { display: inline-block; min-width: 1.4em; font-size: 11px; color: var(--muted); }
+.lab-tabs .on .lab-step { color: inherit; }
 .concept-ex { margin: 8px 0; padding: 10px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; white-space: pre-wrap; font: 15px/1.7 var(--deva); }
 .concept-see { font-size: 13px; color: var(--muted); }
 button.link { border: 0; background: none; padding: 0; color: var(--brand); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font: inherit; }

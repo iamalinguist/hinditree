@@ -397,7 +397,61 @@
       tool: 'Method 1 labels every finite -ता as HAB with a silent (hab): the counterfactual अगर वह आता तो मैं जाता gets two habituals and no tense. Before a noun, बहता पानी and बहता हुआ पानी get the same structure (a participle modifying the noun), which builds in the silent-हुआ view: compare it with the idiom and चलना cases.',
       readings: ['Sabine Iatridou (2000), The grammatical ingredients of counterfactuality, Linguistic Inquiry', 'Bernard Comrie (1976), Aspect (Cambridge)', 'Martin Haspelmath (2003), The geometry of grammatical meaning: semantic maps and cross-linguistic comparison', 'Yamuna Kachru (2006), Hindi'],
       output: 'A paper on the meaning of Hindi -ता, and a position on one form with many functions that can be applied to other Hindi forms.',
-      next: 'If -ता is one piece with one meaning, should the tree show it as a piece? Look at words and morphemes next.',
+      next: '-ता also appears before रहा in खाता रहा. Ask whether that रहा is the progressive next.',
+    },
+    {
+      id: 'raha', phase: 'clause', title: 'One रहा or two?', hi: 'रहा: सातत्य या प्रगति',
+      tables: [{
+        title: 'Which forms does each रहा have?',
+        head: ['Form', 'Stem + रहा (खा रहा)', '-ता + रह- (खाता रहा)'],
+        rows: [
+          ['Past', 'खा रहा था', 'खाता रहा, खाता रहा था'],
+          ['Imperative', '* खा रहो', 'खाते रहो'],
+          ['Future', '* खा रहेगा (खा रहा होगा instead)', 'खाता रहेगा'],
+          ['Habitual', '* खा रहता है', 'खाता रहता है'],
+          ['Subjunctive', '* खा रहे', 'खाता रहे'],
+          ['Infinitive', '* खा रहना', 'खाते रहना'],
+        ],
+        note: 'Fill in the judgements with several native speakers before relying on the stars: they are the data that decides between H1 and H2. Compare चुका, which also keeps verb forms (खा चुकेगा, खा चुकने के बाद) and a living verb चुकना (पैसा चुक गया, कर्ज़ चुकाना).',
+      }],
+      question: 'Is रहा after a bare stem (खा रहा है) the same element as रहा after -ता (खाता रहा था)? And is either related to the verb रहना ("stay, remain")?',
+      hypotheses: [
+        ['One रहा, a pure marker', 'A native speaker\'s account: रहा/रही/रहे is the progressive marker everywhere, as चुका/चुकी/चुके is the completive marker. It has no relation to the verb रहना; a similar meaning does not prove a common origin. In खाता रहा था, -ता adds routine, रहा continuity and था the past.'],
+        ['Two रहा', 'After a bare stem, रहा is the progressive marker: it has only the forms रहा/रही/रहे. After -ता, रह- is a verb of continuing (the continuative) with every verb form, including the imperative (खाते रहो); in खाता रहा it is in the perfective, so the whole means "kept eating" over a stretch that ended. Whether the progressive comes historically from रहना is a separate question, for texts to decide.'],
+      ],
+      evidence: `# The progressive
+वह खाना खा रहा था
+# The continuative
+वह खाना खाता रहा
+वह खाना खाता रहा था
+# Imperative: only after -ता?
+खाते रहो
+* खा रहो
+# Future and habitual
+वह खाता रहेगा
+वह खाता रहता है
+* वह खा रहता है
+# One event, no routine: is -ता habitual here?
+वह रात भर रोता रहा
+# Both together
+वह खाता रहा रहा है
+वह खा रहा होता है
+# चुका: a marker with verb forms
+वह खा चुकेगा
+खा चुकने के बाद वह गया
+पैसा चुक गया`,
+      argument: [
+        'Collect judgements on every cell of the table from several speakers, with the native speaker\'s account stated first. Mark disagreement with %; if speakers accept * खा रहो or reject खाते रहो, H2 loses its main evidence.',
+        'State what each hypothesis predicts. H1 predicts that रहा has the same forms after a stem and after -ता. H2 predicts the table: no imperative, future or habitual after a bare stem, all of them after -ता.',
+        'If H2 holds, answer the native speaker\'s question: what is रहो in खाते रहो, if not a form of a verb? Name it (continuative रहना) without claiming anything about history.',
+        'Keep synchronic and historical claims apart. The table only shows what the forms are today. A claim that the progressive comes from रहना needs dated texts (when does खा रहा है first appear, and with what meaning?), not a similarity of meaning.',
+        'Test the meaning of -ता in खाता रहा: वह रात भर रोता रहा is one long event with no routine. Does that support the "one core meaning" view of -ता (see "What does -ता mean?")?',
+        'Map which aspects can combine and in what order (खा रहा होता है, खाया करता था, खाता रहा था, ? खाता रहा रहा है). A fixed order is evidence for a hierarchy of aspect positions.',
+      ],
+      tool: 'The tagger already builds in H2: in खा रहा था, रहा is PROG; in खाता रहा था, रहा is a verb (V.intrans) with a silent (perf), and in खाते रहो, रहो is a verb too. To draw H1, retag रहा as PROG in Word categories and see whether Method 1 still finds a tree.',
+      readings: ['Bernard Comrie (1976), Aspect (Cambridge)', 'Carlota Smith (1991), The Parameter of Aspect', 'Guglielmo Cinque (1999), Adverbs and Functional Heads', 'R. S. McGregor (1995), Outline of Hindi Grammar (on रहना with the imperfective participle)', 'Yamuna Kachru (2006), Hindi', 'Joan Bybee, Revere Perkins and William Pagliuca (1994), The Evolution of Grammar'],
+      output: 'A short paper or squib: "One रहा or two? Progressive and continuative in Hindi", built on native-speaker judgements of the table.',
+      next: 'If रहा and -ता are separate pieces, should the tree show them as pieces? Look at words and morphemes next.',
     },
     {
       id: 'morphemes', phase: 'clause', title: 'Words or morphemes in the tree?', hi: 'शब्द या रूपिम',

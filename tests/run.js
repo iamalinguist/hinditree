@@ -304,7 +304,9 @@ test('Concepts: unique terms, valid areas, links to existing Whatzit? questions'
   assert.equal(new Set(CONCEPTS.map((c) => c.id)).size, CONCEPTS.length);
   for (const c of CONCEPTS) {
     assert.ok(AREAS.some(([a]) => a === c.area), c.id);
-    assert.ok(c.term && c.text, c.id);
+    assert.ok(c.term && c.text && c.examples && c.why, c.id);
+    assert.equal((c.text.match(/\*\*/g) || []).length % 2, 0, `${c.id}: unbalanced **`);
+    assert.equal((c.why.match(/\*\*/g) || []).length % 2, 0, `${c.id}: unbalanced ** in why`);
     c.see.forEach((id) => assert.ok(stations.has(id), `${c.id} → ${id}`));
   }
 });
