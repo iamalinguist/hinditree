@@ -408,7 +408,7 @@
         'Ask what the split explains that the whole-word tree does not. For example, नहीं and particles never come between खा and -ता, which is what whole words predict; is there anything that only the split predicts?',
         'Limit the claim to habitual -ता, and leave the counterfactual use to "What does -ता mean?". Check the share of each in a corpus.',
       ],
-      tool: 'Method 1 keeps whole words and adds silent (hab), (perf) and (past). Tick "Show suffixes" in Make Structure to see the same tree with the suffix under its own node ([V खा] [HAB -ता], [V आ] [PERF -या]); irregular forms (गया, दी, पिया) stay whole. Compare the two drawings for your data.',
+      tool: 'Method 1 keeps whole words and adds silent (hab), (perf) and (past). Tick "Show suffixes" in Make Structure to see the same tree with the suffix under its own node ([V खा] [HAB -ता], [V आ] [PERF -या], and for the future [V खा] [ASP ∅] [SBJV -ऊँ] [TENSE -गा]); irregular forms (गया, दी, पिया) stay whole. Compare the two drawings for your data.',
       readings: ['Morris Halle and Alec Marantz (1993), Distributed Morphology and the pieces of inflection', 'Miriam Butt and Tracy Holloway King, the ParGram Urdu grammar (LFG): how morphology supplies features', 'Joan Bresnan and Sam Mchombo (1995), The Lexical Integrity Principle: evidence from Bantu, NLLT', 'Noam Chomsky (1957), Syntactic Structures (affix hopping)', 'Linda Thomas (1993), Beginning Syntax'],
       output: 'A short paper or squib: "Hindi -ता and the pieces of inflection", arguing for one way of drawing the verb group.',
       next: 'The perfective participle also builds the so-called passive with जाना. Look at it next.',

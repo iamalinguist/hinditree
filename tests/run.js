@@ -267,8 +267,10 @@ test('pro for understood arguments, ∅ for an empty slot', () => {
   assert.equal(slot.c[0].c[0].empty, true);
   assert.equal(tree.text(slot), '');
   const fut = tree.suffixes(tree.present(parser.parse(tagger.tag('मैं खाऊँगा'), compiled).trees[0], 6));
-  assert.match(tree.toBracket(fut), /\[AUX \[ASP ∅\] \[TENSE \(fut\)\]\]/);
-  assert.equal(tree.text(fut), 'मैं खाऊँगा');
+  assert.match(tree.toBracket(fut), /\[V खा\{eat\}\] \[AUX \[ASP ∅\] \[SBJV -ऊँ\{SBJV\}\] \[TENSE -गा\{FUT\}\]\]/);
+  const third = tree.suffixes(tree.present(parser.parse(tagger.tag('वह देगा'), compiled).trees[0], 6));
+  assert.match(tree.toBracket(third), /\[V दे\{give\}\] \[AUX \[ASP ∅\] \[TENSE -गा\{FUT\}\]\]/);
+  assert.equal(tree.text(fut), 'मैं खा -ऊँ -गा');
 });
 test('complex postpositions take their complement: राम की ओर is one PP', () => {
   const t = parser.parse(tagger.tag('वह राम की ओर देख रहा है'), compiled).trees[0];

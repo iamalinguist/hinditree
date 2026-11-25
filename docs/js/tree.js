@@ -289,7 +289,7 @@
    *   [V खाता] [AUX [HAB (hab)] ...]   becomes   [V खा] [AUX [HAB -ता] ...]
    *   [V आया] [AUX [PERF (perf)] ...]  becomes   [V आ] [AUX [PERF -या] ...]
    *   [V आया] [AUX [TENSE (past)]]     becomes   [V आ] [AUX [PERF -या] [TENSE (past)]]
-   *   [V खाऊँगा] [AUX [TENSE (fut)]]  becomes   [V खाऊँगा] [AUX [ASP ∅] [TENSE (fut)]]
+   *   [V खाऊँगा] [AUX [TENSE (fut)]]  becomes   [V खा] [AUX [ASP ∅] [SBJV -ऊँ] [TENSE -गा]]
    * Forms that cannot be cut (गया, किया, दी, पिया) stay whole.
    */
   const VOWEL_SIGNS = { 'ा': 'आ', 'ि': 'इ', 'ी': 'ई', 'ु': 'उ', 'ू': 'ऊ', 'े': 'ए', 'ै': 'ऐ', 'ो': 'ओ', 'ौ': 'औ' };
@@ -310,10 +310,24 @@
       const word = leaf.w.normalize('NFC');
       // Simple future: an aspect position with nothing in it, [ASP ∅] (Whatzit?,
       // "Tense or perspective?": every clause has an aspect slot).
-      if (HT.lexicon.verb(word).some((f) => f.kind === 'fut')) {
+      const future = HT.lexicon.verb(word).find((f) => f.kind === 'fut');
+      if (future) {
         const vgp = parentOf(parent);
         const aux = vgp && vgp.c.find((c) => c.l === 'AUX');
-        if (aux && !aux.c.some((c) => /^(HAB|PERF|PROG|ASP)$/.test(c.l))) aux.c.unshift({ l: 'ASP', c: [{ w: '∅', empty: true }] });
+        if (!aux) return;
+        if (!aux.c.some((c) => /^(HAB|PERF|PROG|ASP)$/.test(c.l))) aux.c.unshift({ l: 'ASP', c: [{ w: '∅', empty: true }] });
+        // The future is the subjunctive plus -गा: खा-ऊँ-गा, खा-ए-गा, देख-ें-गे.
+        const end = word.match(/(गा|गी|गे|गीं)$/);
+        const stem = future.stem && future.stem.normalize('NFC');
+        const tense = aux.c.find((c) => c.l === 'TENSE' && c.c[0] && c.c[0].w === '(fut)');
+        if (!end || !stem || !tense || !word.startsWith(stem)) return;
+        let mood = word.slice(stem.length, word.length - end[1].length);
+        if (VOWEL_SIGNS[mood[0]]) mood = VOWEL_SIGNS[mood[0]] + mood.slice(1);
+        tense.c = [{ w: `-${end[1]}`, g: 'FUT' }];
+        // होगा, देगा: the third-person subjunctive (हो, दे) has no ending to show.
+        if (mood) aux.c.splice(aux.c.indexOf(tense), 0, { l: 'SBJV', c: [{ w: `-${mood}`, g: 'SBJV' }] });
+        leaf.w = stem;
+        if (leaf.g) leaf.g = leaf.g.split('.')[0];
         return;
       }
       const form = HT.lexicon.verb(word).find((f) => (f.kind === 'hab' || f.kind === 'perf')
