@@ -8,6 +8,7 @@
  *   Judgements, Constituency tests, Building an argument
  *                 short lessons on linguistic method, with Hindi examples
  *                 that can be added to the current data set
+ *   Concepts      linguistic terms explained with Hindi data (concepts.js)
  *   Whatzit?      a research path through questions on Hindi syntax (whatzit.js)
  *
  * The password only marks the Lab as a space for invited students. It is
@@ -48,7 +49,7 @@ Problems and counterexamples:
   };
 
   const TABS = [['workbench', 'Workbench'], ['flow', 'Flow'], ['words', 'Word categories'], ['corpus', 'Corpus'], ['judgements', 'Judgements'],
-    ['tests', 'Constituency tests'], ['argument', 'Building an argument'], ['whatzit', 'Whatzit?']];
+    ['tests', 'Constituency tests'], ['argument', 'Building an argument'], ['concepts', 'Concepts'], ['whatzit', 'Whatzit?']];
 
   const today = () => {
     const d = new Date();
@@ -126,6 +127,15 @@ Problems and counterexamples:
     if (!unlocked()) return gate(el, () => lab(el));
     const data = load();
     const refresh = () => lab(el);
+    // Jump between Concepts and Whatzit?, opening the linked entry.
+    const open = (tab, id) => {
+      data.tab = tab;
+      if (tab === 'whatzit') (data.whatzit = data.whatzit || { notes: {} }).open = id;
+      if (tab === 'concepts') Object.assign(data.concepts = data.concepts || { mine: [] }, { focus: id, area: '', query: '', editing: null });
+      save(data);
+      refresh();
+      window.scrollTo(0, 0);
+    };
     el.innerHTML = `<div class="lab">
       <nav class="lab-tabs" role="tablist" aria-label="Hindi Lab">${TABS.map(([id, name]) =>
         `<button role="tab" data-tab="${id}" aria-selected="${id === data.tab}" class="${id === data.tab ? 'on' : ''}">${esc(name)}</button>`).join('')}</nav>
@@ -146,7 +156,8 @@ Problems and counterexamples:
     else if (data.tab === 'corpus') corpus(panel, data, refresh);
     else if (data.tab === 'flow') flow(panel, data, refresh);
     else if (data.tab === 'words') HT.wordclass.render(panel);
-    else if (data.tab === 'whatzit') HT.whatzit.render(panel, { data, save, addToSet });
+    else if (data.tab === 'whatzit') HT.whatzit.render(panel, { data, save, addToSet, open });
+    else if (data.tab === 'concepts') HT.concepts.render(panel, { data, save, open });
     else lesson(panel, data, LESSONS[data.tab]);
     return undefined;
   }
@@ -234,7 +245,7 @@ Problems and counterexamples:
     };
     $('#lab-export').onclick = () => {
       keep();
-      download('hindi-lab.json', new Blob([JSON.stringify({ app: 'hinditree-lab', version: 2, sets: data.sets, corpus: data.corpus, ...(data.whatzit ? { whatzit: data.whatzit } : {}) }, null, 2)], { type: 'application/json' }));
+      download('hindi-lab.json', new Blob([JSON.stringify({ app: 'hinditree-lab', version: 2, sets: data.sets, corpus: data.corpus, ...(data.whatzit ? { whatzit: data.whatzit } : {}), ...(data.concepts && data.concepts.mine && data.concepts.mine.length ? { concepts: data.concepts.mine } : {}) }, null, 2)], { type: 'application/json' }));
     };
     $('#lab-import').onchange = async (e) => {
       try {
@@ -255,6 +266,17 @@ Problems and counterexamples:
           Object.entries(incoming.whatzit.notes).slice(0, 100).forEach(([id, n]) => {
             if (!notes[id] && n && typeof n === 'object') {
               notes[id] = { status: String(n.status || '').slice(0, 20), view: String(n.view || '').slice(0, 20000), found: String(n.found || '').slice(0, 20000) };
+            }
+          });
+        }
+        // Your own Concepts terms: added unless one with the same name exists.
+        if (Array.isArray(incoming.concepts)) {
+          const own = (data.concepts = data.concepts || { mine: [] }).mine = data.concepts.mine || [];
+          incoming.concepts.slice(0, 500).forEach((c) => {
+            const term = String((c && c.term) || '').slice(0, 120);
+            if (term && !own.some((x) => x.term === term)) {
+              own.push({ id: `mine-${newId()}`, term, hi: String(c.hi || '').slice(0, 120), area: ['word', 'sentence', 'meaning', 'change', 'method'].includes(c.area) ? c.area : 'word',
+                text: String(c.text || '').slice(0, 5000), examples: String(c.examples || '').slice(0, 5000) });
             }
           });
         }

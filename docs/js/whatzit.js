@@ -246,7 +246,7 @@
     },
     {
       id: 'tense', phase: 'clause', title: 'Tense or perspective?', hi: 'काल या दृष्टि',
-      table: {
+      tables: [{
         title: 'Aspect and auxiliary: the verb group as a grid',
         head: ['Aspect ↓  Auxiliary →', 'है (present)', 'था (past)', 'होगा (future or presumptive)', 'no auxiliary'],
         rows: [
@@ -257,7 +257,20 @@
           ['No aspect', '—', '—', 'आएगा (-एगा on the verb)', '—'],
         ],
         note: '-या follows a stem ending in a vowel (आ-या), -आ one ending in a consonant (लिख-ा): one perfective marker. With an aspect marker the future goes on हो (आ रहा होगा, not *आ रहेगा). The "no auxiliary" column is where Method 1 adds a silent tense, (past) or (hab); the होगा column is often a guess (आया होगा "must have come") rather than a future.',
-      },
+      }, {
+        title: 'English and Hindi: where tense, aspect and agreement are marked',
+        head: ['', 'English', 'Hindi'],
+        rows: [
+          ['Sentence', 'Ram eats fruit', 'राम फल खाता है'],
+          ['Gloss', 'Ram eat-PRS.3SG fruit', 'Ram fruit eat-HAB.M.SG be.PRS.3SG'],
+          ['Tense', '-s, fused with person and number', 'है, a separate word'],
+          ['Aspect', 'none (simple present)', '-त- in खाता (habitual)'],
+          ['Agreement', '-s: third person singular', '-आ: masculine singular; है: third person singular'],
+          ['Past', 'ate (eat.PST): no suffix to cut off', 'खाता था (habitual past); खाया (perfective)'],
+          ['Thomas-style tree', '[AUX [TENSE (pres)]] [V eats]: AUX before V', '[V खाता] [AUX [HAB (hab)] [TENSE है]]: AUX after V'],
+        ],
+        note: 'English packs tense and agreement into one suffix and has no habitual marker in the simple present; Hindi spreads aspect, agreement and tense over the verb and a separate auxiliary. The silent (pres) of English is forced by fusion (ate cannot be cut); for Hindi -ता the silent (hab) is a choice (see "Words or morphemes in the tree?").',
+      }],
       question: 'Do आया, आया है and आया था express three tenses (past, present perfect, past perfect), or one completed event seen from different perspectives?',
       hypotheses: [
         ['Three tenses', 'As in English: आया is a simple past with a silent past tense, आया है a present perfect and आया था a past perfect. This is Thomas\'s system, which Method 1 follows.'],
@@ -332,6 +345,57 @@
       tool: 'Method 1 labels every finite -ता as HAB with a silent (hab): the counterfactual अगर वह आता तो मैं जाता gets two habituals and no tense. Before a noun, बहता पानी and बहता हुआ पानी get the same structure (a participle modifying the noun), which builds in the silent-हुआ view: compare it with the idiom and चलना cases.',
       readings: ['Sabine Iatridou (2000), The grammatical ingredients of counterfactuality, Linguistic Inquiry', 'Bernard Comrie (1976), Aspect (Cambridge)', 'Martin Haspelmath (2003), The geometry of grammatical meaning: semantic maps and cross-linguistic comparison', 'Yamuna Kachru (2006), Hindi'],
       output: 'A paper on the meaning of Hindi -ता, and a position on one form with many functions that can be applied to other Hindi forms.',
+      next: 'If -ता is one piece with one meaning, should the tree show it as a piece? Look at words and morphemes next.',
+    },
+    {
+      id: 'morphemes', phase: 'clause', title: 'Words or morphemes in the tree?', hi: 'शब्द या रूपिम',
+      question: 'In खाता है the tree has V खाता and a silent HAB (hab). Should the suffix itself stand under HAB: V खा, HAB -ता? More generally: does syntax start from whole words or from their pieces?',
+      tables: [{
+        title: 'Three ways to draw the verb group',
+        head: ['Analysis', 'खाता है', 'आया, देखा', 'गया'],
+        rows: [
+          ['Whole words (Method 1 now)', '[V खाता] [AUX [HAB (hab)] [TENSE है]]', '[V आया] [AUX [TENSE (past)]]', '[V गया] [AUX [TENSE (past)]]'],
+          ['Suffix as a node', '[V खा] [AUX [HAB -ता] [TENSE है]]', '[V आ] [PERF -या]; [V देख] [PERF -आ]', 'listed whole, like English went'],
+          ['Suffix as a node with features', '[V खा] [HAB -त- {M, SG}] [TENSE है]', '[V आ] [PERF -य- {M, SG}]', 'listed whole, with the same features'],
+        ],
+        note: '-ता is regular for every verb. The perfective is regular too: -या after a stem ending in a vowel (आ-या, सो-या), -आ after one ending in a consonant (देख-ा), with ई shortened (पी → पिया). Only a few forms are listed: गया, किया, दिया, लिया, हुआ, the old participles inherited from Sanskrit and Prakrit (kṛta → किया, gata → गया). Many speakers now say करा for किया: the regular rule replacing an exception. Features in braces carry gender and number without a separate agreement node.',
+      }],
+      hypotheses: [
+        ['Whole words', 'Words enter the syntax fully inflected; the tree shows their features (HAB, PERF, TENSE) as silent elements. This is Thomas\'s practice and the Lexical Integrity Principle of LFG.'],
+        ['Suffixes in the tree', 'Inflectional suffixes are pieces of the syntax: -त- heads HAB and -य-/-आ heads PERF, carrying gender and number as features; है heads TENSE. Both the habitual and the perfective are regular, apart from a short list of whole forms (गया, किया, दिया, लिया, हुआ). The claim is about habitual -ता; the counterfactual use is a separate study.'],
+      ],
+      evidence: `# -ता is regular for every verb
+वह खाता है
+वह जाता है
+वह करता है
+# -ता also carries agreement
+वह खाती है
+वे खाते हैं
+# The perfective: -या after a vowel, -आ after a consonant
+वह आया
+वह सोया
+उसने फ़िल्म देखी
+# The regular rule replacing an exception: करा for किया
+% उसने काम करा
+उसने काम किया
+# But करा is also the causative stem: "got the work done"
+मैंने काम करा दिया
+# The few listed forms
+वह गया
+उसने काम किया
+उसने किताब दी
+वह बीमार हुआ`,
+      argument: [
+        'Segment the habitual as -त- (aspect) plus -आ/-ई/-ए, and treat the agreement part as features on the aspect node rather than as a node of its own.',
+        'State the perfective rule (-या after a vowel, -आ after a consonant, ई shortened in पिया) and list its exceptions (गया, किया, दिया, लिया, हुआ). A regular rule with a few listed exceptions is normal (English go and went), so the exceptions do not by themselves defeat the analysis.',
+        'Compare with LFG, where the tree keeps whole words but the suffix still contributes its meaning as a feature: the lexicon says that -ता adds ASPECT = HABITUAL. So the question is not whether -ता means HAB, but whether it needs its own node in the tree. A node is justified if some syntactic rule must see it separately from the stem.',
+        'Count किया against करा in written and spoken corpora, by region. If करा is spreading, the perfective rule is productive: strong evidence that it is a real rule. Check whether the causative करा- (करा देना, "get done") holds some speakers back.',
+        'Ask what the split explains that the whole-word tree does not. For example, नहीं and particles never come between खा and -ता, which is what whole words predict; is there anything that only the split predicts?',
+        'Limit the claim to habitual -ता, and leave the counterfactual use to "What does -ता mean?". Check the share of each in a corpus.',
+      ],
+      tool: 'Method 1 keeps whole words and adds silent (hab), (perf) and (past). A version with suffix nodes could be written as your own grammar (Method 3) if the tagger split -ता and -या off: compare the two trees for the same sentences.',
+      readings: ['Morris Halle and Alec Marantz (1993), Distributed Morphology and the pieces of inflection', 'Miriam Butt and Tracy Holloway King, the ParGram Urdu grammar (LFG): how morphology supplies features', 'Joan Bresnan and Sam Mchombo (1995), The Lexical Integrity Principle: evidence from Bantu, NLLT', 'Noam Chomsky (1957), Syntactic Structures (affix hopping)', 'Linda Thomas (1993), Beginning Syntax'],
+      output: 'A short paper or squib: "Hindi -ता and the pieces of inflection", arguing for one way of drawing the verb group.',
       next: 'The perfective participle also builds the so-called passive with जाना. Look at it next.',
     },
     {
@@ -509,12 +573,13 @@
 
   /** Draws the tab. lab gives { data, save, addToSet }. */
   function render(el, lab) {
-    const { data, save, addToSet } = lab;
+    const { data, save, addToSet, open } = lab;
     const state = data.whatzit || (data.whatzit = { open: STATIONS[0].id, notes: {} });
     if (!state.notes) state.notes = {};
     if (!STATIONS.some((x) => x.id === state.open)) state.open = STATIONS[0].id;
     const index = STATIONS.findIndex((x) => x.id === state.open);
     const st = STATIONS[index];
+    const terms = HT.concepts ? HT.concepts.forStation(st.id) : [];
     const note = state.notes[st.id] || {};
     const status = (id) => (state.notes[id] && state.notes[id].status) || '';
     const done = STATIONS.filter((x) => status(x.id) === 'written').length;
@@ -550,12 +615,13 @@
         <p class="wz-question">${esc(st.question)}</p>
         <div class="wz-hyp">${st.hypotheses.map(([name, claim], i) => `${i ? '<span class="wz-vs">or</span>' : ''}
           <div class="wz-h"><b>H${i + 1}. ${esc(name)}</b><p>${esc(claim)}</p></div>`).join('')}</div>
+        ${terms.length && open ? `<p class="concept-see">Concepts: ${terms.map((c) => `<button class="link" data-concept="${esc(c.id)}">${esc(c.term)}</button>`).join(', ')}</p>` : ''}
       </section>
 
-      ${st.table ? `<section class="card wz-table"><h2>${esc(st.table.title)}</h2>
-        <div class="wz-table-scroll"><table class="ff"><tr>${st.table.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>
-        ${st.table.rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td lang="hi">${esc(c)}</td>` : `<td>${esc(c)}</td>`)).join('')}</tr>`).join('')}</table></div>
-        ${st.table.note ? `<p class="hint">${esc(st.table.note)}</p>` : ''}</section>` : ''}
+      ${(st.tables || (st.table ? [st.table] : [])).map((tb) => `<section class="card wz-table"><h2>${esc(tb.title)}</h2>
+        <div class="wz-table-scroll"><table class="ff"><tr>${tb.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>
+        ${tb.rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td lang="hi">${esc(c)}</td>` : `<td>${esc(c)}</td>`)).join('')}</tr>`).join('')}</table></div>
+        ${tb.note ? `<p class="hint">${esc(tb.note)}</p>` : ''}</section>`).join('')}
 
       <div class="lesson-cards">
         ${evidence ? `<section class="card lesson-card"><h2>Evidence</h2><ul class="wz-evidence">${evidence}</ul>
@@ -585,6 +651,7 @@
       el.querySelector('.wz-detail').scrollIntoView({ block: 'nearest' });
     };
     el.querySelectorAll('[data-station]').forEach((b) => { b.onclick = () => go(b.dataset.station); });
+    el.querySelectorAll('[data-concept]').forEach((b) => { b.onclick = () => open('concepts', b.dataset.concept); });
     el.querySelector('#wz-prev').onclick = () => index && go(STATIONS[index - 1].id);
     el.querySelector('#wz-next').onclick = () => index < STATIONS.length - 1 && go(STATIONS[index + 1].id);
     const add = el.querySelector('#wz-add');

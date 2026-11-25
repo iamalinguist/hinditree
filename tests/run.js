@@ -266,11 +266,21 @@ test('demonstratives: DET before a noun, a third-person pronoun alone', () => {
 
 // Hindi Lab: judgement marks
 global.localStorage = { getItem: () => null, setItem: () => {} };
-for (const file of ['studio', 'pages', 'whatzit', 'lab']) require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));
+for (const file of ['studio', 'pages', 'concepts', 'whatzit', 'lab']) require(path.join(__dirname, '..', 'docs', 'js', `${file}.js`));
 test('Lab: judgement marks and headings are read', () => {
   const rows = globalThis.HT.labLines('# Heading\n#पत्थर ने रोटी खाई\n% मैंने बोला\n?? क\n* ख // note\nOK ग');
   assert.deepEqual(rows.map((r) => r.heading || `${r.judgement}${r.sentence}`), ['Heading', '#पत्थर ने रोटी खाई', '%मैंने बोला', '??क', '*ख', '✓ग']);
   assert.equal(rows[4].comment, 'note');
+});
+test('Concepts: unique terms, valid areas, links to existing Whatzit? questions', () => {
+  const { CONCEPTS, AREAS } = globalThis.HT.concepts;
+  const stations = new Set(globalThis.HT.whatzit.STATIONS.map((x) => x.id));
+  assert.equal(new Set(CONCEPTS.map((c) => c.id)).size, CONCEPTS.length);
+  for (const c of CONCEPTS) {
+    assert.ok(AREAS.some(([a]) => a === c.area), c.id);
+    assert.ok(c.term && c.text, c.id);
+    c.see.forEach((id) => assert.ok(stations.has(id), `${c.id} → ${id}`));
+  }
 });
 test('Whatzit?: stations are complete and their evidence reads as Lab lines', () => {
   const { STATIONS, PHASES } = globalThis.HT.whatzit;
