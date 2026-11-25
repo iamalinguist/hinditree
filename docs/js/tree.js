@@ -1,7 +1,7 @@
 /*
  * Operations on trees.
  * Node: {l: label, c: children, f?: verb class, fn?: function, tri?: triangle}
- * Leaf: {w: word, g?: gloss, abs?: unpronounced}
+ * Leaf: {w: word, g?: gloss, abs?: unpronounced, empty?: silent argument ϕ}
  */
 (function (HT) {
   'use strict';
@@ -9,7 +9,7 @@
   const clone = (x) => JSON.parse(JSON.stringify(x));
   const isLeaf = (n) => n.w !== undefined;
   const leaves = (n) => (isLeaf(n) ? [n] : n.c.flatMap(leaves));
-  const text = (n) => leaves(n).filter((l) => !l.abs).map((l) => l.w).join(' ');
+  const text = (n) => leaves(n).filter((l) => !l.abs && !l.empty).map((l) => l.w).join(' ');
   const some = (n, test) => test(n) || (!isLeaf(n) && n.c.some((c) => some(c, test)));
 
   function walk(n, visit, path = []) {
@@ -120,7 +120,7 @@
       else marked(root);
     }
     for (const u of units) if (u.fn === 'CL') u.fn = verbClass(root) === 'intens' ? 'sC' : 'dO';
-    return units.map((u) => ({ ...u, text: text(u.node) }));
+    return units.map((u) => ({ ...u, text: text(u.node) || (leaves(u.node).some((l) => l.empty) ? 'ϕ' : '') }));
   }
 
   /* Bracket notation: [NP=S [DET यह] [N लड़का]]   [Vgp.trans ...]   [S2^ triangle]   {gloss} after a word */
@@ -175,8 +175,9 @@
           const leaf = { w: t.w };
           if (t.g) leaf.g = t.g;
           if (/^\([a-z]+\)$/.test(t.w)) leaf.abs = true;
+          if (t.w === 'ϕ' || t.w === '∅') Object.assign(leaf, { w: 'ϕ', empty: true });
           n.c.push(leaf);
-          run = t.quoted || leaf.abs ? null : leaf;
+          run = t.quoted || leaf.abs || leaf.empty ? null : leaf;
         }
       }
       if (i >= tokens.length) throw new Error('A closing ] is missing.');
@@ -297,7 +298,7 @@
       let pos = 0;
       (function visit(n) {
         if (isLeaf(n)) {
-          if (!n.abs) pos += n.w.split(' ').length;
+          if (!n.abs && !n.empty) pos += n.w.split(' ').length;
           return;
         }
         const from = pos;

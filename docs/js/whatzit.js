@@ -102,7 +102,7 @@
         'For 50 common verbs, check each behaviour separately: takes an object, takes ने, passivises, can drop the object, has an intransitive or causative partner.',
         'If the behaviours do not cluster, the single feature is not doing the work, and you can say what does instead (family, meaning, aspect).',
       ],
-      tool: 'The Method 1 verb classes ([trans], [intrans], [ditrans]...) are exactly this feature: list the verbs where the class gives the wrong prediction, using the Workbench to see which sentences it accepts wrongly.',
+      tool: 'The Method 1 verb classes ([trans], [intrans], [ditrans]...) are exactly this feature: list the verbs where the class gives the wrong prediction, using the Workbench to see which sentences it accepts wrongly. Method 1 draws मैंने खा लिया with a silent object [NP=dO ϕ]: that is H1 in the tree. H2 says there is no object at all, so the ϕ is the claim to argue against.',
       readings: ['Paul Hopper and Sandra Thompson (1980), Transitivity in grammar and discourse, Language', 'Colin Masica (1976), Defining a Linguistic Area: South Asia (Chicago)', 'Gillian Ramchand (2008), Verb Meaning and the Lexicon (Cambridge)', 'Tara Mohanan (1994), Argument Structure in Hindi'],
       output: 'A paper: "Transitivity is not a category of Hindi grammar", with the 50-verb table as its evidence.',
       next: 'If transitivity does not decide ने, what does? Look at ने next.',

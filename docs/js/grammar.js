@@ -8,6 +8,7 @@
  *   @1.5              cost of the rule on this line; cheaper trees are listed first
  *   Label.feature     the feature is internal, except verb classes, which are displayed
  *   _name             helper symbol, never drawn
+ *   ϕNP=dO            a silent NP with function dO; it takes no word
  */
 (function (HT) {
   'use strict';
@@ -22,14 +23,22 @@ S -> AdvP.s=A _subj=S VP | _subj=S AdvP.s=A VP | _subj=S VP AdvP.s=A
 S -> _adjunct=A _subj=S VP @0.3
 S -> AdvP.s=A _adjunct=A _subj=S VP @0.5
 S -> part.q _subj=S VP
-# Subject omitted: imperative (ch. 3) or Hindi pro-drop
-S -> VP @3
-S -> AdvP.s=A VP @3.2
+# Subject omitted: imperative (ch. 3) or Hindi pro-drop, drawn as a silent ϕ subject
+S -> ϕNP=S VP @3
+S -> AdvP.s=A ϕNP=S VP @3.2
 # Dative experiencer: मुझे नींद आ रही है
 S -> NP.dat=A NP=S VP @2.2
 # Hindi word order: object before subject
 S -> NP.dat=iO NP=S VP.dpass
 S -> _obj=dO NP.erg=S VP.gap @2.2
+# An understood object, drawn as a silent ϕ object: मैंने खा लिया, राम खाता है.
+# Not with an imperative, where the subject is understood: दरवाज़ा खोलो.
+S -> _subj=S VP.od @2
+S -> _adjunct=A _subj=S VP.od @2.3
+S -> ϕNP=S VP.od @4
+VP.od -> _x=A* ϕNP=dO Vgp.trans_od
+Vgp.trans_od -> NEG? V.trans_od AUX?
+Vgp.trans_od -> V.trans_od AUX NEG @1
 _subj -> NP | NP.erg
 _obj -> NP | NP.dat
 _adjunct -> AdvP | PP | S2.cp | S2.pt
@@ -79,8 +88,6 @@ VP -> _x=A* Vgp.intrans
 VP -> _x=A* NP=A _x=A* Vgp.intrans @2
 VP -> _x=A* _obj=dO _x=A* Vgp.trans
 VP -> _x=A* S2.inf=dO _x=A* Vgp.trans
-# Hindi leaves out an understood object (मैंने खा लिया); costlier than an overt one
-VP -> _x=A* Vgp.trans @2
 VP -> _x=A* Vgp.trans S2.comp=dO
 VP -> _x=A* NP.dat=iO _x=A* NP=dO _x=A* Vgp.ditrans
 VP -> _x=A* NP=dO _x=A* NP.dat=iO _x=A* Vgp.ditrans @0.2
@@ -115,7 +122,7 @@ _aspect -> PROG | PERF | HAB
 S2.comp -> sub.comp S
 S2.adv -> sub.adv S
 S -> S2.adv=A part.corr? _subj=S VP
-S -> S2.adv=A part.corr? VP @3
+S -> S2.adv=A part.corr? ϕNP=S VP @3
 S -> _subj=S VP S2.adv=A
 S -> _subj=S S2.adv=A VP @0.5
 S -> S2.inf=S VP @0.3

@@ -309,6 +309,7 @@ VP -> PP* NP? NP? V TENSE?`;
     ['Passive', 'be + -en, by-phrase', 'A perfective participle with जाना. The agent is an optional PP with से or के द्वारा.', 'पकड़ा गया'],
     ['Do-support', 'In negatives and questions', 'None. नहीं is inside Vgp and questions use क्या or intonation.', 'क्या राम आया'],
     ['Compound verbs', 'None in the book', 'A stem with a vector verb, shown as VEC inside AUX.', 'खा लिया'],
+    ['Conjunct verbs', 'None in the book', 'A noun or adjective with a light verb (करना, होना, देना). By default the noun is the dO and the light verb the V; with Light verbs as one verb they form one complex V.', 'मदद की'],
     ['Genitive', 'NP + ’s under POSS', 'NP + का/के/की under POSS, agreeing with the head noun.', 'सीता की किताब'],
     ['Noun modifiers', 'PP and clauses follow the noun', 'They precede it (वाला, participles). Only जो clauses may follow.', 'चश्मे वाला लड़का'],
     ['Relative clauses', 'Inside NP', 'Inside NP, or a correlative adjoined to S₁ and picked up by वह.', 'जो आया, वह मेरा भाई है'],

@@ -355,7 +355,11 @@
     if (!s.tokens.length) return '';
     const cards = s.tokens.map((t, i) => `<button class="word ${s.word === i ? 'on' : ''} ${t.abs ? 'abstract' : ''} ${t.tags.length ? '' : 'missing'}" data-act="word" data-i="${i}">
         <b lang="hi">${esc(t.w)}</b><span class="tag">${esc((t.tags[0] || 'choose').replace('_', ' '))}</span>
-        ${t.tags.length > 1 ? `<small>+${t.tags.length - 1} possible</small>` : ''}</button>`).join('');
+        ${(() => {
+          // V.trans_od only lets Method 1 draw a silent object; it is not a separate category.
+          const n = t.tags.filter((x) => !/_od$/.test(x)).length;
+          return n > 1 ? `<small>+${n - 1} possible</small>` : '';
+        })()}</button>`).join('');
     const token = s.tokens[s.word];
     let palette = '';
     if (token) {

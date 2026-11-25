@@ -23,6 +23,18 @@
     const rename = {};
     let showClass = null;
     let elide = [];
+    // Silent elements: "ϕNP=dO" in a rule draws an empty NP with that function.
+    // It takes no word, so it is attached to the item after it (or before it).
+    const empties = new Map();
+    const silent = (item, before, after) => {
+      const list = (xs) => xs.map((e) => `${e.sym}=${e.fn}`).join(',');
+      const id = `\u0003${list(before)}|${item.sym}=${item.fn}|${list(after)}`;
+      if (!empties.has(id)) {
+        empties.set(id, { before, after });
+        addRule(id, [item], 0);
+      }
+      return { sym: id, fn: '' };
+    };
 
     const addRule = (lhs, rhs, cost) => rules.push({ lhs, rhs, cost });
     const join = (rhs) => {
@@ -84,11 +96,29 @@
         const names = alternative.trim().split(/\s+/).filter(Boolean);
         if (!names.length) return fail('the right-hand side is empty');
         if (names.length > 9) return fail('use at most nine symbols in one rule');
-        let variants = [[]];
+        // Fold silent elements into the item after them (or the last item).
+        const items = [];
+        let pending = [];
         for (const name of names) {
+          const e = name.match(/^[ϕ∅]([^=?*+ϕ∅]+)(?:=([A-Za-z]+))?$/);
+          if (e) {
+            if (!LABEL.test(e[1])) return fail(`cannot read "${name}"`);
+            pending.push({ sym: e[1], fn: e[2] || '' });
+          } else {
+            items.push({ name, before: pending, after: [] });
+            pending = [];
+          }
+        }
+        if (!items.length) return fail('a rule needs at least one item besides silent elements');
+        if (pending.length) items[items.length - 1].after = pending;
+        let variants = [[]];
+        for (const { name, before, after } of items) {
           const m = name.match(/^([^=?*+]+)(?:=([A-Za-z]+))?([?*+]?)$/);
           if (!m || !LABEL.test(m[1])) return fail(`cannot read "${name}"`);
-          const item = { sym: m[1], fn: m[2] || '' };
+          const hasSilent = before.length || after.length;
+          if (hasSilent && m[3]) return fail(`a silent element must stand next to a plain item, not "${name}"`);
+          const plain = { sym: m[1], fn: m[2] || '' };
+          const item = hasSilent ? silent(plain, before, after) : plain;
           const present = m[3] === '*' || m[3] === '+' ? { sym: plus(item), fn: '' } : item;
           const taken = variants.map((v) => [...v, present]);
           variants = m[3] === '?' || m[3] === '*' ? [...variants, ...taken] : taken;
@@ -102,7 +132,7 @@
     });
 
     if (!roots.length && rules.length) {
-      const first = rules.find((r) => !/^[\u0001\u0002]/.test(r.lhs));
+      const first = rules.find((r) => !/^[\u0001\u0002\u0003]/.test(r.lhs));
       if (first) roots = [first.lhs];
     }
     if (!rules.length && !errors.length) errors.push({ line: 1, message: 'the grammar has no rules' });
@@ -115,7 +145,7 @@
       if (!index.has(first)) index.set(first, []);
       index.get(first).push(r);
     }
-    return { unary, binary, roots, errors, rename, showClass, elide };
+    return { unary, binary, roots, errors, rename, showClass, elide, empties };
   }
 
   function insert(cell, entry) {
@@ -159,6 +189,11 @@
     const { rhs } = entry.rule;
     const children = build(entry.left, tokens, rhs[0].fn, grammar);
     if (entry.right) children.push(...build(entry.right, tokens, rhs[1].fn, grammar));
+    const empty = grammar.empties && grammar.empties.get(entry.sym);
+    if (empty) {
+      const make = (e) => node(e.sym, [{ w: 'ϕ', empty: true }], e.fn, grammar);
+      return [...empty.before.map(make), ...children, ...empty.after.map(make)];
+    }
     if (/^[\u0001\u0002_]/.test(entry.sym)) {
       if (fn && children.length === 1 && children[0].c) children[0].fn = fn;
       return children;
@@ -239,7 +274,7 @@
       let best = null;
       for (; j >= i; j--) {
         const options = [...chart[i][j].entries()]
-          .filter(([s]) => !/^[\u0001\u0002_]/.test(s)).map(([, list]) => list[0])
+          .filter(([s]) => !/^[\u0001\u0002\u0003_]/.test(s)).map(([, list]) => list[0])
           .sort((a, b) => a.cost - b.cost);
         if (options.length) {
           // For one word keep the category itself rather than a phrase built over it.

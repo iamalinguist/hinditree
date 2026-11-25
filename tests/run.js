@@ -223,9 +223,17 @@ test('obligation: मुझे खाना खाना है has a noun objec
   const t = parser.parse(tagger.tag('मुझे खाना खाना है'), compiled).trees[0];
   assert.equal(tree.functions(t).map((u) => `${u.fn}:${u.text}`).join(' / '), 'S:मुझे / dO:खाना / P:खाना है');
 });
-test('Method 1 accepts a dropped object, but prefers an overt one', () => {
+test('Method 1 draws dropped subjects and objects as silent ϕ, but prefers overt ones', () => {
   const fn = (x) => tree.functions(parser.parse(tagger.tag(x), compiled).trees[0]).map((u) => `${u.fn}:${u.text}`).join(' / ');
-  assert.equal(fn('मैंने खा लिया'), 'S:मैंने / P:खा लिया');
+  assert.equal(fn('मैंने खा लिया'), 'S:मैंने / dO:ϕ / P:खा लिया');
+  assert.equal(fn('खा लिया'), 'S:ϕ / dO:ϕ / P:खा लिया');
+  assert.equal(fn('दरवाज़ा खोलो'), 'S:ϕ / dO:दरवाज़ा / P:खोलो');
+  assert.equal(fn('राम खाता है'), 'S:राम / dO:ϕ / P:खाता है');
+  assert.equal(fn('खाना खा लो'), 'S:ϕ / dO:खाना / P:खा लो');
+  const t = parser.parse(tagger.tag('मैंने खा लिया है'), compiled).trees[0];
+  assert.match(tree.toBracket(t), /\[VP \[NP=dO ϕ\] \[Vgp.trans/);
+  assert.equal(tree.text(t), 'मैंने खा लिया है');
+  assert.deepEqual(tree.fromBracket(tree.toBracket(t)), t);
   assert.equal(fn('राम ने रोटी खाई'), 'S:राम ने / dO:रोटी / P:खाई');
 });
 test('participles modify a noun with or without हुआ, but not a pronoun', () => {
