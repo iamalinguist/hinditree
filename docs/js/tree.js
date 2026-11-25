@@ -293,6 +293,14 @@
    * Forms that cannot be cut (गया, किया, दी, पिया) stay whole.
    */
   const VOWEL_SIGNS = { 'ा': 'आ', 'ि': 'इ', 'ी': 'ई', 'ु': 'उ', 'ू': 'ऊ', 'े': 'ए', 'ै': 'ऐ', 'ो': 'ओ', 'ौ': 'औ' };
+  /** The suffix after the stem for a verb form of this kind (hab, perf, fut): खाता → ता. */
+  function suffixOf(word, kind) {
+    const w = word.normalize('NFC');
+    const f = HT.lexicon.verb(w).find((x) => x.kind === kind && x.stem && w.startsWith(x.stem.normalize('NFC')) && w.length > x.stem.length);
+    if (!f) return '';
+    const rest = w.slice(f.stem.normalize('NFC').length);
+    return VOWEL_SIGNS[rest[0]] ? VOWEL_SIGNS[rest[0]] + rest.slice(1) : rest;
+  }
   function suffixes(root) {
     const tree = clone(root);
     const order = [];
@@ -417,5 +425,5 @@
     return n;
   }
 
-  HT.tree = { clone, isLeaf, leaves, text, walk, at, present, functions, toBracket, fromBracket, toForest, rules, compare, sanitize, oneVerb, suffixes };
+  HT.tree = { clone, isLeaf, leaves, text, walk, at, present, functions, toBracket, fromBracket, toForest, rules, compare, sanitize, oneVerb, suffixes, suffixOf };
 })(globalThis.HT = globalThis.HT || {});

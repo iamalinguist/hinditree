@@ -357,8 +357,23 @@
   // HTML
   function wordsPanel() {
     if (!s.tokens.length) return '';
+    // With "Show suffixes", a silent element that the tree draws as a suffix says so:
+    // (hab) = -ता, the suffix of खाता.
+    const split = s.opts.suffixes && !s.exercise && s.view === 'tree' && ['thomas', 'xbar'].includes(s.method);
+    const kinds = { '(hab)': 'hab', '(perf)': 'perf', '(fut)': 'fut' };
+    const shownAs = (t, i) => {
+      if (!split || !t.abs || !kinds[t.w]) return '';
+      const prev = s.tokens.slice(0, i).reverse().find((x) => !x.abs);
+      if (!prev || !/^V\./.test(prev.tags[0] || '')) return '';
+      const suffix = T.suffixOf(prev.w, kinds[t.w]);
+      // The future is drawn as two pieces, the subjunctive and -गा: (fut) = -ऊँ -गा.
+      const future = kinds[t.w] === 'fut' && suffix.match(/^(.*?)(गा|गी|गे|गीं)$/);
+      if (future) return future[1] ? `-${future[1]} -${future[2]}` : `-${future[2]}`;
+      return suffix ? `-${suffix}` : '';
+    };
+    let linked = 0;
     const cards = s.tokens.map((t, i) => `<button class="word ${s.word === i ? 'on' : ''} ${t.abs ? 'abstract' : ''} ${t.tags.length ? '' : 'missing'}" data-act="word" data-i="${i}">
-        <b lang="hi">${esc(t.w)}</b><span class="tag">${esc((t.tags[0] || 'choose').replace('_', ' '))}</span>
+        <b lang="hi">${esc(t.w)}${(() => { const x = shownAs(t, i); if (x) linked++; return x ? ` = ${esc(x)}` : ''; })()}</b><span class="tag">${esc((t.tags[0] || 'choose').replace('_', ' '))}</span>
         ${(() => {
           // V.trans_od only lets Method 1 draw a silent object; it is not a separate category.
           const n = t.tags.filter((x) => !/_od$/.test(x)).length;
@@ -386,7 +401,8 @@
         </div></div>`;
     }
     return `<section class="card words-card"><div class="row between"><h3>Word categories</h3>
-      <span class="hint">Click a word to correct it</span></div><div class="words">${cards}</div>${palette}</section>`;
+      <span class="hint">Click a word to correct it</span></div><div class="words">${cards}</div>
+      ${linked ? '<p class="hint">Show suffixes is on: each silent element marked “=” is drawn in the tree as the suffix of the verb before it, which these cards list as one word.</p>' : ''}${palette}</section>`;
   }
 
   function messages() {
