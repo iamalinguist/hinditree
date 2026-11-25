@@ -13,7 +13,7 @@
     'NP', "N'", 'VP', 'Vgp', 'AP', 'AdvP', 'PP', 'POSS', 'DET', 'N', 'PRO', 'V', 'AUX', 'TENSE',
     'MOD', 'PERF', 'PROG', 'HAB', 'PASS', 'VEC', 'NEG', 'A', 'Adv', 'deg', 'P', 'CASE', 'sub', 'coord', 'part'];
   const LEVELS = ['1 · Categories and phrases', '2 · AdvP, PP, AP', '3 · Verb classes', '4 · Verb group', '5 · N′ in the noun phrase', '6 · Clauses and triangles'];
-  const OPTIONS = [['oneVerb', 'Light verbs as one verb'], ['functions', 'Functions'], ['gloss', 'Glosses'], ['translit', 'Transliteration'], ['english', 'Translation'],
+  const OPTIONS = [['oneVerb', 'Light verbs as one verb'], ['suffixes', 'Show suffixes'], ['functions', 'Functions'], ['gloss', 'Glosses'], ['translit', 'Transliteration'], ['english', 'Translation'],
     ['triangles', 'Triangles for S₂'], ['align', 'Align words'], ['color', 'Colour'], ['blank', 'Blank labels (quiz)']];
 
   const s = {
@@ -64,8 +64,12 @@
 
   function shown() {
     if (!s.tree) return null;
-    if (s.method !== 'thomas') return s.tree;
-    return T.present(baseTree(s.tree), s.level, { triangles: s.level === 6 && s.opts.triangles });
+    // "Show suffixes" draws -ता and -या under HAB and PERF instead of a silent element.
+    // Not in exercises, which are marked against whole-word model answers.
+    const split = s.opts.suffixes && !s.exercise;
+    if (s.method !== 'thomas') return split && s.method === 'xbar' ? T.suffixes(s.tree) : s.tree;
+    const view = T.present(baseTree(s.tree), s.level, { triangles: s.level === 6 && s.opts.triangles });
+    return split ? T.suffixes(view) : view;
   }
 
   // History
@@ -535,8 +539,10 @@
         <button class="btn small primary" data-act="present">Present</button>
       </div>
       <div class="options">${OPTIONS.filter(([key]) => (key === 'oneVerb' ? s.method === 'thomas'
+        : key === 'suffixes' ? s.view === 'tree' && ['thomas', 'xbar'].includes(s.method)
         : s.view === 'tree' ? key !== 'triangles' || s.level === 6 : ['gloss', 'english'].includes(key))).map(([key, name]) =>
-        `<label${key === 'oneVerb' ? ' title="Draw compound verbs (खा लिया) and conjunct verbs (मदद की) as one complex V"' : ''}><input type="checkbox" data-opt="${key}" ${s.opts[key] ? 'checked' : ''}> ${name}</label>`).join('')}</div>
+        `<label${key === 'oneVerb' ? ' title="Draw compound verbs (खा लिया) and conjunct verbs (मदद की) as one complex V"'
+          : key === 'suffixes' ? ' title="Draw the aspect suffix under its own node: [V खा] [HAB -ता] instead of [V खाता] [HAB (hab)]"' : ''}><input type="checkbox" data-opt="${key}" ${s.opts[key] ? 'checked' : ''}> ${name}</label>`).join('')}</div>
       ${s.opts.oneVerb && s.method === 'thomas' && s.tree ? T.oneVerb(s.tree).notes.map((n) => `<p class="hint oneverb-note" lang="hi">${esc(n)}</p>`).join('') : ''}
       <p class="present-caption" lang="hi">${esc(s.text)}</p>
       <div class="canvas" id="canvas"></div>

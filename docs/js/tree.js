@@ -281,6 +281,62 @@
     return { tree, notes };
   }
 
+  /*
+   * Show suffixes: a view of a tree with the aspect suffix drawn under its own
+   * node instead of a silent element (Whatzit?, "Words or morphemes in the tree?").
+   *   [V खाता] [AUX [HAB (hab)] ...]   becomes   [V खा] [AUX [HAB -ता] ...]
+   *   [V आया] [AUX [PERF (perf)] ...]  becomes   [V आ] [AUX [PERF -या] ...]
+   *   [V आया] [AUX [TENSE (past)]]     becomes   [V आ] [AUX [PERF -या] [TENSE (past)]]
+   * Forms that cannot be cut (गया, किया, दी, पिया) stay whole.
+   */
+  const VOWEL_SIGNS = { 'ा': 'आ', 'ि': 'इ', 'ी': 'ई', 'ु': 'उ', 'ू': 'ऊ', 'े': 'ए', 'ै': 'ऐ', 'ो': 'ओ', 'ौ': 'औ' };
+  function suffixes(root) {
+    const tree = clone(root);
+    const order = [];
+    (function visit(n, parent) {
+      if (isLeaf(n)) order.push({ leaf: n, parent });
+      else n.c.forEach((c) => visit(c, n));
+    })(tree, null);
+    const parentOf = (target) => {
+      let found = null;
+      walk(tree, (n) => { if (n.c && n.c.includes(target)) found = n; });
+      return found;
+    };
+    order.forEach(({ leaf, parent }, i) => {
+      if (!parent || parent.l !== 'V' || leaf.abs || leaf.empty) return;
+      const word = leaf.w.normalize('NFC');
+      const form = HT.lexicon.verb(word).find((f) => (f.kind === 'hab' || f.kind === 'perf')
+        && f.stem && word.startsWith(f.stem.normalize('NFC')) && word.length > f.stem.length);
+      if (!form) return;
+      let suffix = word.slice(form.stem.length);
+      if (VOWEL_SIGNS[suffix[0]]) suffix = VOWEL_SIGNS[suffix[0]] + suffix.slice(1);
+      const want = form.kind === 'hab' ? '(hab)' : '(perf)';
+      // The silent element of this verb: the next one before another verb.
+      let target = null;
+      for (let j = i + 1; j < order.length; j++) {
+        const o = order[j];
+        if (o.parent && o.parent.l === 'V' && !o.leaf.abs) break;
+        if (o.leaf.abs && o.leaf.w === want) { target = o.leaf; break; }
+      }
+      const gloss = leaf.g ? leaf.g.split('.')[0] : '';
+      const label = form.kind === 'hab' ? 'HAB' : 'PFV';
+      if (target) {
+        delete target.abs;
+        Object.assign(target, { w: `-${suffix}`, g: label });
+      } else if (form.kind === 'perf') {
+        // A bare perfective (आया): add PERF before the silent past tense.
+        const vgp = parentOf(parent);
+        const aux = vgp && vgp.c.find((c) => c.l === 'AUX');
+        if (!aux) return;
+        const at = aux.c.findIndex((c) => c.l === 'TENSE');
+        aux.c.splice(at < 0 ? aux.c.length : at, 0, { l: 'PERF', c: [{ w: `-${suffix}`, g: label }] });
+      } else return;
+      leaf.w = form.stem;
+      if (gloss) leaf.g = gloss;
+    });
+    return tree;
+  }
+
   /** The rewrite rules that this particular tree uses. */
   function rules(root) {
     const seen = new Set();
@@ -336,5 +392,5 @@
     return n;
   }
 
-  HT.tree = { clone, isLeaf, leaves, text, walk, at, present, functions, toBracket, fromBracket, toForest, rules, compare, sanitize, oneVerb };
+  HT.tree = { clone, isLeaf, leaves, text, walk, at, present, functions, toBracket, fromBracket, toForest, rules, compare, sanitize, oneVerb, suffixes };
 })(globalThis.HT = globalThis.HT || {});

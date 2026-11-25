@@ -246,6 +246,14 @@ test('participles modify a noun with or without हुआ, but not a pronoun', (
   assert.match(b('दौड़ते हुए वह गिरा', xbar), /^\[TP \[VP.intrans=A/);
   assert.match(b('जब शिक्षक आए छात्र उठे'), /आए\{come.PFV\}/);
 });
+test('Show suffixes: -ता and -या under their own node; irregular forms stay whole', () => {
+  const b = (s) => tree.toBracket(tree.suffixes(tree.present(parser.parse(tagger.tag(s), compiled).trees[0], 6)));
+  assert.match(b('राम फल खाता है'), /\[V खा\{eat\}\] \[AUX \[HAB -ता\{HAB\}\] \[TENSE है/);
+  assert.match(b('राम आया'), /\[V आ\{come\}\] \[AUX \[PERF -या\{PFV\}\] \[TENSE \(past\)\]/);
+  assert.match(b('उसने फ़िल्म देखी'), /\[V देख\{see\/look\}\] \[AUX \[PERF -ई/);
+  assert.match(b('वह गया'), /\[V गया\{go.PFV\}\] \[AUX \[TENSE \(past\)\]\]/);
+  assert.match(b('उसने किताब दी'), /\[V दी\{give.PFV\}\]/);
+});
 test('complex postpositions take their complement: राम की ओर is one PP', () => {
   const t = parser.parse(tagger.tag('वह राम की ओर देख रहा है'), compiled).trees[0];
   assert.match(tree.toBracket(t), /\[PP=A \[NP \[N राम\{Ram\}\]\] \[P "की ओर"/);
