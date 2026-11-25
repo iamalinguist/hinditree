@@ -388,6 +388,7 @@ dialog .row { margin-top: 10px; }
 .wz-table-scroll { overflow-x: auto; }
 .wz-table table.ff { min-width: 560px; }
 .wz-table table.ff td:first-child { font-weight: 600; white-space: nowrap; }
+.wz-table table.ff td:not(:first-child):not([lang="hi"]) { font-family: inherit; font-weight: 400; }
 .wip li { margin: 4px 0; line-height: 1.6; }
 .wip cite { font-style: italic; }
 

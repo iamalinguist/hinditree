@@ -242,7 +242,55 @@
       tool: 'The "Light verbs as one verb" switch in Make Structure draws them as one V; the notes it gives (for example नहीं between the parts) are evidence.',
       readings: ['Peter Hook (1974), The Compound Verb in Hindi', 'Miriam Butt (1995), The Structure of Complex Predicates in Urdu', 'Tara Mohanan (1994), Argument Structure in Hindi', 'Miriam Butt and Gillian Ramchand (2005), Complex aspectual structure in Hindi/Urdu'],
       output: 'A paper comparing compound and conjunct verbs on the same tests.',
-      next: 'Vector verbs add aspect (खा लिया, खा गया). Look at tense and aspect in the verb group next.',
+      next: '-कर and -ते हुए also join two verbs. Ask whether they form one verb next.',
+    },
+    {
+      id: 'converbs', phase: 'clause', title: 'One verb or two events?', hi: 'पूर्वकालिक और तात्कालिक कृदंत',
+      question: 'खाकर जाना (one after the other) and खाते हुए जाना (at the same time) join two verbs. Do they form one verb, inflected as a whole, whose first part can then move? Or is the first part a separate small clause with its own event?',
+      hypotheses: [
+        ['One verb, then movement', 'A native speaker\'s account: -कर or -ते हुए first forms one verb (खाकर जाना, खाते हुए जाना), and inflection applies to that unit. Once it is formed, the first part behaves as an adverbial and can move anywhere in the sentence.'],
+        ['Two events, an adverbial clause', 'खाना खाकर is a small non-finite clause with its own event (a converb clause), attached to the main verb as an adverbial (A). Only the main verb is inflected; the clause places its event relative to the main one: before it (-कर) or during it (-ते हुए).'],
+      ],
+      evidence: `# What moves, and what stays
+वह खाना खाकर गया
+खाना खाकर वह गया
+# Compare a compound verb
+वह किताब ले आया
+वह किताब लेकर आया
+किताब लेकर वह आया
+* किताब ले वह आया
+# Test 1: two time adverbs (one event time or two?)
+सुबह खाना खाकर वह शाम को गया
+# Test 2: two different objects
+उसने खाना खाकर किताब पढ़ी
+# Test 3: negating only the first part
+वह बिना खाए गया
+वह खाना न खाकर गया
+# Test 4: one negation, two readings?
+वह खाकर नहीं गया
+# Test 5: ने is decided by the main verb only
+राम खाना खाकर गया
+राम ने खाना खाकर किताब पढ़ी
+# Who is the understood subject?
+मुझे यह सुनकर दुख हुआ
+# -ते हुए: invariant or agreeing
+वह गाते हुए गई
+वह गाती हुई गई
+# From verb to postposition
+इस बात को लेकर झगड़ा हुआ
+हम दिल्ली होकर आए`,
+      argument: [
+        'State the predictions first. If H1 is right, the two parts share one event time, one negation and one set of objects. If H2 is right, each part can have its own time adverb, its own object and its own negation.',
+        'Run the five tests in the evidence with several speakers, and mark disagreements with %. Labels decide nothing: the tests do.',
+        'Compare with compound verbs (ले आया): if the -कर form passes tests that the compound verb fails, the two need different analyses.',
+        'Keep what is right in H1. "Form it, then move part of it" is a derivational account, and speakers\' reports of how they build these sentences are data for teaching and processing, whichever analysis the syntax supports.',
+        'Then the open questions: who controls the understood subject (मुझे in मुझे यह सुनकर दुख हुआ), why -ते हुए sometimes agrees (गाती हुई), and how लेकर and होकर became postpositions.',
+        'Compare other languages: English has both kinds (Having eaten, he left; He left eating an apple), and so do Japanese (-te) and Tamil. Look for what is special to Hindi in the details, not in the existence of the construction.',
+      ],
+      tool: 'Method 1 already draws H2: in खाना खाकर वह गया, खाना खाकर is an S2 with its own VP and dO, with the function A. To draw H1, write a grammar of your own in My Grammar (Method 3) and compare. वह गाता हुआ चला गया gets no tree yet.',
+      readings: ['Martin Haspelmath (1995), The converb as a cross-linguistically valid category, in Haspelmath and König (eds.), Converbs in Cross-Linguistic Perspective', 'Alice Davison (1981), Syntactic and semantic indeterminacy resolved: a mostly pragmatic analysis for the Hindi conjunctive participle, in Cole (ed.), Radical Pragmatics', 'Colin Masica (1976), Defining a Linguistic Area: South Asia', 'Roman Jakobson (1957), Shifters, verbal categories and the Russian verb (on taxis)', 'Yamuna Kachru (2006), Hindi'],
+      output: 'A paper testing the one-verb and the clause analyses of -कर and -ते हुए on the same data.',
+      next: 'Vector verbs and -ते हुए both carry aspect. Look at tense and aspect in the verb group next.',
     },
     {
       id: 'tense', phase: 'clause', title: 'Tense or perspective?', hi: 'काल या दृष्टि',
@@ -564,6 +612,81 @@
       tool: 'The parser and the Workbench already sort sentences into accepted and rejected: use them to check each pair before release.',
       readings: ['Alex Warstadt and others (2020), BLiMP: The Benchmark of Linguistic Minimal Pairs, TACL', 'Riyaz Ahmad Bhat and others (2017), The Hindi/Urdu Treebank Project (Handbook of Linguistic Annotation)', 'Universal Dependencies, Hindi HDTB treebank'],
       output: 'An open Hindi minimal-pair dataset and paper.',
+      next: 'Models often fail where Hindi differs from English. List those differences next.',
+    },
+    {
+      id: 'english', phase: 'method', title: 'Hindi, not English', hi: 'हिंदी बनाम अंग्रेज़ी',
+      tables: [{
+        title: 'What Hindi has and English lacks',
+        lang: ['', 'hi', 'en', ''],
+        head: ['Feature', 'Hindi', 'English', 'Counterpart in English?'],
+        rows: [
+          ['Ergative ने', 'राम ने रोटी खाई', 'Ram ate bread', 'None'],
+          ['Verb agrees with the object', 'राम ने रोटी खाई (खाई agrees with रोटी)', 'Ram ate bread', 'None'],
+          ['Gender on the verb', 'लड़का आया, लड़की आई', 'The boy came, the girl came', 'None'],
+          ['को on a specific object', 'उसने एक किताब पढ़ी, उसने किताब को पढ़ा', 'He read a book, he read the book', 'Partial: articles do similar work'],
+          ['Dative subject', 'मुझे भूख लगी, मुझे राम पसंद है', 'I am hungry, I like Ram', 'Partial: it seems to me; old methinks'],
+          ['Postpositions', 'घर में, राम के साथ', 'in the house, with Ram', 'Mirror image: prepositions'],
+          ['Verb-final order, free scrambling', 'राम ने किताब पढ़ी, किताब राम ने पढ़ी', 'Ram read the book', 'Partial: topicalisation (That book, Ram read)'],
+          ['Understood subject and object', 'खाना खाया? हाँ, खा लिया', 'Did you eat? Yes, I ate it', 'Partial: diary style (Ate it. Went home.)'],
+          ['Compound verbs', 'खा लिया, सो गया, तोड़ डाला', 'ate up, fell asleep, smashed', 'Partial: particles (up, off)'],
+          ['Conjunct verbs', 'मदद करना, शुरू होना', 'give help, take a walk', 'Partial: fewer light verbs'],
+          ['Converbs', 'खाकर गया, खाते हुए गया', 'Having eaten, he left; he left eating', 'Yes, used less'],
+          ['Stacked aspect', 'वह खाता रहा था, मैं खा रहा होता हूँ', 'He had kept eating', 'Partial: kept + -ing, had been -ing; no progressive under a habitual'],
+          ['Habitual marked in the present', 'वह रोज़ खाता है', 'He eats every day', 'Partial: used to, would (past only)'],
+          ['Presumptive होगा', 'वह आया होगा, वह घर पर होगा', 'He must have come, he must be at home', 'Partial: a modal verb, not a verb form'],
+          ['Ability passive', 'मुझसे खाया नहीं गया', 'I could not bring myself to eat', 'None'],
+          ['Causative suffixes', 'पढ़ना, पढ़ाना, पढ़वाना', 'read, teach, have someone read', 'None: separate verbs (make, have)'],
+          ['Honorific grammar', 'तू आ, तुम आओ, आप आइए', 'Come', 'None'],
+          ['Correlative clauses', 'जो आया, वह गया', 'The one who came left', 'Partial: old style (Who steals my purse steals trash)'],
+          ['Yes/no questions with क्या', 'क्या तुम आओगे?', 'Will you come?', 'None: English inverts the auxiliary'],
+          ['Question word in place', 'तुम क्या खाओगे?', 'What will you eat?', 'Partial: echo questions (You will eat what?)'],
+          ['Focus particles ही, भी, तो', 'राम ही आया, राम भी आया', 'Only Ram came, Ram came too', 'Partial: only, too, even, stress'],
+          ['Echo words', 'चाय-वाय, किताब-विताब', 'tea and things', 'Partial: fancy-shmancy'],
+          ['वाला', 'दिल्ली वाला, जाने वाला', 'the one from Delhi, about to go', 'Partial: -er, the one'],
+        ],
+        note: 'Verdicts are starting points to test, not results. None: no grammatical counterpart. Partial: English has something similar, but as a separate word, a lexical item, or a marginal or old-fashioned pattern. Yes: the same construction, used less. Add your own rows in the Notes below.',
+      }, {
+        title: 'The other way round: what English has and Hindi lacks',
+        lang: ['', 'en', 'hi', ''],
+        head: ['Feature', 'English', 'Hindi', 'Counterpart in Hindi?'],
+        rows: [
+          ['Articles', 'a book, the book', 'किताब, एक किताब', 'Partial: एक, को, word order'],
+          ['do-support', 'Did you eat? I did not eat.', 'क्या तुमने खाया? मैंने नहीं खाया।', 'None (compare होना-support in "Words or morphemes in the tree?")'],
+          ['Inversion in questions', 'Will you come?', 'क्या तुम आओगे?', 'None'],
+          ['Question word moved to the front', 'What did you eat?', 'तुमने क्या खाया?', 'None: it stays in place'],
+          ['Expletive subjects', 'It is raining. There is a book.', 'बारिश हो रही है। एक किताब है।', 'None'],
+          ['Tense and person in one suffix', 'eats (-s), ate', 'खाता है (aspect and tense on separate words)', 'Partial: the future खाऊँगा'],
+          ['Phrasal verbs', 'give up, look after', 'छोड़ देना, देखभाल करना', 'Partial: compound and conjunct verbs'],
+        ],
+        note: 'The comparison is about different choices, not more or less grammar.',
+      }],
+      question: 'Which properties of Hindi grammar have no counterpart in English? For each: is the difference one of kind (English has nothing like it) or of degree (English has a counterpart, but lexical, marginal or rare)?',
+      hypotheses: [
+        ['Different in kind', 'Some Hindi categories have no English counterpart at all: ergative ने, verbs that agree in gender and with the object, honorific grammar, causative suffixes, the ability passive.'],
+        ['Different in degree', 'For many apparent differences English has a counterpart (kept eating, having eaten, give a push), but as a separate word, a marginal pattern or a rarer choice. A claim that something is "only in Hindi" has to survive that comparison.'],
+      ],
+      evidence: `# Candidates for a difference in kind
+राम ने रोटी खाई
+लड़की आई
+मुझसे खाया नहीं गया
+आप आइए
+उसने किताब पढ़वाई
+# Candidates for a difference in degree
+वह खाता रहा था
+खाना खाकर वह गया
+जो आया, वह गया
+उसने खाना खा लिया`,
+      argument: [
+        'Go row by row. For each property, find the closest English construction (not the usual translation) and decide: none, partial or yes.',
+        'For a partial verdict, say what the difference is: a separate word instead of a suffix, a word instead of a rule, a marginal or old-fashioned pattern, or only frequency.',
+        'Add rows as you find them, each with the Hindi sentence and the closest English attempt.',
+        'Before calling a property unique to Hindi, check a third language. Many of these are shared across South Asia (Masica 1976), and some, like converbs, are found from Turkish to Japanese.',
+        'Use the second table as a check: English has properties that Hindi lacks too.',
+      ],
+      tool: 'The English to Hindi page lists where Thomas\'s rules for English change for Hindi. Draw a Hindi sentence in Method 1 and compare it with Thomas\'s tree for its English translation.',
+      readings: ['Colin Masica (1976), Defining a Linguistic Area: South Asia', 'Robert Lado (1957), Linguistics Across Cultures', 'Carl James (1980), Contrastive Analysis', 'Yamuna Kachru (2006), Hindi', 'Annie Montaut (2004), A Grammar of Hindi (Lincom)', 'Matthew Dryer and Martin Haspelmath (eds.) (2013), The World Atlas of Language Structures Online'],
+      output: 'A contrastive grammar of Hindi and English for teaching, and a list of candidate Hindi properties to test against other languages.',
       next: 'Bring all of it together.',
     },
     {
@@ -635,7 +758,7 @@
 
       ${(st.tables || (st.table ? [st.table] : [])).map((tb) => `<section class="card wz-table"><h2>${esc(tb.title)}</h2>
         <div class="wz-table-scroll"><table class="ff"><tr>${tb.head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>
-        ${tb.rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td lang="hi">${esc(c)}</td>` : `<td>${esc(c)}</td>`)).join('')}</tr>`).join('')}</table></div>
+        ${tb.rows.map((r) => `<tr>${r.map((c, i) => { const lang = tb.lang ? tb.lang[i] : (i ? 'hi' : ''); return lang ? `<td lang="${lang}">${esc(c)}</td>` : `<td>${esc(c)}</td>`; }).join('')}</tr>`).join('')}</table></div>
         ${tb.note ? `<p class="hint">${esc(tb.note)}</p>` : ''}</section>`).join('')}
 
       <div class="lesson-cards">

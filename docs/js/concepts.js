@@ -89,6 +89,9 @@
     ['silent-element', 'sentence', 'Abstract (silent) element', '',
       'A node in the tree with no pronounced word, used to show something the analysis claims is there. Thomas writes (pres) and (past) under TENSE; HindiTree adds (hab), (perf), pro and ∅.',
       'खाता है: [V खाता] [AUX [HAB (hab)] [TENSE है]]\nदी: [V दी] [AUX [TENSE (past)]]', ['tense', 'morphemes', 'transitivity'], 'Thomas (1993), Beginning Syntax'],
+    ['converb', 'sentence', 'Converb', 'पूर्वकालिक कृदंत',
+      'A non-finite verb form that makes an adverbial clause. It carries no tense of its own: it places its event relative to the main verb, before it (-कर, -करके) or during it (-ते हुए). करके is the converb of करना itself, which is why there is no *करकर. Whether the converb and the main verb form one verb is the question in Whatzit?.',
+      'खाना खाकर वह गया (before)\nवह गाते हुए गई (during)\nखाना खाकर वह गया, but * किताब ले वह आया', ['converbs'], 'Haspelmath (1995), The converb as a cross-linguistically valid category'],
     // Meaning
     ['aspect', 'meaning', 'Aspect and tense', 'पक्ष और काल',
       'Tense places an event in time (past, present, future). Aspect says how the event is viewed: as a whole, in progress, as a habit. Hindi marks aspect on the verb (-ता, रहा, -या) and tense on the auxiliary (है, था).',
@@ -143,6 +146,9 @@
       'Polysemy is one word with related meanings that share a history. Homonymy is two words that only look alike (English desert and dessert). To decide, test shared inflection, a meaning bridge, in-between uses that are still alive, and the same path in other languages. रहना and progressive रहा pass all four tests; आम "mango" (from Sanskrit āmra) and आम "common" (from Arabic ʿāmm) pass none. Related in origin does not mean the same today: progressive रहा has no imperative (* खा रहो), lexical रहना does (यहीं रहो).',
       'Related: रहना "stay" → लिखता रहा → लिख रहा है\nLook-alikes: आम (mango) and आम (common)\nToday different: यहीं रहो but * खा रहो', ['ta', 'tense'], ''],
     // Method
+    ['contrastive', 'method', 'Contrastive analysis', 'व्यतिरेकी विश्लेषण',
+      'Comparing two languages feature by feature to find where they differ. A difference can be one of kind (one language has no counterpart) or of degree (it has one, but as a separate word, a marginal pattern or a rarer choice). A property is unique to a language only after a third language has been checked.',
+      'Kind: राम ने रोटी खाई (no English ergative)\nDegree: वह खाता रहा, he kept eating', ['english'], 'James (1980), Contrastive Analysis'],
     ['judgement', 'method', 'Acceptability judgement and gradience', '',
       'A speaker\'s sense of whether a sentence is possible. Judgements are often gradient rather than yes or no; HindiTree marks them *, ?, ??, # and %.',
       '* राम ने सोया\n? उसने खाना नहीं खा लिया\n% मैंने छींका', ['judgements'], 'Sprouse and Almeida (2012)'],
